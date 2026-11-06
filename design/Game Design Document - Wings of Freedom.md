@@ -4,7 +4,7 @@
 
 | Project Genre | Historical Subject | Engine Target | Document Revision |
 |---|---|---|---|
-| Episodic Narrative / Top-Down Jet Action | Flt. Lt. Matiur Rahman (1941–1971) | HTML5 / Phaser 3, mobile portrait first | 3.0 (Five-Episode Structure) |
+| Episodic Narrative / Top-Down Jet Action | Flt. Lt. Matiur Rahman (1941–1971) | HTML5 / Phaser 4, mobile portrait first | 3.1 (Five-Episode Structure) |
 
 > **How to read this document.** Items marked **[verify]** are facts that published sources disagree on or that we have not yet confirmed. Resolve them before writing final scripts. See §9.
 
@@ -16,13 +16,17 @@ The game tells Matiur Rahman's life in **five episodes**. Episodes 1, 3 and 5 ar
 
 | # | Episode | Years | Type | Target length |
 |---|---|---|---|---|
-| 1 | **Son of Dhaka** | 1941–1963 | Cutscene episode | 5–7 min |
-| 2 | **Sabre Skies** | September 1965 | Playable: top-down jet action, F-86 Sabre | 25–35 min |
-| 3 | **A Home and a Homeland** | 1968–August 1971 | Cutscene episode, with optional light interaction | 12–15 min |
-| 4 | **Bluebird** | 20 August 1971 | Playable: infiltration + low-level flight with cockpit struggle | 15–20 min |
-| 5 | **Homecoming** | 1971–2006 | Cutscene episode | 5–7 min |
+| 1 | **Son of Dhaka** | 1941–1963 | Cutscene episode | 2–3 min |
+| 2 | **Sabre Skies** | September 1965 | Playable: top-down jet action, F-86 Sabre | 8–12 min |
+| 3 | **A Home and a Homeland** | 1968–August 1971 | Cutscene episode | 2–3 min |
+| 4 | **Bluebird** | 20 August 1971 | Playable: infiltration + low-level flight with cockpit struggle | 8–12 min |
+| 5 | **Homecoming** | 1971–2006 | Cutscene episode | 2–3 min |
 
-**Total:** about 65–85 minutes.
+**Total:** about 30 minutes (22–33 min). This is a small, focused game.
+
+**Length rules**
+- Every cutscene episode is **2–3 minutes**. Scenes run 15–40 seconds; individual shots 3–8 seconds. Dialogue is short; images do most of the work.
+- Every playable episode is **8–12 minutes** on a first play, including short in-engine story beats.
 
 **Design pillars**
 
@@ -150,18 +154,22 @@ These characters are invented to carry scenes. The credits must label them as co
 
 **Purpose:** introduce Matiur and the places that will matter later. Let the player see the T-33 and the F-86 before they ever fly one.
 
-| Scene | Content | Reused later in |
-|---|---|---|
-| 1.1 Dhaka, 1941 | Agha Sadeq Road house. Title card: date of birth. | Ep 3 (Dhaka scenes) |
-| 1.2 Boyhood | Dhaka Collegiate School; a visit to Ramnagar: river, boats, paddy fields. A plane passes overhead and the boy looks up *(dramatised)*. | Ep 3 (Ramnagar, Bhairab) |
-| 1.3 Sargodha | PAF Public School. Homesickness, letters home, friendship with Hasan. | — |
-| 1.4 Risalpur, 15 Aug 1961 | Academy drill, first training flights. *Optional:* a 30-second one-touch "first solo" interaction that teaches basic steering. | Ep 2 controls |
-| 1.5 Mauripur, 1963 | Commissioning (36th GD(P)). First posting to No. 2 Squadron, Karachi. He climbs into a **T-33** for the first time. | **Ep 4: same base, same aircraft type** |
-| 1.6 Peshawar | Converts to the **F-86 Sabre**, joins No. 19 Squadron. Ends looking at the Sabre on the flight line. | Leads directly into Ep 2 |
+**Length:** 2–3 minutes.
 
-**Interaction:** tap to advance, hold to skip, optional tap on highlighted objects to open archive cards.
+| Scene | Time | Content | Reused later in |
+|---|---|---|---|
+| 1.1 Dhaka, 1941 | ~15 s | Agha Sadeq Road house. Title card: date of birth. | Ep 3 (Dhaka scenes) |
+| 1.2 Boyhood | ~30 s | Dhaka Collegiate School; a visit to Ramnagar: river, boats, paddy fields. A plane passes overhead and the boy looks up *(dramatised)*. | Ep 3 (Ramnagar, Bhairab) |
+| 1.3 Sargodha | ~25 s | PAF Public School. Homesickness, a letter home, friendship with Hasan. | — |
+| 1.4 Risalpur, 15 Aug 1961 | ~20 s | Academy drill, first training flights. | — |
+| 1.5 Mauripur, 1963 | ~30 s | Commissioning (36th GD(P)). First posting to No. 2 Squadron, Karachi. He climbs into a **T-33** for the first time. | **Ep 4: same base, same aircraft type** |
+| 1.6 Peshawar | ~20 s | Converts to the **F-86 Sabre**, joins No. 19 Squadron. Ends looking at the Sabre on the flight line. | Leads directly into Ep 2 |
+
+**Interaction:** tap to advance, hold to skip. The archive card at the end can be opened for more detail.
 
 ### Episode 2 — Sabre Skies (September 1965) · Playable
+
+**Length:** 8–12 minutes.
 
 **Genre:** top-down, vertical-scrolling jet action (portrait screen). The terrain scrolls down and the Sabre sits in the lower third.
 
@@ -173,22 +181,19 @@ These characters are invented to carry scenes. The credits must label them as co
 - **Guns:** fire automatically when a target is inside the gunsight cone (option: hold-to-fire).
 - **Pull button:** tighter turn, raises G.
 
-**Systems**
-- **G-meter (0–7 G):** above 5.5 G for 2 s the screen greys and controls soften. 7 G for over 1 s is a blackout and the sortie fails.
-- **Fuel:** drains with throttle. Every sortie ends with returning to base and landing.
-- **Ammunition:** limited bursts for the F-86's six .50-calibre machine guns.
-- **Airframe damage:** 4 pips. Damage affects handling.
+**Systems** (kept small for a short episode)
+- **G-meter (0–7 G):** above 5.5 G for 2 s the screen greys and controls soften. 7 G for over 1 s is a blackout and the sortie restarts.
+- **Fuel:** drains with throttle. Matters most in sortie 3.
+- **Airframe damage:** 3 pips. Damage affects handling.
 - **Wingman:** radio calls warn of threats and give context.
 
 **Sorties (in order)**
 
-| # | Sortie | Teaches |
-|---|---|---|
-| 1 | **Scramble.** Take off, join formation with the wingman, patrol. | Steering, throttle, formation |
-| 2 | **Combat air patrol.** Intercept intruders before they reach the base. | Gunsight, G-management |
-| 3 | **Escort.** Protect a slower strike formation through a defended area. | Positioning, priorities |
-| 4 | **Low-level navigation.** Fly a route under 100 ft through valleys and over plains without hitting terrain. | **The exact skill needed in Ep 4** |
-| 5 | **Running on empty.** Return a damaged, low-fuel Sabre and land it. | Fuel and damage management |
+| # | Sortie | Time | Teaches |
+|---|---|---|---|
+| 1 | **Scramble.** Take off, join formation with the wingman, short patrol. Doubles as the tutorial. | 2–3 min | Steering, throttle, formation |
+| 2 | **Intercept.** Stop intruders before they reach the base while protecting a slower friendly formation. | 3–4 min | Gunsight, G-management, priorities |
+| 3 | **Low and home.** Damaged and low on fuel, fly back under 100 ft through valleys and over plains, then land. | 3–4 min | **Low-level flying, the exact skill needed in Ep 4**; fuel and damage |
 
 **Tone rules for Episode 2**
 - No kill counter. Score comes from objectives (base protected, escort safe, route flown, aircraft landed).
@@ -196,25 +201,22 @@ These characters are invented to carry scenes. The credits must label them as co
 - Enemy aircraft types should be period-accurate (Hunter, Gnat, Mystère, Vampire, Canberra) but not demonised. The episode is about airmanship and duty, not national hatred. This matters especially for a Bangladeshi audience, given India's role in 1971.
 - Do not claim specific missions or victories for Matiur until they are sourced **[verify]**.
 
-**Between sorties:** short in-engine scenes at the flight line (crew chief, wingman, letters from home), told in the same style as the cutscene episodes.
+**Between sorties:** 10–15 second in-engine beats at the flight line (crew chief, wingman, a letter from home), in the same style as the cutscene episodes.
 
 ### Episode 3 — A Home and a Homeland (1968 – August 1971) · Cutscene episode
 
 **Purpose:** show what he had to lose and why he chose to act anyway.
 
-| Scene | Content |
-|---|---|
-| 3.1 Wedding, 1968 | Bengali wedding in Dhaka. Milly introduced. Warm, colourful, quiet. |
-| 3.2 Karachi home | Married life in officers' quarters; Mahin and Tuhin as babies. He is now an instructor. |
-| 3.3 Leave, January–March 1971 | Return to Dhaka and Ramnagar. Rising tension is heard on the radio and in conversation. |
-| 3.4 25 March 1971 | Operation Searchlight, shown only through **radio broadcasts, distant sound and the next morning's aftermath**, never as on-screen killing. |
-| 3.5 The Bhairab camp | He trains Rafiq, Karim, Jabbar and Nurul and other volunteers. Drill, weapons handling, river crossings. |
-| 3.6 14 April 1971 | PAF aircraft bomb the old camp site. He had moved the camp in time. He watches the aircraft of his own air force attack his people. |
-| 3.7 Return, April–May 1971 | Back to Dhaka on 23 April, Karachi on 9 May, with his family. |
-| 3.8 Masroor under watch | Grounded and watched. In his office he studies flight schedules and taxiway timings. |
-| 3.9 The night before | A quiet evening at home with his family. No speeches. Ends at dawn on 20 August. |
+**Length:** 2–3 minutes. This episode covers the most history, so each beat is a few shots at most.
 
-**Optional light interaction:** in 3.5 the player can walk Matiur around the camp (top-down, same camera as gameplay) and talk to each trainee. In 3.8 the player can tap through the flight schedule papers to discover the 20 August solo slot. This keeps players engaged and introduces Episode 4's map. It does not branch the story.
+| Scene | Time | Content |
+|---|---|---|
+| 3.1 Wedding, 1968 | ~20 s | Bengali wedding in Dhaka. Milly introduced. Warm, colourful, quiet. |
+| 3.2 Karachi home | ~20 s | Officers' quarters; Mahin and Tuhin as babies. He is now an instructor. |
+| 3.3 Leave and 25 March 1971 | ~30 s | Back in Dhaka and Ramnagar; tension on the radio. Operation Searchlight shown only through **radio broadcasts, distant sound and the next morning's aftermath**, never as on-screen killing. |
+| 3.4 The Bhairab camp | ~35 s | He trains volunteers: one short shot each of Rafiq, Karim, Jabbar and Nurul. Drill, weapons handling, a river crossing. |
+| 3.5 14 April 1971 | ~20 s | PAF aircraft bomb the old camp site. He had moved the camp in time. He watches his own air force attack his people. |
+| 3.6 Masroor under watch | ~30 s | Title card: back in Karachi, 9 May. Grounded and watched; he studies flight schedules. A quiet last evening with his family. Ends at dawn, 20 August. |
 
 ### Episode 4 — Bluebird (20 August 1971) · Playable
 
@@ -228,19 +230,21 @@ These characters are invented to carry scenes. The credits must label them as co
 
 #### 4.2 Recommended design: three phases
 
-**Phase 1 — Morning at Masroor (3–5 min): top-down social stealth**
+**Length:** 8–12 minutes in total.
+
+**Phase 1 — Morning at Masroor (2–3 min): top-down social stealth**
 - Matiur is allowed on the base, so the aim is to **look normal**, not to hide.
 - Guards and officers have **vision cones**. Being seen somewhere unusual, running or carrying the wrong item raises a **Suspicion** bar.
 - **Cover actions:** inspect an aircraft, check a clipboard, talk to ground crew. Doing one while watched slows Suspicion.
 - **Clock** in the HUD (about 11:10 → 11:30 **[verify timeline]**). Reach the signal point on the taxiway in the time window.
 - **Fail:** stopped and questioned (Suspicion full) or missing the window. Restart from a checkpoint.
 
-**Phase 2 — Bluebird (60–90 s): the boarding**
+**Phase 2 — Bluebird (about 1 min): the boarding**
 - Flag down the taxiing T-33 for a "safety check".
 - A few timing prompts: signal, approach, climb into the rear seat, canopy closes.
 - Minhas has one or two short, plain lines. He is confused and polite, not hostile.
 
-**Phase 3 — Radar Horizon (5–8 min): low-level flight + cockpit struggle**
+**Phase 3 — Radar Horizon (5–7 min): low-level flight + cockpit struggle**
 - Same top-down flight engine as Episode 2, now in a T-33 over desert and salt flats toward Thatta.
 - **Altitude band:** stay between 30 and 100 ft.
   - Above 100 ft, a radar icon fills. When full, interceptors are scrambled and the player must drop low again before they arrive (failing restarts from the last checkpoint).
@@ -258,16 +262,16 @@ These characters are invented to carry scenes. The credits must label them as co
 
 ### Episode 5 — Homecoming (1971–2006) · Cutscene episode
 
-| Scene | Content |
-|---|---|
-| 5.1 From white | Text over white: 20 August 1971, both pilots killed near Thatta. |
-| 5.2 Two graves, two countries | Matiur buried in the fourth-class employees' graveyard at Masroor. Minhas honoured with the Nishan-e-Haider. Shown with equal quiet. |
-| 5.3 Bangladesh | Independence; the Bir Shreshtho award. Milly and the daughters' return **[verify how and when]**. |
-| 5.4 Thirty-five years | Time passes: the daughters grow up; the family keeps asking for him to come home. |
-| 5.5 Karachi, June 2006 | Exhumation and handover ceremony. |
-| 5.6 Dhaka, 24 June 2006 | The coffin, under the Bangladesh flag, arrives in Dhaka. |
-| 5.7 Mirpur, 25 June 2006 | Burial with full military honours at the Martyred Intellectuals' Graveyard. Milly and the daughters present. Crowd, salute, silence. |
-| 5.8 Archive | The pixel-art grave **dissolves into a real photograph** of the grave: the one deliberate break from the art style (§6.8). Then a montage of real archive photos and credits. |
+**Length:** 2–3 minutes, plus credits.
+
+| Scene | Time | Content |
+|---|---|---|
+| 5.1 From white | ~15 s | Text over white: 20 August 1971, both pilots killed near Thatta. |
+| 5.2 Two graves, two countries | ~25 s | Matiur buried in the fourth-class employees' graveyard at Masroor. Minhas honoured with the Nishan-e-Haider. Shown with equal quiet. |
+| 5.3 Thirty-five years | ~30 s | Independence; the Bir Shreshtho award. Milly and the daughters' return **[verify how and when]**. The daughters grow up; the family keeps asking for him to come home. |
+| 5.4 Karachi → Dhaka, June 2006 | ~25 s | Handover ceremony in Karachi. On 24 June the coffin, under the Bangladesh flag, arrives in Dhaka. |
+| 5.5 Mirpur, 25 June 2006 | ~35 s | Burial with full military honours at the Martyred Intellectuals' Graveyard. Milly and the daughters present. Salute, then silence. |
+| 5.6 Archive | ~20 s | The pixel-art grave **dissolves into a real photograph** of the grave: the one deliberate break from the art style (§6.8). A few real archive photos, then credits. |
 
 ---
 
@@ -309,7 +313,7 @@ Episodes 1, 3 and 5 are story-heavy. Episodes 2 and 4 are top-down gameplay. If 
 
 ### 6.2 The core decision: one world, built once
 
-**All cutscenes are made in-engine (Phaser) from the same pixel-art assets as the gameplay.** No pre-rendered video.
+**All cutscenes are made in-engine (Phaser 4) from the same pixel-art assets as the gameplay.** No pre-rendered video.
 
 This means:
 - The same Matiur sprite walks through Episode 3's camp and Episode 4's tarmac.
