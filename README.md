@@ -34,13 +34,7 @@ Episode 2 on a phone (portrait, 360 px wide, shown at 2×):
 
 Hit aircraft trail smoke and break off; nothing explodes. The flight engine and low-level flying built here are reused in Episode 4.
 
-**Controls (phone):**
-- Drag anywhere to steer.
-- Slide THROTTLE on the right edge for speed.
-- Hold PULL for a tighter turn. In sortie 3 it climbs.
-- Guns fire on their own when the sight is on a target.
-
-## Try it
+## Run it
 
 Needs Node 20+.
 
@@ -52,11 +46,31 @@ npm install
 npm run dev
 ```
 
-Open the `Network:` address it prints on a phone on the same Wi-Fi. Run `npm test` for the unit tests and the bot pilots that fly every sortie.
+Open the `Network:` address it prints (for example `http://192.168.0.196:5173`) on your phone. The phone must be on the same Wi-Fi.
+If the phone can't connect, Windows Firewall is probably blocking Node on a *Public* network. Set the Wi-Fi network to *Private*, or allow Node.js through the firewall.
+
+`?sortie=1`, `?sortie=2` or `?sortie=3` on the URL jumps straight into a sortie.
+
+```bash
+npm test          # unit tests + bot pilots that fly every sortie
+npm run build     # static build in dist/ (Phaser loads from the jsDelivr CDN)
+```
+
+## Controls
+
+| Phone | Desktop | Does |
+|---|---|---|
+| Drag anywhere | Arrow keys | Steer: the jet turns toward the drag |
+| THROTTLE slider (right edge) | W / S | Speed and fuel burn |
+| PULL | Space | Tighter turn and more G. In sortie 3 it climbs. |
+| (automatic) | | Guns fire when the sight is on a target. Set GUNS: HOLD for a FIRE button. |
+| II | P / Esc | Pause |
+
+## Tuning
+
+Every gameplay number is in [src/data/tuning.json](src/data/tuning.json): speeds, G limits, fuel burn, damage, guns, AI and the low-level band.
 
 ## Design
 
-On the `stage-2-game-dev` branch:
-
-- [Game Design Document](https://github.com/jawadefaj/matiur/blob/stage-2-game-dev/design/Game%20Design%20Document%20-%20Wings%20of%20Freedom.md): rev 3.1, the source of truth for story, structure, tone and history.
-- [Build spec](https://github.com/jawadefaj/matiur/blob/stage-2-game-dev/design/init_design.md): tech, systems, tuning and code layout.
+- [Game Design Document](<design/Game Design Document - Wings of Freedom.md>): rev 3.1, the source of truth for story, structure, tone and history.
+- [Build spec](design/init_design.md): tech, systems, tuning and code layout.

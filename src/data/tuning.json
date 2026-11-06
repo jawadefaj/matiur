@@ -1,0 +1,124 @@
+{
+  "units": {
+    "pxPerKnot": 0.3,
+    "g0": 50
+  },
+  "aircraft": {
+    "sabre": {
+      "minSpeed": 160, "maxSpeed": 600, "accel": 35, "decel": 35,
+      "normalG": 3.0, "pullG": 7.6, "normalRateDeg": 85, "pullRateDeg": 130,
+      "headingGain": 4.0, "rollRate": 7.0, "bleed": 1.6, "radius": 7, "hp": 30
+    },
+    "hunter": {
+      "minSpeed": 200, "maxSpeed": 590, "accel": 50, "decel": 40,
+      "normalG": 3.2, "pullG": 5.8, "normalRateDeg": 80, "pullRateDeg": 115,
+      "headingGain": 3.0, "rollRate": 5.0, "bleed": 0.9, "radius": 8, "hp": 14
+    },
+    "gnat": {
+      "minSpeed": 180, "maxSpeed": 560, "accel": 55, "decel": 40,
+      "normalG": 3.4, "pullG": 6.2, "normalRateDeg": 95, "pullRateDeg": 125,
+      "headingGain": 3.4, "rollRate": 6.0, "bleed": 0.9, "radius": 6, "hp": 10
+    },
+    "mystere": {
+      "minSpeed": 190, "maxSpeed": 560, "accel": 45, "decel": 40,
+      "normalG": 3.0, "pullG": 5.5, "normalRateDeg": 75, "pullRateDeg": 110,
+      "headingGain": 3.0, "rollRate": 5.0, "bleed": 0.9, "radius": 7, "hp": 14
+    },
+    "canberra": {
+      "minSpeed": 220, "maxSpeed": 420, "accel": 25, "decel": 25,
+      "normalG": 2.0, "pullG": 2.5, "normalRateDeg": 30, "pullRateDeg": 40,
+      "headingGain": 1.5, "rollRate": 2.0, "bleed": 0.5, "radius": 11, "hp": 24
+    },
+    "b57": {
+      "minSpeed": 220, "maxSpeed": 420, "accel": 25, "decel": 25,
+      "normalG": 2.0, "pullG": 2.5, "normalRateDeg": 30, "pullRateDeg": 40,
+      "headingGain": 1.5, "rollRate": 2.0, "bleed": 0.5, "radius": 11, "hp": 30
+    }
+  },
+  "takeoff": {
+    "rotateSpeed": 150,
+    "groundAccelMul": 0.9,
+    "climbRate": 900,
+    "cruiseAltitude": 12000
+  },
+  "gmeter": {
+    "max": 7,
+    "greyoutAbove": 5.5,
+    "greyoutAfter": 2.0,
+    "greyoutClearBelow": 4.5,
+    "greyoutRecover": 1.2,
+    "greyoutControl": 0.5,
+    "blackoutAt": 7.0,
+    "blackoutAfter": 1.0,
+    "smoothRate": 14,
+    "strainFrom": 5.0
+  },
+  "fuel": {
+    "idleBurn": 0.06,
+    "throttleBurn": 0.34,
+    "groundBurnMul": 0.3,
+    "bingo": 15,
+    "flameoutGrace": 6
+  },
+  "damage": {
+    "pips": 3,
+    "hitsPerPip": 5,
+    "pipGrace": 2.0,
+    "handlingLossPerPip": 0.12,
+    "speedLossPerPip": 0.08,
+    "leakPerPip": 0.3
+  },
+  "guns": {
+    "player": {
+      "coneDeg": 6, "range": 240, "bulletSpeed": 560, "bulletLife": 0.55,
+      "fireInterval": 0.06, "spreadDeg": 1.5, "damage": 1, "burst": 0, "pause": 0
+    },
+    "wingman": {
+      "coneDeg": 5, "range": 200, "bulletSpeed": 560, "bulletLife": 0.5,
+      "fireInterval": 0.1, "spreadDeg": 3, "damage": 0.7, "burst": 0.8, "pause": 1.4
+    },
+    "enemy": {
+      "coneDeg": 4, "range": 180, "bulletSpeed": 520, "bulletLife": 0.5,
+      "fireInterval": 0.16, "spreadDeg": 8, "damage": 1, "burst": 0.45, "pause": 2.0
+    }
+  },
+  "ai": {
+    "defendRange": 230,
+    "defendConeDeg": 25,
+    "defendChancePerSec": 0.9,
+    "overshootRange": 45,
+    "extendAfterBurst": 0.55,
+    "maxFireAspectDeg": 100,
+    "combatFuel": 50,
+    "escortEngageRange": 420,
+    "brokenOffGoneAfter": 5,
+    "brokenOffGoneDist": 700
+  },
+  "lowLevel": {
+    "bandLow": 30,
+    "bandHigh": 100,
+    "gaugeMax": 200,
+    "climbRate": 60,
+    "sinkRate": 30,
+    "vAccel": 140,
+    "pullUpG": 1.2,
+    "radarFill": 0.4,
+    "radarDrain": 0.25,
+    "interceptTime": 8,
+    "warnLookAhead": 1.0,
+    "playerRadius": 5,
+    "engineOutSink": 25
+  },
+  "landing": {
+    "maxSpeed": 210,
+    "maxHeadingErrDeg": 15,
+    "maxAlt": 40,
+    "rolloutDecel": 45,
+    "flareAlt": 10,
+    "flareFunnel": 420
+  },
+  "camera": {
+    "lookAhead": 150,
+    "follow": 5
+  }
+}

@@ -159,6 +159,15 @@ Top-down, vertical-scrolling. Terrain scrolls down; the Sabre sits in the lower 
 
 Score comes from objectives only: base protected, escort safe, route flown, aircraft landed. Enemy types: Hunter, Gnat, Mystère, Vampire, Canberra. Sortie 3 uses the same altitude gauge as Episode 4 Phase 3.
 
+**Decisions made in the Episode 2 mechanics build** (not in the GDD; revisit in playtests):
+- **Altitude control at low level:** the GDD gives no altitude control. In low-level flight, PULL climbs and letting go sinks; at altitude, PULL tightens the turn. Episode 4 Phase 3 should reuse this.
+- **Camera:** the jet keeps a heading and can turn freely (16 baked frames). The camera looks ahead along the heading, so when flying north the jet sits in the lower third as the GDD asks.
+- **Steering:** floating stick. The jet turns toward the drag direction, and the stick base follows a long drag.
+- **Hit grace:** after losing an airframe pip, the player is immune for 2 s, so one burst can't take all three.
+- **Enemy fire:** enemies hold fire on head-on passes and often break away after a burst. Each enemy fighter has about 50 s of combat fuel, then leaves for home, which counts as turned back. This prevents endless turning fights.
+- **Landing assist:** lined up and under 210 kt on short final, the jet holds about 10 ft until over the runway.
+- **Checkpoint restarts** pause on a "tap to continue" card.
+
 ### 6.3 Episode 4 — Bluebird
 
 Three phases, 8–12 minutes in total (GDD §3, option A).
@@ -249,25 +258,43 @@ One main theme (flute or solo voice) recurs in every episode, arranged different
 
 ## 10. Code and data layout
 
+Built so far (Episode 2 mechanics). The simulation is plain TypeScript with no Phaser, so it runs in tests:
+
 ```
 src/
-  main.ts
+  main.ts  config.ts  save.ts
+  data/      tuning.json  tuning.ts
+  systems/
+    math.ts
+    flight/    FlightModel.ts  GMeter.ts  Fuel.ts  Damage.ts  LowLevel.ts (altitude band, radar, terrain)
+    combat/    Guns.ts (bullets, lead-computing sight)
+    ai/        AI.ts (enemy fighters, bombers, escorted friendlies, Sherdil Two)
+    radio/     Radio.ts
+  sim/       World.ts  types.ts        // aircraft, bullets, events; steps at 60 Hz
+  sortie/    Sortie.ts  Sortie1Scramble.ts  Sortie2Intercept.ts  Sortie3LowAndHome.ts  terrain.ts
+  scenes/    BootScene.ts  MenuScene.ts  FlightScene.ts (renders the sim)  UIScene.ts (HUD + touch)
+  gfx/       pixelArt.ts  textures.ts  // placeholder art generated at boot
+  ui/        widgets.ts
+tests/       systems.test.ts  sorties.test.ts (bot pilots fly every sortie)
+```
+
+Still planned for later episodes:
+
+```
+src/
   scenes/
-    BootScene.ts  PreloadScene.ts  TitleScene.ts  EpisodeSelectScene.ts
+    TitleScene.ts  EpisodeSelectScene.ts
     CutsceneScene.ts        // plays src/data/cutscenes/*.json (Ep 1, 3, 5 and in-episode beats)
-    Ep2FlightScene.ts       // Sabre sorties 1–3
     Ep4MasroorScene.ts      // Phase 1: stealth
     Ep4BoardingScene.ts     // Phase 2: boarding
     Ep4FlightScene.ts       // Phase 3: T-33 on the shared flight engine
     ArchiveScene.ts  AltScenarioScene.ts
-    UIScene.ts              // runs in parallel, owns the HUD
   systems/
-    flight/    FlightModel.ts  GMeter.ts  Fuel.ts  Damage.ts  AltitudeBand.ts  RadarFill.ts
     stealth/   Suspicion.ts  VisionCone.ts  PatrolLoop.ts
     cockpit/   ControlShare.ts  RhythmPrompt.ts
     cutscene/  CutscenePlayer.ts
   data/
-    tuning.json  dialogue.en.json  dialogue.bn.json  archive.json
+    dialogue.en.json  dialogue.bn.json  archive.json
     cutscenes/   ep1_01_dhaka.json  ...
 assets/
   palette/master.hex
@@ -329,6 +356,9 @@ tools/
 Historical fact-checks are tracked in GDD §9. Build-side questions:
 
 - Does the G-meter apply to the T-33 in Episode 4 Phase 3, or only to the Sabre in Episode 2?
+- Low-level altitude control (PULL climbs, letting go sinks): keep it for Episode 4, or give altitude its own control?
+- Logical height: the build stretches from 360 × 640 up to 360 × 800 to fill tall phones (§2 says 360 × 640). Keep it, or letterbox?
+- Sound: the mechanics build has no audio yet.
 - Items in Episode 4 Phase 1: the GDD says carrying "the wrong item" raises Suspicion but doesn't list items. The earlier spec had ID card, clipboard, toolkit and torch. Confirm or cut.
 - Bangla pixel font: custom or licensed?
 - Mockup images: add them to the repo or drop §4.3.
