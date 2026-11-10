@@ -120,5 +120,16 @@
   "camera": {
     "lookAhead": 150,
     "follow": 5
+  },
+  "walk": {
+    "speed": 52,
+    "cell": 6,
+    "radius": 4,
+    "talkRange": 24,
+    "tapRadius": 16,
+    "animFps": 8,
+    "cameraFollow": 6,
+    "stickDeadZone": 10,
+    "stickMax": 36
   }
 }

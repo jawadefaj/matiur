@@ -49,7 +49,7 @@ npm run dev
 Open the `Network:` address it prints (for example `http://192.168.0.196:5173`) on your phone. The phone must be on the same Wi-Fi.
 If the phone can't connect, Windows Firewall is probably blocking Node on a *Public* network. Set the Wi-Fi network to *Private*, or allow Node.js through the firewall.
 
-`?sortie=1`, `?sortie=2` or `?sortie=3` on the URL jumps straight into a sortie.
+`?sortie=1`, `?sortie=2` or `?sortie=3` on the URL jumps straight into a sortie. `?walk=flightline` jumps into the on-foot flight line.
 
 ```bash
 npm test          # unit tests + bot pilots that fly every sortie
@@ -65,6 +65,19 @@ npm run build     # static build in dist/ (Phaser loads from the jsDelivr CDN)
 | PULL | Space | Tighter turn and more G. In sortie 3 it climbs. |
 | (automatic) | | Guns fire when the sight is on a target. Set GUNS: HOLD for a FIRE button. |
 | II | P / Esc | Pause |
+
+### On foot (walk mechanic)
+
+Some parts of the game are played on foot: move a character from one place to another to reach a goal. The first is **The Flight Line** (menu: ON FOOT), the beat before Sortie 1: get the brief from Sherdil Two in the crew room, find the crew chief on his rounds by the jet, then walk out to your Sabre. It ends on FLY SORTIE 1.
+
+| Phone | Desktop | Does |
+|---|---|---|
+| Tap the ground | | Walk there, finding a way round walls |
+| Tap a person | | Walk over and talk to them |
+| Drag | Arrow keys / WASD | Walk in that direction |
+| Tap / TALK button | Space / E | Read the next line, or talk to whoever is near |
+
+The same system moves non-player characters: scripts can send anyone along a path (`walk('two', ...)`), loop them on rounds (`setPatrol`), and chain moves, waits and dialogue into short scripted sequences. See `src/walk/`.
 
 ## Tuning
 
@@ -94,6 +107,7 @@ matiur/
 │   ├── sim/              The simulation: aircraft, bullets and events, stepped 60 times a second
 │   ├── systems/          Flight model, G-meter, fuel, damage, low-level flight, guns, AI, radio
 │   ├── sortie/           The three Episode 2 sorties and their terrain
+│   ├── walk/             On-foot levels: pathfinding, walking characters, goals, dialogue
 │   └── ui/               Pixel-font text and button helpers
 ├── tests/                Unit tests and bot pilots that fly every sortie
 └── .claude/launch.json   Dev and preview server settings for Claude Code
@@ -101,7 +115,7 @@ matiur/
 
 `node_modules/` (from `npm install`) and `dist/` (from `npm run build`) are created locally and are not committed.
 
-The code in `sim/`, `systems/` and `sortie/` doesn't use Phaser, so the tests can fly every sortie without a browser. The scenes in `scenes/` draw that simulation and read the touch and keyboard input.
+The code in `sim/`, `systems/`, `sortie/` and `walk/` doesn't use Phaser, so the tests can fly every sortie without a browser. The scenes in `scenes/` draw that simulation and read the touch and keyboard input.
 
 **Where new things go**
 
@@ -110,6 +124,7 @@ The code in `sim/`, `systems/` and `sortie/` doesn't use Phaser, so the tests ca
 | Game art (PNG) | `assets/sprites/`, named after the texture key. See [assets/sprites/README.md](assets/sprites/README.md). |
 | A gameplay number | [src/data/tuning.json](src/data/tuning.json) |
 | A sortie | `src/sortie/`, then add it to `SORTIE_LIST` and `makeSortie` in [src/sortie/index.ts](src/sortie/index.ts) |
+| An on-foot level | `src/walk/` (a `WalkLevel` subclass, like `FlightLine.ts`), then add it to `WALK_LIST` and `makeWalkLevel` in [src/walk/index.ts](src/walk/index.ts) |
 | A research photo or article | `assets/reference/`, with its source recorded in [assets/README.md](assets/README.md) |
 | Real art, audio or fonts (later) | The planned folders under `assets/`, listed in [assets/README.md](assets/README.md) |
 | A README screenshot | `assets/screenshots/` |

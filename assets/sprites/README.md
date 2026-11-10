@@ -33,6 +33,14 @@ After you add or rename a PNG, restart `npm run dev` so it finds the new file. E
 | `puff_fuel.png` | Fuel vapour | 4 × 4 | |
 | `spark.png` | Hit spark | 4 × 4 | |
 | `dust.png` | Smoke over a bombed base | 10 × 10 | |
+| `walker_pilot.png` | Matiur on foot | 48 × 104 | Walker sheet: see below |
+| `walker_wingman.png` | Sherdil Two on foot | 48 × 104 | Walker sheet |
+| `walker_crew.png` | Crew chief | 48 × 104 | Walker sheet |
+| `sabre_parked.png` | Parked Sabre at walking scale, nose up | 100 × 104 | Keep the size: the walk collision boxes in `src/walk/FlightLine.ts` follow it |
+
+### Walking characters
+
+A grid of frames, 3 columns by 4 rows. Rows from the top: facing down (toward the camera), left, right, up. Columns: standing, left foot forward, right foot forward. The template frames are 16 × 26. The feet sit near the bottom of each frame, where the soft shadow is.
 
 ### Aircraft
 
