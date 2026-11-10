@@ -1,6 +1,9 @@
-// Turns the canvases drawn in pixelArt.ts into Phaser textures. BootScene calls
-// registerTextures() once; the scenes then use the texture keys made here.
+// Turns the art into Phaser textures. BootScene loads any PNGs from
+// assets/sprites/ (pngArt.ts), then calls registerTextures() once. Each key uses
+// its PNG if there is one, else the placeholder drawn in pixelArt.ts. The
+// scenes then use the texture keys made here.
 import Phaser from 'phaser';
+import { PNG_ART, aircraftSheetFromImage, imageToCanvas, pngKey, silhouette } from './pngArt';
 import {
   AIRCRAFT_ART,
   bakeAircraft,
@@ -36,30 +39,52 @@ function addStrip(tm: Phaser.Textures.TextureManager, key: string, sheet: BakedS
   }
 }
 
-/** Generate every placeholder texture. Called once by the boot scene. */
+/** Queue every PNG in assets/sprites/ for loading. Called from BootScene.preload(). */
+export function loadPngArt(scene: Phaser.Scene): void {
+  for (const [key, url] of Object.entries(PNG_ART)) scene.load.image(pngKey(key), url);
+}
+
+/** The loaded PNG for a texture key, or undefined if there is none. */
+function png(tm: Phaser.Textures.TextureManager, key: string): HTMLImageElement | HTMLCanvasElement | undefined {
+  if (!tm.exists(pngKey(key))) return undefined;
+  return tm.get(pngKey(key)).getSourceImage() as HTMLImageElement | HTMLCanvasElement;
+}
+
+/** The PNG for a key as a canvas, or the placeholder if there is no PNG. */
+function art(tm: Phaser.Textures.TextureManager, key: string, placeholder: () => HTMLCanvasElement): HTMLCanvasElement {
+  const img = png(tm, key);
+  return img ? imageToCanvas(img) : placeholder();
+}
+
+/** Make every texture, from PNGs where they exist. Called once by the boot scene. */
 export function registerTextures(scene: Phaser.Scene): void {
   const tm = scene.textures;
   // Each aircraft kind, plus a black silhouette (<kind>_sh) used as its ground shadow.
   for (const name of Object.keys(AIRCRAFT_ART)) {
-    addStrip(tm, name, bakeAircraft(name));
-    addStrip(tm, `${name}_sh`, bakeAircraft(name, '#000000'));
+    const img = png(tm, name);
+    const sheet = img ? aircraftSheetFromImage(img) : bakeAircraft(name);
+    addStrip(tm, name, sheet);
+    addStrip(tm, `${name}_sh`, { ...sheet, canvas: silhouette(sheet.canvas) });
   }
-  addCanvas(tm, 'ground_farmland', bakeGround('farmland'));
-  addCanvas(tm, 'ground_plains', bakeGround('plains'));
-  for (const r of [24, 32, 40, 48]) addCanvas(tm, HILL_KEYS[r], bakeHill(r));
-  addCanvas(tm, 'tree', bakeTree());
-  addCanvas(tm, 'hut', bakeHut());
-  addCanvas(tm, 'pylon', bakePylon());
+  addCanvas(tm, 'ground_farmland', art(tm, 'ground_farmland', () => bakeGround('farmland')));
+  addCanvas(tm, 'ground_plains', art(tm, 'ground_plains', () => bakeGround('plains')));
+  for (const r of [24, 32, 40, 48]) addCanvas(tm, HILL_KEYS[r], art(tm, HILL_KEYS[r], () => bakeHill(r)));
+  addCanvas(tm, 'tree', art(tm, 'tree', bakeTree));
+  addCanvas(tm, 'hut', art(tm, 'hut', bakeHut));
+  addCanvas(tm, 'pylon', art(tm, 'pylon', bakePylon));
   // Puffs for smoke trails, fuel vapour and hit sparks. 'dust' is the smoke
   // over a bombed base.
-  addCanvas(tm, 'puff_light', bakePuff(6, '#cfcfca'));
-  addCanvas(tm, 'puff_dark', bakePuff(6, '#55585a'));
-  addCanvas(tm, 'puff_fuel', bakePuff(4, '#e8e6dc'));
-  addCanvas(tm, 'spark', bakePuff(4, '#ffe27a'));
-  addCanvas(tm, 'dust', bakePuff(10, '#8c7f6a'));
-  // Three cloud shapes, each with a black copy for its ground shadow.
+  addCanvas(tm, 'puff_light', art(tm, 'puff_light', () => bakePuff(6, '#cfcfca')));
+  addCanvas(tm, 'puff_dark', art(tm, 'puff_dark', () => bakePuff(6, '#55585a')));
+  addCanvas(tm, 'puff_fuel', art(tm, 'puff_fuel', () => bakePuff(4, '#e8e6dc')));
+  addCanvas(tm, 'spark', art(tm, 'spark', () => bakePuff(4, '#ffe27a')));
+  addCanvas(tm, 'dust', art(tm, 'dust', () => bakePuff(10, '#8c7f6a')));
+  // Three cloud shapes, each with a black copy for its ground shadow. A cloud
+  // PNG gets its shadow made from it unless cloudsh<n>.png is also given.
   for (let v = 0; v < 3; v++) {
-    addCanvas(tm, `cloud${v}`, bakeCloud(v));
-    addCanvas(tm, `cloudsh${v}`, bakeCloud(v, true));
+    const cloud = art(tm, `cloud${v}`, () => bakeCloud(v));
+    addCanvas(tm, `cloud${v}`, cloud);
+    const shadow = png(tm, `cloudsh${v}`);
+    addCanvas(tm, `cloudsh${v}`, shadow ? imageToCanvas(shadow) : png(tm, `cloud${v}`) ? silhouette(cloud) : bakeCloud(v, true));
   }
 }

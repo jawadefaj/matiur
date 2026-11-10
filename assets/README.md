@@ -2,13 +2,15 @@
 
 All of the game's non-code files live here: the app icon, reference photos, reading material and the screenshots used in the main README.
 
-The game build uses only `public/`. The in-game art is placeholder pixel art drawn in code when the game starts (`src/gfx/pixelArt.ts`), so the game never loads anything from `reference/` or `screenshots/`.
+The game build uses only `public/` and `sprites/`. In-game art comes from PNGs in `sprites/` where they exist. Everything else is placeholder pixel art drawn in code when the game starts (`src/gfx/pixelArt.ts`). The game never loads anything from `reference/` or `screenshots/`.
 
 ## Folders
 
 ```
 assets/
 ├── public/          App icon and web-app manifest. These ship with the game.
+├── sprites/         PNG game art. Each file replaces one placeholder (see sprites/README.md).
+│   └── templates/   The placeholders as PNGs, to paint over. Not used by the game.
 ├── reference/       Research for art and writing. Never shipped.
 │   ├── people/      Photos of Matiur Rahman
 │   ├── places/      Places from his life
@@ -20,10 +22,11 @@ assets/
 | Folder | In the game build? | How it is used |
 |---|---|---|
 | `public/` | Yes | Vite serves this folder at the site root and copies it unchanged into `dist/` (`publicDir` in [vite.config.ts](../vite.config.ts)). [index.html](../index.html) links to `icon.svg` and `manifest.webmanifest`. |
+| `sprites/` | Yes | Found by `src/gfx/pngArt.ts` when the game is built. Each PNG replaces the placeholder with the same name. Rules and key names are in [sprites/README.md](sprites/README.md). |
 | `reference/` | No | Used by people only: artists, writers and fact-checkers. |
 | `screenshots/` | No | Shown in the [main README](../README.md). |
 
-**Planned folders.** The [build spec](../design/init_design.md) (§10) plans these for when real art replaces the placeholders: `palette/` (the master palette file), `tilesets/`, `sprites/`, `portraits/`, `ui/`, `audio/`, `fonts/`, and `archive/` for the real photos shown on archive cards. Create each folder when its first file arrives.
+**Planned folders.** The [build spec](../design/init_design.md) (§10) plans these for when real art replaces the placeholders: `palette/` (the master palette file), `tilesets/`, `portraits/`, `ui/`, `audio/`, `fonts/`, and `archive/` for the real photos shown on archive cards. Create each folder when its first file arrives.
 
 ## Rules
 
