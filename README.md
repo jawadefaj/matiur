@@ -80,6 +80,7 @@ matiur/
 ├── tsconfig.json         TypeScript settings
 ├── assets/               Every non-code file: icon, reference photos, reading, screenshots
 │   ├── public/           App icon and web-app manifest, copied into the build
+│   ├── sprites/          PNG game art; each file replaces one placeholder
 │   ├── reference/        Research photos and reading for art and writing (never shipped)
 │   └── screenshots/      The images in this README
 ├── design/               Game Design Document and build spec
@@ -88,7 +89,7 @@ matiur/
 │   ├── config.ts         Screen size, palette, font and other shared constants
 │   ├── save.ts           Progress and settings, saved in the browser (localStorage)
 │   ├── data/             tuning.json: every gameplay number
-│   ├── gfx/              Placeholder pixel art, drawn in code when the game starts
+│   ├── gfx/              Game art: loads PNGs from assets/sprites/, else draws placeholders in code
 │   ├── scenes/           Phaser scenes: boot, sortie menu, flight, HUD and touch controls
 │   ├── sim/              The simulation: aircraft, bullets and events, stepped 60 times a second
 │   ├── systems/          Flight model, G-meter, fuel, damage, low-level flight, guns, AI, radio
@@ -106,6 +107,7 @@ The code in `sim/`, `systems/` and `sortie/` doesn't use Phaser, so the tests ca
 
 | Adding | Put it in |
 |---|---|
+| Game art (PNG) | `assets/sprites/`, named after the texture key. See [assets/sprites/README.md](assets/sprites/README.md). |
 | A gameplay number | [src/data/tuning.json](src/data/tuning.json) |
 | A sortie | `src/sortie/`, then add it to `SORTIE_LIST` and `makeSortie` in [src/sortie/index.ts](src/sortie/index.ts) |
 | A research photo or article | `assets/reference/`, with its source recorded in [assets/README.md](assets/README.md) |
