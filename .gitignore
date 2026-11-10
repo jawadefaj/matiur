@@ -1,4 +1,7 @@
+# Installed packages (npm install recreates them)
 node_modules/
+# Build output (npm run build recreates it)
 dist/
+# Log files and macOS Finder files
 *.log
 .DS_Store
