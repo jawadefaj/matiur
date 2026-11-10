@@ -70,6 +70,8 @@ npm run build     # static build in dist/ (Phaser loads from the jsDelivr CDN)
 
 Some parts of the game are played on foot: move a character from one place to another to reach a goal. The first is **The Flight Line** (menu: ON FOOT), the beat before Sortie 1: get the brief from Sherdil Two in the crew room, find the crew chief on his rounds by the jet, then walk out to your Sabre. It ends on FLY SORTIE 1.
 
+<img src="assets/screenshots/walk-dialogue.png" alt="The flight line: Matiur talks to Sherdil Two in the crew room" width="200">
+
 | Phone | Desktop | Does |
 |---|---|---|
 | Tap the ground | | Walk there, finding a way round walls |
