@@ -158,6 +158,8 @@ export class UIScene extends Phaser.Scene {
     }
     // Input reaches the sim only while no overlay is open.
     if (this.overlay === 'none') this.writeControls(dt);
+    // FlightScene steps the sim after this scene (see main.ts), so the HUD
+    // shows the state from the end of the previous frame.
     this.draw();
     this.checkEnd(dt);
     this.drawOverlay();

@@ -222,6 +222,8 @@ export function bakeGround(kind: 'farmland' | 'plains'): HTMLCanvasElement {
   const bund = kind === 'farmland' ? '#566c32' : '#8f7a4f';
   const seed = kind === 'farmland' ? 7 : 19;
   // Columns of random width, each split into rows of random height.
+  // A field's height, colour and furrow direction each add their own offset
+  // (+1, +50, +90) to the hash's row argument, so they are picked independently.
   let x = 0;
   let ci = 0;
   while (x < S) {
@@ -272,6 +274,7 @@ export function bakeHill(r: number): HTMLCanvasElement {
       const dy = y + 0.5 - c;
       const ang = Math.atan2(dy, dx);
       // Two sine waves wobble the edge, so hills are not perfect circles.
+      // The edge stays between about 0.75r and 1.05r, but LowLevel collides with the full r.
       const edge = r * (0.9 + 0.1 * Math.sin(ang * 5 + r) + 0.05 * Math.sin(ang * 11));
       const d = Math.hypot(dx, dy);
       if (d > edge + 1) continue;

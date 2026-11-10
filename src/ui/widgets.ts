@@ -33,6 +33,7 @@ export class Button {
   visible = true;
   readonly text: Phaser.GameObjects.Text;
 
+  /** (x, y) is the top-left corner and (w, h) the size, in px. A primary button has a yellow label and border. */
   constructor(
     scene: Phaser.Scene,
     public x: number,

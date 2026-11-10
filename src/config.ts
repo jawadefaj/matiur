@@ -82,6 +82,7 @@ const THR_H = Math.round(230 + EXTRA_H * 0.4);
 
 export const HUD = {
   topH: 44,
+  // objectiveY and radioY are unused: UIScene hard-codes the hint (y 48) and radio box (y 62).
   objectiveY: 48,
   radioY: 62,
   // pause, throttle and altGauge are rectangles (top-left x, y); pull and

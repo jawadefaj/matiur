@@ -186,7 +186,8 @@ export class FlightScene extends Phaser.Scene {
           vibrate(90);
           break;
         case 'baseHit':
-          // Each raid adds three smoke points around the hit, up to six in all.
+          // Each bomber that reaches the base adds three smoke points around
+          // its target, up to six in all.
           if (this.baseFires.length < 6) {
             for (let i = 0; i < 3; i++) {
               this.baseFires.push({ x: e.x + (Math.random() - 0.5) * 120, y: e.y + (Math.random() - 0.5) * 300 });
@@ -292,6 +293,7 @@ export class FlightScene extends Phaser.Scene {
     g.fillStyle(0x9c8a64, 1);
     g.fillRect(x - 22, y - 16, 44, 32);
     for (let i = 0; i < 7; i++) {
+      // Fixed strides spread the huts over the patch, so every village looks the same.
       const hx = Math.round(x - 18 + ((i * 13) % 36));
       const hy = Math.round(y - 12 + ((i * 7) % 24));
       g.fillStyle(0x2b2118, 1);

@@ -23,6 +23,8 @@ async function start(): Promise<void> {
     parent: 'game',
     width: GAME_W,
     height: GAME_H,
+    // Same colour as the page background in index.html, so any bars around
+    // the scaled canvas blend in.
     backgroundColor: '#111214',
     // Nearest-neighbour scaling and whole-pixel positions keep the art crisp.
     pixelArt: true,

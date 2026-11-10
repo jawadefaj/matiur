@@ -39,6 +39,8 @@ export class MenuScene extends Phaser.Scene {
       y += 74;
     }
 
+    // Setting toggles. Each tap saves at once; FlightScene reads the guns mode
+    // when a sortie starts.
     const guns = this.buttons.add(
       new Button(this, 30, oy + 362, 145, 36, `GUNS: ${save.settings.gunsMode.toUpperCase()}`, () => {
         const next = loadSave().settings.gunsMode === 'auto' ? 'hold' : 'auto';
