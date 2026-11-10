@@ -15,10 +15,12 @@ export class MenuScene extends Phaser.Scene {
   }
 
   create(): void {
+    // A fresh set each time: Phaser reuses this scene object when the menu reopens.
     this.buttons = new ButtonSet();
     this.ground = this.add.tileSprite(0, 0, GAME_W, GAME_H, 'ground_farmland').setOrigin(0);
     this.add.rectangle(0, 0, GAME_W, GAME_H, 0x0b0c0d, 0.55).setOrigin(0);
     this.g = this.add.graphics();
+    // Centre the layout vertically on screens taller than 9:16.
     const oy = Math.round(EXTRA_H / 2);
 
     txt(this, GAME_W / 2, oy + 40, 'WINGS OF FREEDOM', 16, CSS.signal).setOrigin(0.5);
@@ -67,6 +69,7 @@ export class MenuScene extends Phaser.Scene {
     ];
     txt(this, GAME_W / 2, oy + 458, help.join('\n'), 8, CSS.dim).setOrigin(0.5, 0).setAlign('center');
 
+    // ButtonSet does its own hit-testing. Keys 1-3 start a sortie on desktop.
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => this.buttons.pointerDown(p.id, p.x, p.y));
     this.input.on('pointerup', (p: Phaser.Input.Pointer) => this.buttons.pointerUp(p.id, p.x, p.y));
     this.input.keyboard?.on('keydown-ONE', () => this.start(1));
@@ -79,7 +82,9 @@ export class MenuScene extends Phaser.Scene {
   }
 
   update(_t: number, dms: number): void {
+    // Drift the ground down the screen at 30 px/s, as if flying north.
     this.ground.tilePositionY -= dms * 0.03;
+    // Buttons are drawn into one Graphics, redrawn every frame to show presses.
     this.g.clear();
     this.buttons.draw(this.g);
   }

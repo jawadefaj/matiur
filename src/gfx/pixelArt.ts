@@ -97,8 +97,8 @@ const OUTLINE = '#1e2124';
 /**
  * Art per aircraft kind: a shape from SHAPES and its colours (a airframe,
  * c canopy, d dark details). Keys must match tuning.aircraft, because
- * FlightScene uses an aircraft's kind as its texture key. The Mystère and
- * B-57 reuse the Sabre and Canberra shapes.
+ * FlightScene uses an aircraft's kind as its texture key. mystere and b57
+ * reuse the sabre and canberra shapes.
  */
 export const AIRCRAFT_ART: Record<string, { shape: string; pal: Palette }> = {
   sabre: { shape: 'sabre', pal: { a: '#d5dadf', c: '#4c8db5', d: '#2a2d31' } },
@@ -352,6 +352,7 @@ export function bakeCloud(variant: number, shadow = false): HTMLCanvasElement {
   const W = 56;
   const H = 32;
   const [canvas, ctx] = makeCanvas(W, H);
+  // Circles as [centre x, centre y, radius], px.
   const blobs: [number, number, number][] = [
     [[16, 18, 10], [28, 14, 12], [40, 18, 10], [24, 22, 9], [34, 22, 9]],
     [[14, 16, 9], [26, 12, 11], [38, 15, 10], [46, 19, 7], [22, 22, 8], [34, 23, 8]],
@@ -365,6 +366,7 @@ export function bakeCloud(variant: number, shadow = false): HTMLCanvasElement {
         const d = Math.hypot(x + 0.5 - bx, y + 0.5 - by);
         if (d <= br) {
           inside = true;
+          // The lower part of each circle is the shaded underside.
           if (y + 0.5 - by > br * 0.45) under = true;
         }
       }

@@ -1,3 +1,5 @@
+// First scene to run (see main.ts): bakes every placeholder texture, then
+// starts the sortie menu.
 import Phaser from 'phaser';
 import { registerTextures } from '../gfx/textures';
 

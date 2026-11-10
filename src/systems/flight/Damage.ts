@@ -5,8 +5,10 @@ import { tuning } from '../../data/tuning';
 export class Damage {
   readonly maxPips = tuning.damage.pips;
   pips: number;
+  /** Damage taken toward the next lost pip. */
   private hits = 0;
 
+  /** Pass fewer pips to start already damaged (sortie 3 starts with one lost). */
   constructor(pips = tuning.damage.pips) {
     this.pips = pips;
   }
@@ -27,18 +29,22 @@ export class Damage {
     return this.maxPips - this.pips;
   }
 
+  /** Multiplier on the deg/s turn caps, passed as FlightMods.handling. */
   get handling(): number {
     return 1 - this.lost * tuning.damage.handlingLossPerPip;
   }
 
+  /** Top-speed multiplier, passed as FlightMods.maxSpeed. */
   get maxSpeed(): number {
     return 1 - this.lost * tuning.damage.speedLossPerPip;
   }
 
+  /** Fuel burn multiplier, passed to Fuel.update as leakMul. */
   get leak(): number {
     return 1 + this.lost * tuning.damage.leakPerPip;
   }
 
+  /** No pips left: Sortie fails the sortie. */
   get destroyed(): boolean {
     return this.pips <= 0;
   }
@@ -53,6 +59,7 @@ export class Damage {
     return this.hits / tuning.damage.hitsPerPip;
   }
 
+  /** Save and restore for checkpoint restarts (sortie 3). */
   snapshot(): { pips: number; hits: number } {
     return { pips: this.pips, hits: this.hits };
   }
