@@ -12,8 +12,14 @@ import type { Sortie } from '../src/sortie/Sortie';
 import { Sortie3LowAndHome } from '../src/sortie/Sortie3LowAndHome';
 import { corridorX, LOW_AIRFIELD } from '../src/sortie/terrain';
 
+/** Fixed step, the same as FlightScene's. */
 const DT = 1 / 60;
 
+/**
+ * Fly sortie `n` with `bot` setting the controls each step. The World seed and
+ * the step order match FlightScene: World.step (skipped while the sortie freezes
+ * the world), then Sortie.update, then drain the events.
+ */
 function run(n: 1 | 2 | 3, bot: (w: World, s: Sortie) => void, maxSeconds: number) {
   const w = new World(1000 + n);
   const s = makeSortie(n);
@@ -40,6 +46,8 @@ describe('sortie playthroughs', () => {
       }
       const m = s.markers[0];
       if (!m) return;
+      // Joining: steer for a point 0.6 s ahead of the slot and match Two's speed
+      // plus a catch-up term. Otherwise fly straight at the current marker.
       if (m.kind === 'slot') {
         const two = w.aircraft.find((a) => a.role === 'wingman')!;
         const v = velocity(two.f);
@@ -64,6 +72,8 @@ describe('sortie playthroughs', () => {
       void s;
       const p = w.player.f;
       const c = w.controls;
+      // Chase the nearest bomber first, then the nearest fighter. Break hard when a
+      // bandit points at us; otherwise fly the lead point and let auto-fire shoot.
       const enemies = w.activeEnemies();
       const bombers = enemies.filter((e) => e.role === 'bomber');
       const pool = bombers.length > 0 ? bombers : enemies;
@@ -118,8 +128,10 @@ describe('sortie playthroughs', () => {
         need = Math.max(need, s3.ll.heightAt(x, y, 8) + 14);
       }
       const toThreshold = p.y - (LOW_AIRFIELD.y + LOW_AIRFIELD.length / 2);
+      // On short final, stop holding height and let the jet settle onto the runway.
       if (landing && toThreshold < 150) need = 0;
       c.pull = p.altitude < need;
+      // Idle on the approach so the speed drops below landing.maxSpeed.
       c.throttle = landing ? 0 : 0.42;
     }, 600);
     expect(s.failReason).toBe('');

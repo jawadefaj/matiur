@@ -1,3 +1,6 @@
+// Unit tests for the simulation systems: math, flight model, G-meter, fuel,
+// damage, guns and low-level flight. They run headlessly in Node, which is why
+// src/sim, src/systems and src/sortie stay free of Phaser.
 import { describe, expect, it } from 'vitest';
 import { tuning } from '../src/data/tuning';
 import { DEG, angleDiff, clockPosition, frameForHeading, headingTo } from '../src/systems/math';
@@ -18,6 +21,7 @@ import { World } from '../src/sim/World';
 
 const sabre = tuning.aircraft.sabre;
 
+/** Call `fn` once per `dt` step for `seconds` of simulated time. */
 function fly(seconds: number, fn: (t: number) => void, dt = 1 / 60): void {
   for (let t = 0; t < seconds; t += dt) fn(t);
 }
@@ -86,6 +90,8 @@ describe('flight model', () => {
   });
 });
 
+// The meter smooths its input (gmeter.smoothRate), so time over a threshold starts
+// a moment after the input jumps. Both checks below pass with almost no margin.
 describe('G-meter', () => {
   it('greys out only after 2 s above 5.5 G, then recovers', () => {
     const m = new GMeter();
@@ -132,6 +138,7 @@ describe('fuel and damage', () => {
 describe('guns', () => {
   it('leads a crossing target', () => {
     const shooter = makeFlightState({ x: 0, y: 0, heading: 0, speed: 400 });
+    // 150 px dead ahead, crossing left to right, so the lead point is to its right.
     const target = makeFlightState({ x: 0, y: -150, heading: Math.PI / 2, speed: 400 });
     const sol = leadSolution(shooter, target, tuning.guns.player.bulletSpeed);
     expect(sol.lx).toBeGreaterThan(0);
@@ -163,6 +170,7 @@ describe('low level', () => {
   });
 
   it('radar contact leads to interception unless the jet gets low', () => {
+    // 150 ft is above lowLevel.bandHigh, so the radar fills; 60 ft is below it, so it drains.
     const ll = new LowLevel([]);
     const f = makeFlightState({ altitude: 150, speed: 300 });
     let result = 'ok';

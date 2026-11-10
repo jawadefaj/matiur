@@ -126,7 +126,7 @@ export function lowLevelTerrain(seed: number): TerrainSpec {
     const y = -d;
     const cx = corridorX(y);
     const hw = halfWidth(d);
-    // Each ridge juts from one wall to just past the centre line, leaving a gap on the far side.
+    // Each ridge runs from one wall to past the centre line, leaving a gap on the far side.
     const fromLeft = rng() < 0.5;
     const x1 = fromLeft ? cx - hw - 10 : cx + hw + 10;
     const x2 = fromLeft ? cx + hw * (0.1 + rng() * 0.5) : cx - hw * (0.1 + rng() * 0.5);
