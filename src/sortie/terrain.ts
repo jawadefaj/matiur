@@ -3,8 +3,13 @@ import { mulberry32 } from '../systems/math';
 import type { Obstacle } from '../systems/flight/LowLevel';
 import { emptyTerrain, type Airfield, type Line, type Point, type TerrainSpec } from './Sortie';
 
+/** Home airfield for sorties 1 and 2, centred on the world origin. */
 export const PESHAWAR: Airfield = { name: 'Peshawar', x: 0, y: 0, length: 420, width: 26 };
 
+/**
+ * A wandering line from `from` to `to` for rivers and roads: random sideways
+ * drift that keeps easing back toward the straight line. `amp` and `width` in px.
+ */
 function wiggleLine(rng: () => number, from: Point, to: Point, steps: number, amp: number, width: number): Line {
   const points: Point[] = [];
   const dx = to.x - from.x;
@@ -35,6 +40,7 @@ export function farmlandTerrain(seed: number): TerrainSpec {
   for (let i = 0; i < 40; i++) {
     const x = (rng() - 0.5) * 8000;
     const y = (rng() - 0.5) * 8000;
+    // Keep villages off the airfield.
     if (Math.hypot(x, y) > 450) t.villages.push({ x, y });
   }
   for (let i = 0; i < 26; i++) {
@@ -46,6 +52,15 @@ export function farmlandTerrain(seed: number): TerrainSpec {
 // ---------------------------------------------------------------------------
 // Sortie 3: the low-level route home. North (up the screen) toward Peshawar.
 
+/**
+ * Route layout in px. Distances are measured north from the start (y = 0), so
+ * distance d is world y = -d; runwayY is a world y.
+ * valleyEnd: the winding valley ends; the route is straight (x = 0) by blendEnd.
+ * plainsEnd: the plains end and the landing approach begins.
+ * checkpoints: distances where sortie 3 saves a restart point.
+ * boundary: how far off the centre line before the "off the route" call; tall
+ * hills line the plains just beyond it.
+ */
 export const LOW_ROUTE = {
   valleyEnd: 6800,
   blendEnd: 7600,
@@ -55,30 +70,37 @@ export const LOW_ROUTE = {
   boundary: 900,
 };
 
+/** Peshawar again, at the end of the low-level route. */
 export const LOW_AIRFIELD: Airfield = { name: 'Peshawar', x: 0, y: LOW_ROUTE.runwayY, length: 420, width: 26 };
 
 /** Centre-line x of the route at world y (route runs toward negative y). */
 export function corridorX(y: number): number {
   const t = -y;
+  // Two sine waves make the valley wind; the constant term puts the start at x = 0.
   const valley = 240 * Math.sin(t / 1500) + 110 * Math.sin(t / 620 + 1.3) - 110 * Math.sin(1.3);
   if (t <= LOW_ROUTE.valleyEnd) return valley;
   if (t >= LOW_ROUTE.blendEnd) return 0;
+  // Between the two, fade the bends out linearly.
   const k = (t - LOW_ROUTE.valleyEnd) / (LOW_ROUTE.blendEnd - LOW_ROUTE.valleyEnd);
   return valley * (1 - k);
 }
 
+/** Half-width (px) of the valley floor, `t` px along the route. */
 function halfWidth(t: number): number {
   return 125 + 30 * Math.sin(t / 900);
 }
 
+/** Hill radii in px. Each has a baked sprite (HILL_KEYS in src/gfx/textures.ts). */
 const HILL_SIZES = [24, 32, 40, 48];
 
+/** Sortie 3 map: a winding valley, open plains, then the airfield. Every obstacle is also LowLevel collision. */
 export function lowLevelTerrain(seed: number): TerrainSpec {
   const rng = mulberry32(seed);
   const t = emptyTerrain();
   t.ground = 'plains';
   t.airfields.push(LOW_AIRFIELD);
   const obs: Obstacle[] = [];
+  // A round obstacle is a capsule whose two ends are the same point.
   const circle = (kind: Obstacle['kind'], x: number, y: number, r: number, h: number) =>
     obs.push({ kind, x1: x, y1: y, x2: x, y2: y, r, h });
 
@@ -87,6 +109,7 @@ export function lowLevelTerrain(seed: number): TerrainSpec {
     const y = -d;
     const cx = corridorX(y);
     const hw = halfWidth(d);
+    // One to three rows of hills on each side, stepping outward from the valley floor.
     for (const side of [-1, 1]) {
       let x = cx + side * hw;
       const rows = 1 + (rng() < 0.65 ? 1 : 0) + (rng() < 0.3 ? 1 : 0);
@@ -103,6 +126,7 @@ export function lowLevelTerrain(seed: number): TerrainSpec {
     const y = -d;
     const cx = corridorX(y);
     const hw = halfWidth(d);
+    // Each ridge juts from one wall to just past the centre line, leaving a gap on the far side.
     const fromLeft = rng() < 0.5;
     const x1 = fromLeft ? cx - hw - 10 : cx + hw + 10;
     const x2 = fromLeft ? cx + hw * (0.1 + rng() * 0.5) : cx - hw * (0.1 + rng() * 0.5);

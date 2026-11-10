@@ -8,7 +8,7 @@ export class Damage {
   /** Damage taken toward the next lost pip. */
   private hits = 0;
 
-  /** Pass fewer pips to start already damaged (sortie 3 starts with one lost). */
+  /** Pass fewer pips to start already damaged (sortie 3 passes 2). */
   constructor(pips = tuning.damage.pips) {
     this.pips = pips;
   }

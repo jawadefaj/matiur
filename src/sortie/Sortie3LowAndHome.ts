@@ -9,6 +9,7 @@ import type { World } from '../sim/World';
 import { Sortie } from './Sortie';
 import { LOW_AIRFIELD, LOW_ROUTE, corridorX, lowLevelTerrain } from './terrain';
 
+/** Checkpoint state. x is the route centre line at the checkpoint, not the jet's own x. */
 interface Snapshot {
   x: number;
   y: number;
@@ -24,10 +25,14 @@ export class Sortie3LowAndHome extends Sortie {
   readonly title = 'Low and Home';
   readonly place = 'Punjab plains to Peshawar';
 
+  /** Terrain, radar and warnings. UIScene reads its radar and warning state. */
   ll!: LowLevel;
+  /** route: the low-level run home. approach: past LOW_ROUTE.plainsEnd, landing. rollout: on the ground. */
   private stage: 'route' | 'approach' | 'rollout' = 'route';
+  /** Index of the next checkpoint in LOW_ROUTE.checkpoints. */
   private cpIndex = 0;
   private snapshot!: Snapshot;
+  // North (top) and south (bottom) ends of the runway, world y. The route arrives from the south.
   private runwayTop = LOW_AIRFIELD.y - LOW_AIRFIELD.length / 2;
   private runwayBottom = LOW_AIRFIELD.y + LOW_AIRFIELD.length / 2;
 
@@ -43,6 +48,7 @@ export class Sortie3LowAndHome extends Sortie {
       x: corridorX(0), y: 0, heading: 0, speed: 380, throttle: 0.5, altitude: 70,
     });
     w.controls.throttle = 0.5;
+    // The story starts this sortie damaged and short of fuel.
     w.fuel.pct = 32;
     w.damage = new Damage(2);
     w.player.smoke = w.damage.smoke;
@@ -73,6 +79,7 @@ export class Sortie3LowAndHome extends Sortie {
     }
 
     // Progress and checkpoints.
+    // The route starts at y = 0 and runs north (negative y), so -y is the distance flown in px.
     const travelled = -f.y;
     const total = -LOW_ROUTE.runwayY;
     this.setObj('route', this.stage === 'route' ? 'active' : 'done', `${Math.round(clamp(travelled / total, 0, 1) * 100)}%`);
@@ -85,7 +92,9 @@ export class Sortie3LowAndHome extends Sortie {
 
     // Flare assist: lined up and slow on final, the jet holds a few feet
     // until it is over the runway, so landing is about speed and alignment.
+    // It only works from the south, where the route arrives.
     const onRunway = this.overRunway(f.x, f.y);
+    // Distance south of the runway's south end, px; positive while still short of it.
     const toThreshold = f.y - this.runwayBottom;
     const L = tuning.landing;
     if (
@@ -99,6 +108,7 @@ export class Sortie3LowAndHome extends Sortie {
     // Terrain, radar and crash checks.
     const result = this.ll.update(f, dt);
     if (result === 'crash') {
+      // Reaching the ground over the runway counts as a landing if speed and alignment are good.
       if (onRunway && this.landingOk(w)) {
         this.touchdown(w);
         return;
@@ -160,10 +170,15 @@ export class Sortie3LowAndHome extends Sortie {
     }
   }
 
+  /** Inside the runway rectangle, with 2 px of slack at the sides. */
   private overRunway(x: number, y: number): boolean {
     return Math.abs(x - LOW_AIRFIELD.x) <= LOW_AIRFIELD.width / 2 + 2 && y >= this.runwayTop && y <= this.runwayBottom;
   }
 
+  /**
+   * Slow enough (landing.maxSpeed kt), lined up within landing.maxHeadingErrDeg
+   * of north or south, and no higher than landing.maxAlt ft unless ignoreAltitude.
+   */
   private landingOk(w: World, ignoreAltitude = false): boolean {
     const f = w.player.f;
     const err = Math.min(Math.abs(angleDiff(f.heading, 0)), Math.abs(angleDiff(f.heading, Math.PI)));
@@ -171,6 +186,7 @@ export class Sortie3LowAndHome extends Sortie {
     return f.speed <= L.maxSpeed && err <= L.maxHeadingErrDeg * DEG && (ignoreAltitude || f.altitude <= L.maxAlt);
   }
 
+  /** Put the jet on the runway, snapped to the nearer runway heading, and start the rollout. */
   private touchdown(w: World): void {
     const f = w.player.f;
     f.airborne = false;
@@ -178,6 +194,7 @@ export class Sortie3LowAndHome extends Sortie {
     f.vz = 0;
     f.turnRate = 0;
     f.heading = Math.abs(angleDiff(f.heading, 0)) < Math.PI / 2 ? 0 : Math.PI;
+    // Leave low-level flight so the flight model no longer moves the altitude.
     w.lowLevel = false;
     w.controls.throttle = 0;
     this.stage = 'rollout';
@@ -185,6 +202,7 @@ export class Sortie3LowAndHome extends Sortie {
     w.radio.say('Peshawar Tower', 'Touchdown.', { urgent: true });
   }
 
+  /** Save a restart point on the route centre line, heading north. */
   private saveCheckpoint(w: World): void {
     const f = w.player.f;
     this.snapshot = {
@@ -198,6 +216,7 @@ export class Sortie3LowAndHome extends Sortie {
     };
   }
 
+  /** Put the jet back at the last checkpoint at 70 ft and reset the radar, G, bullets and radio. */
   protected restoreCheckpoint(w: World): void {
     const s = this.snapshot;
     const f = w.player.f;

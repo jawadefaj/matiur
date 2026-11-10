@@ -3,6 +3,7 @@
 import Phaser from 'phaser';
 import { CSS, FONT, PAL } from '../config';
 
+/** Add pixel-font text at (x, y). `size` is in px; `wrap` is a word-wrap width in px (0 = no wrap). */
 export function txt(
   scene: Phaser.Scene,
   x: number,
@@ -22,7 +23,12 @@ export function txt(
   return scene.add.text(x, y, s, style);
 }
 
+/**
+ * A tappable box with a centred label. Only the label is a game object: the
+ * box is drawn by draw() into a Graphics that the scene clears every frame.
+ */
 export class Button {
+  /** True while a pointer that went down on this button is held. */
   pressed = false;
   visible = true;
   readonly text: Phaser.GameObjects.Text;
@@ -53,10 +59,12 @@ export class Button {
     this.text.setVisible(v);
   }
 
+  /** Put the label just above depth d. The box takes the depth of the Graphics it is drawn into. */
   setDepth(d: number): void {
     this.text.setDepth(d + 0.1);
   }
 
+  /** Draw the box into g: drop shadow, face and border. A pressed button shifts 1 px toward its shadow. */
   draw(g: Phaser.GameObjects.Graphics): void {
     if (!this.visible) return;
     const o = this.pressed ? 1 : 0;
@@ -77,6 +85,7 @@ export class Button {
 /** Tracks presses so a tap only fires if it starts and ends on the same button. */
 export class ButtonSet {
   buttons: Button[] = [];
+  /** Pointer id -> the button that pointer pressed. */
   private down = new Map<number, Button>();
 
   add(b: Button): Button {
@@ -84,6 +93,7 @@ export class ButtonSet {
     return b;
   }
 
+  /** Press the button under (x, y) for pointer `id`. Returns true if a button was hit. */
   pointerDown(id: number, x: number, y: number): boolean {
     const b = this.buttons.find((bb) => bb.contains(x, y));
     if (!b) return false;
@@ -92,6 +102,10 @@ export class ButtonSet {
     return true;
   }
 
+  /**
+   * Release pointer `id`. Its button's onTap runs only if the pointer is still
+   * over it. Returns true if the pointer had pressed a button.
+   */
   pointerUp(id: number, x: number, y: number): boolean {
     const b = this.down.get(id);
     if (!b) return false;
@@ -105,6 +119,7 @@ export class ButtonSet {
     for (const b of this.buttons) b.draw(g);
   }
 
+  /** Destroy every label and forget all buttons and presses. */
   clear(): void {
     for (const b of this.buttons) b.destroy();
     this.buttons = [];

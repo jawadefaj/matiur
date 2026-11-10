@@ -14,11 +14,15 @@ import { Sortie3LowAndHome } from '../sortie/Sortie3LowAndHome';
 import { Button, ButtonSet, txt } from '../ui/widgets';
 import type { FlightScene } from './FlightScene';
 
+/** Stick drag, px, up to which there is no steering input. */
 const DEADZONE = 8;
+/** Radius of the drawn stick ring, px; the knob stops at its edge. */
 const STICK_R = 36;
 
+/** What covers the HUD: nothing, a card (title or checkpoint), the pause menu or the results. */
 type Overlay = 'none' | 'card' | 'pause' | 'result';
 
+/** The floating stick: its base (ox, oy) and the finger (x, y), in screen px. id is the pointer. */
 interface Stick {
   id: number;
   ox: number;
@@ -31,28 +35,37 @@ type KeyName = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | 'W' | 'S' | 'SPACE' | 'SHIFT' 
 
 export class UIScene extends Phaser.Scene {
   private flight!: FlightScene;
+  // Graphics layers, back to front: screen effects, HUD, overlays.
   private fx!: Phaser.GameObjects.Graphics;
   private g!: Phaser.GameObjects.Graphics;
   private og!: Phaser.GameObjects.Graphics;
   private t!: Record<string, Phaser.GameObjects.Text>;
   private keys: Partial<Record<KeyName, Phaser.Input.Keyboard.Key>> = {};
 
+  // Which pointer holds each control, so several fingers can work at once.
   private stick: Stick | null = null;
   private pullId: number | null = null;
   private fireId: number | null = null;
   private thrId: number | null = null;
   private pauseId: number | null = null;
 
+  // The open overlay, with its buttons (obtns) and texts (otexts).
   private overlay: Overlay = 'none';
   private obtns = new ButtonSet();
   private otexts: Phaser.GameObjects.Text[] = [];
+  /** Seconds since the sortie ended. */
   private endTimer = 0;
+  /** Seconds since this HUD started; drives blinking and bobbing. */
   private clock = 0;
 
   constructor() {
     super('UI');
   }
 
+  /**
+   * Scene data: the FlightScene to show and control. Resets state, because
+   * Phaser reuses this scene object every time it is launched.
+   */
   init(data: { flight: FlightScene }): void {
     this.flight = data.flight;
     this.stick = null;
@@ -95,9 +108,11 @@ export class UIScene extends Phaser.Scene {
       slideUp: txt(this, HUD.throttle.x - 4, 0, 'SLIDE\nUP', 8, CSS.signal).setOrigin(1, 0.5).setAlign('right'),
     };
     for (const t of Object.values(this.t)) t.setDepth(2);
+    // The altitude gauge and radar only show in low-level flight (sortie 3).
     const lowLevel = this.flight.sortie.lowLevel;
     for (const k of ['altNum', 'radar', 'a100', 'a30']) this.t[k].setVisible(lowLevel);
     const ag = HUD.altGauge;
+    // Altitude (ft) to gauge y: 0 ft at the bottom, lowLevel.gaugeMax at the top.
     const yOf = (alt: number) => ag.y + ag.h - (alt / tuning.lowLevel.gaugeMax) * ag.h;
     this.t.a100.setY(Math.round(yOf(tuning.lowLevel.bandHigh) - 4));
     this.t.a30.setY(Math.round(yOf(tuning.lowLevel.bandLow) - 4));
@@ -106,6 +121,7 @@ export class UIScene extends Phaser.Scene {
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (p: Phaser.Input.Pointer) => this.onDown(p));
     this.input.on(Phaser.Input.Events.POINTER_MOVE, (p: Phaser.Input.Pointer) => this.onMove(p));
     this.input.on(Phaser.Input.Events.POINTER_UP, (p: Phaser.Input.Pointer) => this.onUp(p));
+    // A finger lifted outside the canvas still counts as released.
     this.input.on(Phaser.Input.Events.POINTER_UP_OUTSIDE, (p: Phaser.Input.Pointer) => this.onUp(p));
     const kb = this.input.keyboard;
     if (kb) {
@@ -119,13 +135,17 @@ export class UIScene extends Phaser.Scene {
       kb.on('keydown-ENTER', () => this.overlay === 'card' && this.closeOverlay());
       kb.on('keydown-SPACE', () => this.overlay === 'card' && this.closeOverlay());
     }
+    // Pause when the tab or app goes to the background.
     const onHidden = () => {
       if (this.overlay === 'none') this.openPause();
     };
     this.game.events.on(Phaser.Core.Events.HIDDEN, onHidden);
+    // game.events outlives this scene, so remove the listener when the scene shuts down.
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => this.game.events.off(Phaser.Core.Events.HIDDEN, onHidden));
 
+    // Every sortie starts paused on its title card.
     this.openCard();
+    // Dev builds only: add this scene to the console handle that FlightScene made.
     if (import.meta.env.DEV) Object.assign((window as unknown as { __wof: object }).__wof ?? {}, { ui: this });
   }
 
@@ -136,6 +156,7 @@ export class UIScene extends Phaser.Scene {
       this.flight.sortie.justRestored = false;
       this.openCheckpointCard();
     }
+    // Input reaches the sim only while no overlay is open.
     if (this.overlay === 'none') this.writeControls(dt);
     this.draw();
     this.checkEnd(dt);
@@ -149,10 +170,12 @@ export class UIScene extends Phaser.Scene {
     return this.flight.world;
   }
 
+  /** FIRE shows only in hold-to-fire mode, and only when the sortie allows guns. */
   private get fireVisible(): boolean {
     return this.world.gunsMode === 'hold' && this.world.allowPlayerGuns;
   }
 
+  /** A new touch: dismiss a card, press an overlay button, or take a control. Elsewhere it starts the stick. */
   private onDown(p: Phaser.Input.Pointer): void {
     if (this.overlay === 'card') {
       this.closeOverlay();
@@ -162,6 +185,7 @@ export class UIScene extends Phaser.Scene {
       this.obtns.pointerDown(p.id, p.x, p.y);
       return;
     }
+    // Hit areas are a little larger than the drawn controls.
     const { x, y } = p;
     const pb = HUD.pause;
     if (x >= pb.x - 4 && x <= pb.x + pb.w + 4 && y >= pb.y - 4 && y <= pb.y + pb.h + 4) {
@@ -182,6 +206,7 @@ export class UIScene extends Phaser.Scene {
       this.setThrottleFromY(y);
       return;
     }
+    // One stick at a time: another free finger is ignored.
     if (!this.stick) this.stick = { id: p.id, ox: x, oy: y, x, y };
   }
 
@@ -209,6 +234,7 @@ export class UIScene extends Phaser.Scene {
       this.obtns.pointerUp(p.id, p.x, p.y);
       return;
     }
+    // Pause opens on release, and only if the finger is still on the button.
     if (p.id === this.pauseId) {
       this.pauseId = null;
       const pb = HUD.pause;
@@ -220,6 +246,7 @@ export class UIScene extends Phaser.Scene {
     if (this.stick && p.id === this.stick.id) this.stick = null;
   }
 
+  /** Let go of every control and centre the stick, as an overlay opens. */
   private releaseAll(): void {
     this.stick = null;
     this.pullId = this.fireId = this.thrId = this.pauseId = null;
@@ -229,11 +256,13 @@ export class UIScene extends Phaser.Scene {
     c.fire = false;
   }
 
+  /** Throttle from finger height: 1 at the top of the track, 0 at the bottom. */
   private setThrottleFromY(y: number): void {
     const th = HUD.throttle;
     this.world.controls.throttle = clamp(1 - (y - th.y) / th.h, 0, 1);
   }
 
+  /** Write the held controls (touch or keys) into world.controls. The touch throttle is set as the finger moves. */
   private writeControls(dt: number): void {
     const c = this.world.controls;
     const k = this.keys;
@@ -241,8 +270,10 @@ export class UIScene extends Phaser.Scene {
     if (this.stick) {
       const dx = this.stick.x - this.stick.ox;
       const dy = this.stick.y - this.stick.oy;
+      // Drag direction as a heading: 0 = up the screen, clockwise (see systems/math.ts).
       if (Math.hypot(dx, dy) > DEADZONE) dh = Math.atan2(dx, -dy);
     } else {
+      // Arrow keys give eight directions.
       const kx = (k.RIGHT?.isDown ? 1 : 0) - (k.LEFT?.isDown ? 1 : 0);
       const ky = (k.DOWN?.isDown ? 1 : 0) - (k.UP?.isDown ? 1 : 0);
       if (kx || ky) dh = Math.atan2(kx, -ky);
@@ -250,6 +281,7 @@ export class UIScene extends Phaser.Scene {
     c.desiredHeading = dh;
     c.pull = this.pullId !== null || !!k.SPACE?.isDown || !!k.SHIFT?.isDown;
     c.fire = this.fireId !== null || !!k.F?.isDown;
+    // W and S move the throttle by 60% per second.
     if (k.W?.isDown) c.throttle = Math.min(1, c.throttle + dt * 0.6);
     if (k.S?.isDown) c.throttle = Math.max(0, c.throttle - dt * 0.6);
   }
@@ -257,6 +289,7 @@ export class UIScene extends Phaser.Scene {
   // -------------------------------------------------------------------------
   // Drawing
 
+  /** Redraw the whole HUD from the sim, every frame. */
   private draw(): void {
     const w = this.world;
     const s = this.flight.sortie;
@@ -265,6 +298,7 @@ export class UIScene extends Phaser.Scene {
     const g = this.g;
     fx.clear();
     g.clear();
+    // Blink phase for HUD warnings: 0.25 s on, 0.25 s off.
     const blinkOn = Math.floor(this.clock * 4) % 2 === 0;
 
     // Screen effects: greyout, G strain, hits, crash.
@@ -272,6 +306,7 @@ export class UIScene extends Phaser.Scene {
       fx.fillStyle(0x7d7d7d, 0.5 * w.gmeter.greyLevel);
       fx.fillRect(0, 0, GAME_W, GAME_H);
     }
+    // G strain: a dark border that thickens toward the blackout limit (tunnel vision).
     const st = w.gmeter.strain;
     if (st > 0) {
       const th = Math.round(10 + 80 * st);
@@ -289,6 +324,7 @@ export class UIScene extends Phaser.Scene {
       fx.fillStyle(0xffffff, Math.min(1, this.flight.crashFlash * 1.2));
       fx.fillRect(0, 0, GAME_W, GAME_H);
     }
+    // After a blackout, fade to black before the results open.
     if (s.status === 'failed' && s.failKind === 'blackout') {
       fx.fillStyle(0x000000, Math.min(1, this.endTimer * 1.2));
       fx.fillRect(0, 0, GAME_W, GAME_H);
@@ -303,12 +339,15 @@ export class UIScene extends Phaser.Scene {
     g.fillStyle(PAL.panelEdge, 1);
     g.fillRect(0, HUD.topH, GAME_W, 1);
 
+    // Fuel bar: green above 25%, amber down to bingo, then red and blinking.
     const fuel = w.fuel.pct;
     const fuelCol = fuel > 25 ? PAL.ok : fuel > tuning.fuel.bingo ? PAL.warn : PAL.danger;
     const fuelShow = fuel > tuning.fuel.bingo || blinkOn;
     this.bar(g, 6, 16, 104, 8, fuel / 100, fuelShow ? fuelCol : PAL.ink);
     this.t.fuelV.setText(`${Math.ceil(fuel)}%`);
 
+    // G bar: 0 to 7.5 G, ticks at the greyout and blackout limits. Green below
+    // 4 G, amber up to greyout, then red; it flashes white while blackout counts down.
     const gv = w.gmeter.g;
     const gmax = 7.5;
     const gCol = gv < 4 ? PAL.ok : gv < tuning.gmeter.greyoutAbove ? PAL.warn : PAL.danger;
@@ -321,6 +360,7 @@ export class UIScene extends Phaser.Scene {
     }
     this.t.gV.setText(gv.toFixed(1));
 
+    // Airframe pips: filled while intact, coloured by how many are left.
     const pips = w.damage.pips;
     for (let i = 0; i < w.damage.maxPips; i++) {
       const x = 246 + i * 37;
@@ -338,6 +378,7 @@ export class UIScene extends Phaser.Scene {
     }
 
     this.t.speed.setText(`${Math.round(p.speed)} KT`);
+    // Low level shows whole feet; at altitude, the nearest 100 ft.
     this.t.alt.setText(s.lowLevel ? `ALT ${Math.max(0, Math.round(p.altitude))} FT` : `ALT ${Math.round(p.altitude / 100) * 100}`);
     this.t.thr.setText(`THR ${Math.round(w.controls.throttle * 100)}%`);
 
@@ -371,6 +412,7 @@ export class UIScene extends Phaser.Scene {
     this.drawControls(g);
   }
 
+  /** A bar filled to `frac` (0..1) inside a dark frame. */
   private bar(g: Phaser.GameObjects.Graphics, x: number, y: number, w: number, h: number, frac: number, col: number): void {
     g.fillStyle(PAL.ink, 1);
     g.fillRect(x, y, w, h);
@@ -378,14 +420,17 @@ export class UIScene extends Phaser.Scene {
     g.fillRect(x + 1, y + 1, Math.round((w - 2) * clamp(frac, 0, 1)), h - 2);
   }
 
+  /** The big centre warning and its sub-line. Only the most urgent shows, in the order checked here. */
   private drawWarnings(blinkOn: boolean): void {
     const w = this.world;
     const s = this.flight.sortie;
     let main = '';
     let sub = '';
     let col = CSS.danger;
+    // Radar and terrain state exist only in sortie 3.
     const ll = s instanceof Sortie3LowAndHome ? s.ll : null;
     if (s.restartIn > 0) {
+      // The headline depends on the wording of the restart reason (softFail in Sortie3LowAndHome).
       main = s.restartReason.includes('radar') || s.restartReason.includes('Interceptors') ? 'INTERCEPTED' : 'CRASHED';
       sub = `${s.restartReason}\nRestarting from checkpoint...`;
     } else if (ll?.contact) {
@@ -409,6 +454,7 @@ export class UIScene extends Phaser.Scene {
     this.t.warn2.setText(sub);
   }
 
+  /** Sortie 3 altitude gauge (red below the band, green in it, amber above) and the radar dial. */
   private drawLowLevel(g: Phaser.GameObjects.Graphics, s: Sortie3LowAndHome, blinkOn: boolean): void {
     const ag = HUD.altGauge;
     const ll = tuning.lowLevel;
@@ -435,6 +481,7 @@ export class UIScene extends Phaser.Scene {
     g.fillCircle(cx, cy, 11);
     const r = s.ll.radar;
     if (r > 0) {
+      // A pie filling clockwise from 12 o'clock. It blinks red and white once radar has contact.
       g.fillStyle(s.ll.contact ? (blinkOn ? PAL.danger : PAL.white) : PAL.warn, 1);
       g.slice(cx, cy, 10, -Math.PI / 2, -Math.PI / 2 + r * TAU, false);
       g.fillPath();
@@ -520,6 +567,7 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
+  /** World px to screen px through the flight camera (it never zooms or rotates). */
   private toScreen(wx: number, wy: number): { x: number; y: number } {
     const cam = this.flight.cameras.main;
     return { x: wx - cam.scrollX, y: wy - cam.scrollY };
@@ -529,6 +577,7 @@ export class UIScene extends Phaser.Scene {
   private drawIndicators(g: Phaser.GameObjects.Graphics): void {
     const w = this.world;
     const s = this.flight.sortie;
+    // The box where targets count as on screen: the playfield, clear of the throttle.
     const L = 8;
     const R = GAME_W - 50;
     const T = HUD.playTop + 4;
@@ -541,6 +590,7 @@ export class UIScene extends Phaser.Scene {
         if (bracket > 0) this.bracket(g, x, y, bracket, col);
         return;
       }
+      // Off screen: the arrow goes where the line from the player to the target leaves the box.
       const dx = x - pp.x;
       const dy = y - pp.y;
       const tx = dx > 0 ? (R - pp.x) / dx : dx < 0 ? (L - pp.x) / dx : Infinity;
@@ -552,12 +602,15 @@ export class UIScene extends Phaser.Scene {
       const a = Math.atan2(dy, dx);
       const c = Math.cos(a);
       const sn = Math.sin(a);
+      // The arrow points outward, over a slightly larger dark copy.
       g.fillStyle(PAL.ink, 0.8);
       g.fillTriangle(ex + c * 2, ey + sn * 2, ex - c * 11 - sn * 7, ey - sn * 11 + c * 7, ex - c * 11 + sn * 7, ey - sn * 11 - c * 7);
       g.fillStyle(col, 1);
       g.fillTriangle(ex, ey, ex - c * 9 - sn * 5, ey - sn * 9 + c * 5, ex - c * 9 + sn * 5, ey - sn * 9 - c * 5);
     };
 
+    // Enemies: orange brackets, bigger for bombers. Friendlies: cyan, with a
+    // bracket only for escorted aircraft. Markers: off-screen arrows only.
     for (const a of w.aircraft) {
       if (a.status !== 'active' || a.role === 'player') continue;
       if (a.side === 'enemy') mark(a.f.x, a.f.y, PAL.hostile, a.role === 'bomber' ? 14 : 11);
@@ -568,6 +621,7 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
+  /** Four corner brackets around (x, y), r px out, with 4 px arms. */
   private bracket(g: Phaser.GameObjects.Graphics, x: number, y: number, r: number, col: number): void {
     const k = 4;
     x = Math.round(x);
@@ -581,6 +635,10 @@ export class UIScene extends Phaser.Scene {
     }
   }
 
+  /**
+   * Ring on the lead point of the current gun target. Brighter, with a centre
+   * dot, when that point is inside the gun cone and range (auto-fire shoots then).
+   */
   private drawGunsight(g: Phaser.GameObjects.Graphics): void {
     const gt = this.world.gunTarget;
     if (!gt || !this.world.allowPlayerGuns) return;
@@ -596,6 +654,7 @@ export class UIScene extends Phaser.Scene {
   // -------------------------------------------------------------------------
   // Overlays: title card, pause, results
 
+  /** Title card shown before each sortie. A tap, Enter or Space starts the sortie. */
   private openCard(): void {
     const s = this.flight.sortie;
     this.overlay = 'card';
@@ -636,6 +695,7 @@ export class UIScene extends Phaser.Scene {
     for (const t of this.otexts) t.setDepth(21);
   }
 
+  /** Pause menu with the objective list. Opens only while the sortie is running. */
   private openPause(): void {
     if (this.flight.sortie.status !== 'running') return;
     this.releaseAll();
@@ -653,6 +713,7 @@ export class UIScene extends Phaser.Scene {
     };
     add('RESUME', () => this.closeOverlay(), true);
     add('RESTART SORTIE', () => this.flight.restartSortie());
+    // The GUNS toggle changes the live world and the saved setting together.
     const gunsBtn = new Button(this, 60, y, 240, 40, `GUNS: ${this.world.gunsMode.toUpperCase()}`, () => {
       const next = this.world.gunsMode === 'auto' ? 'hold' : 'auto';
       this.world.gunsMode = next;
@@ -667,6 +728,7 @@ export class UIScene extends Phaser.Scene {
     for (const t of this.otexts) t.setDepth(21);
   }
 
+  /** Results: objectives, time, airframe and fuel, then the buttons. A completed sortie is saved. */
   private openResult(): void {
     const s = this.flight.sortie;
     this.releaseAll();
@@ -704,6 +766,7 @@ export class UIScene extends Phaser.Scene {
     for (const t of this.otexts) t.setDepth(21);
   }
 
+  /** Remove the overlay and unpause the flight. */
   private closeOverlay(): void {
     this.obtns.clear();
     for (const t of this.otexts) t.destroy();
@@ -712,6 +775,7 @@ export class UIScene extends Phaser.Scene {
     this.flight.paused = false;
   }
 
+  /** Once the sortie ends, wait (1.6 s after a blackout, else 1.2 s), then show the results. */
   private checkEnd(dt: number): void {
     const s = this.flight.sortie;
     if (s.status === 'running') return;
@@ -720,10 +784,12 @@ export class UIScene extends Phaser.Scene {
     if (this.overlay === 'none' && this.endTimer > wait) this.openResult();
   }
 
+  /** Dim the screen under any overlay. Cards also get a framed panel and a blinking TAP line. */
   private drawOverlay(): void {
     const g = this.og;
     g.clear();
     if (this.overlay === 'none') return;
+    // The TAP prompt blinks 0.5 s on, 0.5 s off.
     const blinkOn = Math.floor(this.clock * 2) % 2 === 0;
     g.fillStyle(0x0b0c0d, this.overlay === 'card' ? 0.6 : 0.78);
     g.fillRect(0, 0, GAME_W, GAME_H);
@@ -733,6 +799,7 @@ export class UIScene extends Phaser.Scene {
       g.fillRect(20, oy + 176, GAME_W - 40, 214);
       g.lineStyle(1, PAL.signal, 1);
       g.strokeRect(20.5, oy + 176.5, GAME_W - 41, 213);
+      // Both card builders add the TAP prompt last.
       const tap = this.otexts[this.otexts.length - 1];
       tap?.setVisible(blinkOn);
     }
@@ -740,6 +807,7 @@ export class UIScene extends Phaser.Scene {
   }
 }
 
+/** Text checkbox for an objective state, for the pause and results lists. */
 function mark(state: string): string {
   if (state === 'done') return '[OK]';
   if (state === 'failed') return '[X] ';

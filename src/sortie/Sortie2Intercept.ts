@@ -9,6 +9,7 @@ import { Sortie } from './Sortie';
 import { PESHAWAR, farmlandTerrain } from './terrain';
 
 const BASE: Point = { x: PESHAWAR.x, y: PESHAWAR.y };
+/** Beyond this distance from the base (px), Control tells the player to turn back. Nothing else happens. */
 const ARENA_RADIUS = 2800;
 
 export class Sortie2Intercept extends Sortie {
@@ -16,12 +17,17 @@ export class Sortie2Intercept extends Sortie {
   readonly title = 'Intercept';
   readonly place = 'Over Peshawar';
 
+  /** Seconds of script time; drives the wave timeline. */
   private t = 0;
+  /** Waves spawned so far: 1 raid A, 2 Bulldog flight, 3 Gnats, 4 raid C. */
   private wave = 0;
   private bombers: Aircraft[] = [];
+  /** Each bomber's AI by aircraft id, to check whether it has bombed. */
   private bombAI = new Map<number, BomberAI>();
+  /** The friendly B-57s to escort home. */
   private bulldog: Aircraft[] = [];
   private gnats: Aircraft[] = [];
+  /** -1 until every wave is resolved, then counts down to completion. */
   private endTimer = -1;
 
   setup(w: World): void {
@@ -48,6 +54,8 @@ export class Sortie2Intercept extends Sortie {
     this.t += dt;
     const p = w.player;
 
+    // Wave timeline. Raid C comes at 120 s, or from 75 s once raid A's bombers
+    // and the Gnats are dealt with.
     if (this.wave === 0 && this.t > 3) this.spawnWaveA(w);
     if (this.wave === 1 && this.t > 35) this.spawnBulldog(w);
     if (this.wave === 2 && this.t > 47) this.spawnGnats(w);
@@ -89,6 +97,7 @@ export class Sortie2Intercept extends Sortie {
 
     // End once every wave is resolved.
     if (this.wave >= 4 && this.endTimer < 0) {
+      // Bombers that already dropped are heading home, so they no longer count.
       const threats = w.activeEnemies().filter((a) => !this.bombAI.get(a.id)?.bombed);
       const bulldogDone = this.bulldog.every((a) => a.status !== 'active');
       if (threats.length === 0 && bulldogDone) {
@@ -103,10 +112,12 @@ export class Sortie2Intercept extends Sortie {
     }
   }
 
+  /** Every aircraft in `list` is out of the fight or has already bombed. */
   private resolved(list: Aircraft[]): boolean {
     return list.every((a) => a.status !== 'active' || this.bombAI.get(a.id)?.bombed);
   }
 
+  /** Base marker, plus a hint for the most urgent job. */
   private updateMarkersAndHint(): void {
     this.markers = [{ x: BASE.x, y: BASE.y, r: 240, kind: 'base', label: 'BASE' }];
     const inbound = this.bombers.filter((b) => b.status === 'active' && !this.bombAI.get(b.id)?.bombed);
@@ -118,6 +129,7 @@ export class Sortie2Intercept extends Sortie {
     else this.hint = 'Clear the sky';
   }
 
+  /** Raid A: two Canberras from the north-east, each with a Hunter escort on alternate sides. */
   private spawnWaveA(w: World): void {
     this.wave = 1;
     const home = { x: 2600, y: -3800 };
@@ -138,6 +150,7 @@ export class Sortie2Intercept extends Sortie {
     }
   }
 
+  /** Bulldog flight: two friendly B-57s from the south-east that land at the base, or divert if hit hard. */
   private spawnBulldog(w: World): void {
     this.wave = 2;
     this.setObj('escort', 'active');
@@ -153,6 +166,7 @@ export class Sortie2Intercept extends Sortie {
     w.radio.say('Peshawar Control', 'Sherdil, Bulldog flight, two B-57s, coming home from the south-east. Cover them.');
   }
 
+  /** Two Gnats from the east that go after Bulldog flight. */
   private spawnGnats(w: World): void {
     this.wave = 3;
     const home = { x: 3800, y: -600 };
@@ -168,6 +182,7 @@ export class Sortie2Intercept extends Sortie {
     w.radio.say('Peshawar Control', 'Two bandits from the east, closing on Bulldog flight!');
   }
 
+  /** Raid C: one Canberra from the north-west with a Mystère on each side. */
   private spawnWaveC(w: World): void {
     this.wave = 4;
     const home = { x: -3000, y: -3600 };

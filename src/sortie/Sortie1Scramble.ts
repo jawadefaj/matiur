@@ -8,6 +8,7 @@ import type { World } from '../sim/World';
 import { Sortie, type Point } from './Sortie';
 import { PESHAWAR, farmlandTerrain } from './terrain';
 
+/** Seconds the player must hold the slot to complete the join. */
 const JOIN_SECONDS = 3;
 const SLOT = { x: -34, y: 22 }; // left wing of Sherdil Two
 
@@ -16,10 +17,14 @@ export class Sortie1Scramble extends Sortie {
   readonly title = 'Scramble';
   readonly place = 'PAF Base Peshawar';
 
+  /** Runs in order: takeoff, join, patrol, rtb (return to base). */
   private stage: 'takeoff' | 'join' | 'patrol' | 'rtb' = 'takeoff';
+  /** Sherdil Two leads a loop north of the field until the join, then flies on the player's wing. */
   private two!: Aircraft;
   private twoAI = new WingmanAI();
+  /** Seconds held in the slot; drains at half speed when out of it. */
   private joinTime = 0;
+  /** Index of the next patrol point. */
   private wp = 0;
   private readonly patrol: Point[] = [
     { x: 1300, y: -3000 },
@@ -29,6 +34,7 @@ export class Sortie1Scramble extends Sortie {
 
   setup(w: World): void {
     this.terrain = farmlandTerrain(11);
+    // Start at rest near the south end of the runway, facing north (runway three-six).
     w.spawn({
       kind: 'sabre', side: 'player', role: 'player', callsign: 'Sherdil One',
       x: PESHAWAR.x, y: PESHAWAR.y + PESHAWAR.length / 2 - 30, heading: 0,
@@ -37,6 +43,7 @@ export class Sortie1Scramble extends Sortie {
     w.controls.throttle = 0;
     w.allowPlayerGuns = false;
 
+    // No threat calls or chasing in the tutorial; Two loops a route north of the field.
     this.twoAI.calls = false;
     this.twoAI.canEngage = false;
     this.twoAI.setRoute(
@@ -64,6 +71,7 @@ export class Sortie1Scramble extends Sortie {
       case 'takeoff': {
         this.hint = 'Slide THROTTLE up to take off';
         this.markers = [];
+        // Lift off at takeoff.rotateSpeed (kt). Sortie.climbAfterTakeoff then handles the climb.
         if (!p.f.airborne && p.f.speed >= tuning.takeoff.rotateSpeed) p.f.airborne = true;
         if (p.f.airborne) {
           this.setObj('takeoff', 'done');
@@ -87,6 +95,8 @@ export class Sortie1Scramble extends Sortie {
         this.setObj('join', 'active', `${Math.round((this.joinTime / JOIN_SECONDS) * 100)}%`);
         this.hint = dd > 220 ? 'Catch up with Sherdil Two' : inSlot ? 'Hold position...' : 'Slide into the marked slot';
 
+        // Throttle coaching. `along` is px the slot lies ahead of the player along
+        // Two's heading; negative means the player has passed it.
         if (dd < 320) {
           const h = this.two.f.heading;
           const along = (sx - p.f.x) * Math.sin(h) - (sy - p.f.y) * Math.cos(h);
@@ -100,6 +110,7 @@ export class Sortie1Scramble extends Sortie {
           this.setObj('join', 'done', '');
           this.setObj('patrol', 'active');
           this.stage = 'patrol';
+          // The player now leads; Two takes the right wing.
           this.twoAI.mode = 'form';
           this.twoAI.slot = { x: 34, y: 22 };
           w.radio.say('Sherdil Two', "Good join! You have the lead. I'll take your wing.");
