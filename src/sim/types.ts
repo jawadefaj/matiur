@@ -12,8 +12,9 @@ export type Kind = AircraftKind;
 /** Job in the sortie. Together with side it picks the default guns (World.spawn). */
 export type Role = 'player' | 'wingman' | 'fighter' | 'bomber' | 'escortee';
 /**
- * active: flying the mission. brokenOff: hit, trailing smoke, leaving the area
- * (no explosions, by design). gone: left the area. landed: reached its airfield.
+ * active: flying the mission. brokenOff: leaving the area, either hit and
+ * trailing smoke (no explosions, by design) or out of combat fuel.
+ * gone: left the area. landed: reached its airfield.
  */
 export type Status = 'active' | 'brokenOff' | 'gone' | 'landed';
 
