@@ -89,7 +89,7 @@ Should appear: Willys-type jeeps, Bedford/Dodge-style trucks, F-86F Sabres, T-33
 
 ### 4.3 Mockups
 
-Four pixel-art mockups (`IMG-20261104-WA0004/5/6/11.jpg`) shaped the earlier version of this spec but are **not in this repo**. Add them to `design/images-assets/` or drop this table.
+Four pixel-art mockups (`IMG-20261104-WA0004/5/6/11.jpg`) shaped the earlier version of this spec but are **not in this repo**. Add them to `assets/reference/mockups/` or drop this table.
 
 | Mockup | Shows | Use now | Changes needed |
 |---|---|---|---|
@@ -276,7 +276,13 @@ src/
   gfx/       pixelArt.ts  textures.ts  // placeholder art generated at boot
   ui/        widgets.ts
 tests/       systems.test.ts  sorties.test.ts (bot pilots fly every sortie)
+assets/                       // every non-code file; see assets/README.md
+  public/    icon.svg  manifest.webmanifest   // Vite publicDir: copied as-is into the build
+  reference/ people/  places/  aircraft/  reading/   // research only, never shipped
+  screenshots/                // images for the repo README
 ```
+
+The in-game art is still generated in code by `src/gfx/`, so `assets/` has no game art yet.
 
 Still planned for later episodes:
 
@@ -299,7 +305,7 @@ src/
 assets/
   palette/master.hex
   tilesets/  sprites/  portraits/  ui/  audio/  fonts/
-  archive/                  // real photos, used only in archive cards
+  archive/                  // real photos, used only in archive cards (cleared copies, not assets/reference/)
 tools/
   check-palette.ts          // fails on off-palette colours
 ```

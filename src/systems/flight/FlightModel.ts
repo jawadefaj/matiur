@@ -18,6 +18,7 @@ export interface FlightSpec {
 }
 
 export interface FlightState {
+  /** World position, px. y grows downward (south). */
   x: number;
   y: number;
   heading: number; // rad, 0 = north, clockwise
@@ -33,19 +34,24 @@ export interface FlightState {
 export interface FlightInput {
   /** Absolute heading the player (or AI) wants; null = hold wings level. */
   desiredHeading: number | null;
+  /** PULL held: a tighter turn at altitude, a climb in low-level mode. */
   pull: boolean;
+  /** 0..1 */
   throttle: number;
 }
 
+/** Modifiers World sets each step: damage, greyout, low-level mode, engine out. */
 export interface FlightMods {
   handling: number; // 1 = undamaged
   maxSpeed: number; // multiplier on max speed
   control: number; // 1 normally, lower during greyout
   lowLevel: boolean; // PULL climbs instead of tightening turns
+  /** No thrust (World sets it when fuel runs out): airspeed decays to minSpeed and PULL cannot climb. */
   engineOut: boolean;
   extraSink?: number; // ft/s added to sink rate (e.g. engine out)
 }
 
+/** No damage, no greyout, normal flight. */
 export const NO_MODS: FlightMods = {
   handling: 1,
   maxSpeed: 1,
@@ -54,27 +60,33 @@ export const NO_MODS: FlightMods = {
   engineOut: false,
 };
 
+/** Knots to world px per second (tuning.units.pxPerKnot). */
 export function pxPerSec(kt: number): number {
   return kt * tuning.units.pxPerKnot;
 }
 
 /** Load factor of a level turn at `rate` rad/s and `speedKt`. */
 export function gForTurn(rate: number, speedKt: number): number {
+  // Centripetal acceleration in px/s², divided by units.g0 (one G in px/s²).
+  // Lift must also carry the jet's weight (1 G), hence the square root.
   const a = Math.abs(rate) * pxPerSec(speedKt);
   return Math.sqrt(1 + (a / tuning.units.g0) ** 2);
 }
 
 /** Highest turn rate (rad/s) that stays within `g` at `speedKt`. */
 export function maxRateForG(g: number, speedKt: number): number {
+  // Floor the speed so a jet at rest does not divide by zero.
   const v = Math.max(1, pxPerSec(speedKt));
   return (tuning.units.g0 * Math.sqrt(Math.max(0, g * g - 1))) / v;
 }
 
+/** World velocity in px/s (vy is negative when heading north). */
 export function velocity(s: FlightState): { vx: number; vy: number } {
   const v = pxPerSec(s.speed);
   return { vx: Math.sin(s.heading) * v, vy: -Math.cos(s.heading) * v };
 }
 
+/** A new flight state: airborne, level and heading north, unless `partial` says otherwise. */
 export function makeFlightState(partial: Partial<FlightState> = {}): FlightState {
   return {
     x: 0,
@@ -96,6 +108,7 @@ export function throttleForSpeed(spec: FlightSpec, speedKt: number): number {
   return clamp((speedKt - spec.minSpeed) / (spec.maxSpeed - spec.minSpeed), 0, 1);
 }
 
+/** Advance one aircraft by `dt` seconds, updating `s` in place. Called by World.step. */
 export function stepFlight(
   s: FlightState,
   spec: FlightSpec,
@@ -108,6 +121,8 @@ export function stepFlight(
   const maxSp = spec.maxSpeed * mods.maxSpeed;
   let target: number;
   let accel = spec.accel;
+  // Throttle sets a target speed: 0..max on the ground (so the jet can sit
+  // still), minSpeed..max in the air, or just minSpeed in the air with the engine out.
   if (!s.airborne) {
     target = s.throttle * maxSp;
     accel *= tuning.takeoff.groundAccelMul;
@@ -128,14 +143,18 @@ export function stepFlight(
     const err = angleDiff(s.heading, input.desiredHeading);
     const capDeg = (pullForTurn ? spec.pullRateDeg : spec.normalRateDeg) * mods.handling * mods.control;
     const gLimit = pullForTurn ? spec.pullG : spec.normalG;
+    // Turn rate grows with the heading error, capped by the deg/s limit and by
+    // the rate that reaches the G limit at this speed, so fast jets turn wider.
     const cap = Math.min(capDeg * DEG, maxRateForG(gLimit, s.speed));
     targetRate = clamp(err * spec.headingGain, -cap, cap);
   }
+  // The rate builds at rollRate, standing in for the time it takes to roll into a bank.
   s.turnRate = approach(s.turnRate, targetRate, spec.rollRate * dt);
   s.heading = wrapAngle(s.heading + s.turnRate * dt);
 
   // --- Load factor and energy bleed -------------------------------------
   let g = s.airborne ? gForTurn(s.turnRate, s.speed) : 1;
+  // A low-level pull-up adds lowLevel.pullUpG, so climbing shows on the G-meter and bleeds speed.
   if (mods.lowLevel && s.airborne && input.pull) g += tuning.lowLevel.pullUpG;
   s.g = g;
   if (s.airborne) {
@@ -145,6 +164,8 @@ export function stepFlight(
 
   // --- Altitude (low-level mode only; otherwise scripted) ---------------
   if (mods.lowLevel && s.airborne) {
+    // Vertical speed (ft/s) eases toward a climb while PULL is held, or a
+    // sink otherwise, changing at most lowLevel.vAccel ft/s per second.
     const ll = tuning.lowLevel;
     const sink = ll.sinkRate + (mods.extraSink ?? 0);
     const targetVz = input.pull && !mods.engineOut ? ll.climbRate : -sink;

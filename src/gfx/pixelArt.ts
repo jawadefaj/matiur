@@ -3,6 +3,7 @@
 // nearest-neighbour sampling and a 1 px dark outline. No runtime rotation.
 import { TAU } from '../systems/math';
 
+// Bitmap character -> CSS colour. '.' is always transparent.
 type Palette = Record<string, string>;
 
 /** Left half of the aircraft; the last column is the centre line. */
@@ -93,6 +94,12 @@ const SHAPES: Record<string, string[]> = {
 
 const OUTLINE = '#1e2124';
 
+/**
+ * Art per aircraft kind: a shape from SHAPES and its colours (a airframe,
+ * c canopy, d dark details). Keys must match tuning.aircraft, because
+ * FlightScene uses an aircraft's kind as its texture key. The Mystère and
+ * B-57 reuse the Sabre and Canberra shapes.
+ */
 export const AIRCRAFT_ART: Record<string, { shape: string; pal: Palette }> = {
   sabre: { shape: 'sabre', pal: { a: '#d5dadf', c: '#4c8db5', d: '#2a2d31' } },
   mystere: { shape: 'sabre', pal: { a: '#a9ad9c', c: '#4c8db5', d: '#2a2d31' } },
@@ -102,6 +109,7 @@ export const AIRCRAFT_ART: Record<string, { shape: string; pal: Palette }> = {
   b57: { shape: 'canberra', pal: { a: '#c4c9c2', c: '#4c8db5', d: '#2a2d31' } },
 };
 
+// Append the mirrored right half without repeating the centre column.
 function mirror(half: string[]): string[] {
   return half.map((row) => row + row.slice(0, -1).split('').reverse().join(''));
 }
@@ -134,8 +142,13 @@ function outline(grid: string[][]): void {
   for (const [x, y] of add) grid[y][x] = 'o';
 }
 
+/**
+ * Square frames side by side in one canvas. Frame k is turned k/frames of a
+ * full turn clockwise from north, matching frameForHeading() in systems/math.ts.
+ */
 export interface BakedSheet {
   canvas: HTMLCanvasElement;
+  /** Width and height of one frame, px. */
   frameSize: number;
   frames: number;
 }
@@ -149,6 +162,7 @@ export function bakeAircraft(name: string, silhouette?: string, frames = 16): Ba
   const src = mirror(SHAPES[art.shape]);
   const sh = src.length;
   const sw = src[0].length;
+  // Big enough for the bitmap's diagonal at any angle, plus room for the outline.
   const size = Math.ceil(Math.hypot(sw, sh)) + 4;
   const [canvas, ctx] = makeCanvas(size * frames, size);
   for (let k = 0; k < frames; k++) {
@@ -156,6 +170,8 @@ export function bakeAircraft(name: string, silhouette?: string, frames = 16): Ba
     const c = Math.cos(th);
     const s = Math.sin(th);
     const grid: string[][] = [];
+    // Work backwards from each output pixel: rotate its centre into the source
+    // bitmap and copy the nearest source pixel. This leaves no holes.
     for (let dy = 0; dy < size; dy++) {
       const row: string[] = [];
       for (let dx = 0; dx < size; dx++) {
@@ -175,6 +191,7 @@ export function bakeAircraft(name: string, silhouette?: string, frames = 16): Ba
       for (let x = 0; x < size; x++) {
         const ch = grid[y][x];
         if (ch === '.') continue;
+        // 'o' is the outline. Magenta flags a shape character missing from the palette.
         ctx.fillStyle = silhouette ?? (ch === 'o' ? OUTLINE : art.pal[ch] ?? '#ff00ff');
         ctx.fillRect(k * size + x, y, 1, 1);
       }
@@ -186,6 +203,7 @@ export function bakeAircraft(name: string, silhouette?: string, frames = 16): Ba
 // ---------------------------------------------------------------------------
 // Terrain and effects
 
+// Integer hash to [0, 1), so the baked ground looks the same on every run.
 function hash(x: number, y: number, seed: number): number {
   let h = (x * 374761393 + y * 668265263 + seed * 2147483647) | 0;
   h = Math.imul(h ^ (h >>> 13), 1274126177);
@@ -200,6 +218,7 @@ export function bakeGround(kind: 'farmland' | 'plains'): HTMLCanvasElement {
     kind === 'farmland'
       ? ['#6e8b3d', '#7f9a46', '#93a552', '#a7a65a', '#c4a24c', '#b58f45', '#5f7d38']
       : ['#b9a067', '#c6ad72', '#a99260', '#9f9a5c', '#c9b27a', '#8e8d52', '#b49a62'];
+  // Bunds: the raised earth borders between fields.
   const bund = kind === 'farmland' ? '#566c32' : '#8f7a4f';
   const seed = kind === 'farmland' ? 7 : 19;
   // Columns of random width, each split into rows of random height.
@@ -252,6 +271,7 @@ export function bakeHill(r: number): HTMLCanvasElement {
       const dx = x + 0.5 - c;
       const dy = y + 0.5 - c;
       const ang = Math.atan2(dy, dx);
+      // Two sine waves wobble the edge, so hills are not perfect circles.
       const edge = r * (0.9 + 0.1 * Math.sin(ang * 5 + r) + 0.05 * Math.sin(ang * 11));
       const d = Math.hypot(dx, dy);
       if (d > edge + 1) continue;
@@ -261,6 +281,7 @@ export function bakeHill(r: number): HTMLCanvasElement {
         // Light from the top-left.
         const lit = (-dx - dy) / (r * 1.4);
         const ring = d / edge;
+        // Base colour, a lit and a shaded side, a lighter summit and one contour line.
         let col = '#7a6243';
         if (lit > 0.35 && ring < 0.85) col = '#9a7d55';
         else if (lit < -0.3) col = '#5a4630';
@@ -274,6 +295,7 @@ export function bakeHill(r: number): HTMLCanvasElement {
   return canvas;
 }
 
+// Paint a character grid with a palette, one pixel per character.
 function bakeFromRows(rows: string[], pal: Palette): HTMLCanvasElement {
   const [canvas, ctx] = makeCanvas(rows[0].length, rows.length);
   rows.forEach((row, y) =>
@@ -286,6 +308,7 @@ function bakeFromRows(rows: string[], pal: Palette): HTMLCanvasElement {
   return canvas;
 }
 
+/** 8×8 px tree with its shadow (s) baked in. */
 export function bakeTree(): HTMLCanvasElement {
   return bakeFromRows(
     ['..ooo...', '.oggho..', 'oggghho.', 'ogggggo.', 'oggggdo.', '.oddddos', '..ooooss', '....sss.'],
@@ -293,6 +316,7 @@ export function bakeTree(): HTMLCanvasElement {
   );
 }
 
+/** 7×7 px hut (roof, wall and door) with its shadow (s) baked in. */
 export function bakeHut(): HTMLCanvasElement {
   return bakeFromRows(
     ['oooooo.', 'orrrro.', 'orRRro.', 'owwwwos', 'owdwwos', 'oooooos', '.ssssss'],
@@ -300,10 +324,12 @@ export function bakeHut(): HTMLCanvasElement {
   );
 }
 
+/** 5×5 px pylon for the power lines in sortie 3. */
 export function bakePylon(): HTMLCanvasElement {
   return bakeFromRows(['o...o', '.o.o.', '..o..', '.o.o.', 'o...o'], { o: '#3a3d40' });
 }
 
+/** Filled circle `size` px across, for smoke, sparks, fuel vapour and dust puffs. */
 export function bakePuff(size: number, color: string): HTMLCanvasElement {
   const [canvas, ctx] = makeCanvas(size, size);
   const c = size / 2;
@@ -318,6 +344,10 @@ export function bakePuff(size: number, color: string): HTMLCanvasElement {
   return canvas;
 }
 
+/**
+ * 56×32 px cloud of overlapping circles, in three shapes (variant % 3).
+ * `shadow` draws it all black, for the cloud's shadow on the ground.
+ */
 export function bakeCloud(variant: number, shadow = false): HTMLCanvasElement {
   const W = 56;
   const H = 32;

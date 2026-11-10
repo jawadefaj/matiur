@@ -301,7 +301,7 @@ These characters are invented to carry scenes. The credits must label them as co
 | Period enemy types (Hunter, Gnat, Mystère, Vampire, Canberra) | Ep 2 opponents | 2 |
 | PAF aircraft over Bhairab | 14 April 1971 bombing (seen from the ground) | 3 |
 
-Reference photos are in [images-assets/](images-assets/).
+Reference photos are in [assets/reference/](../assets/reference/) (see [assets/README.md](../assets/README.md)).
 
 ---
 

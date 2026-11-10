@@ -1,21 +1,25 @@
+// Shared math: angles and headings, distances, a seeded RNG and hit tests.
 // Angle convention used everywhere: heading 0 = north (up the screen),
 // increasing clockwise, in radians. Screen/world y grows downward.
 
 export const TAU = Math.PI * 2;
+/** Radians per degree, so `30 * DEG` is 30° in radians. */
 export const DEG = Math.PI / 180;
 
+/** Wrap an angle into [-PI, PI). */
 export function wrapAngle(a: number): number {
   a = (a + Math.PI) % TAU;
   if (a < 0) a += TAU;
   return a - Math.PI;
 }
 
+/** Wrap an angle into [0, TAU). */
 export function wrapPositive(a: number): number {
   a %= TAU;
   return a < 0 ? a + TAU : a;
 }
 
-/** Signed shortest turn from `from` to `to`, in (-PI, PI]. */
+/** Signed shortest turn from `from` to `to`, in [-PI, PI). Positive is clockwise. */
 export function angleDiff(from: number, to: number): number {
   return wrapAngle(to - from);
 }
@@ -34,14 +38,17 @@ export function approach(current: number, target: number, maxDelta: number): num
   return Math.max(target, current - maxDelta);
 }
 
+/** Heading from (x1, y1) toward (x2, y2), in the convention above. */
 export function headingTo(x1: number, y1: number, x2: number, y2: number): number {
   return Math.atan2(x2 - x1, -(y2 - y1));
 }
 
+/** Unit vector for heading h: x part. */
 export function dirX(h: number): number {
   return Math.sin(h);
 }
 
+/** Unit vector for heading h: y part (-1 when heading north). */
 export function dirY(h: number): number {
   return -Math.cos(h);
 }
