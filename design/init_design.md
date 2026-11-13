@@ -41,7 +41,9 @@ So the build is three main pieces of tech: a **cutscene player**, a **flight eng
 
 **Flight orientation:** both flight sections (Episode 2, Episode 4 Phase 3) are vertical-scrolling and top-down: terrain scrolls down, the aircraft sits in the lower third. Never ask the player to rotate to landscape.
 
-**Cutscenes are in-engine** (GDD §6.2). No video files. The cutscene player reads JSON (GDD §6.9) and uses the same tilesets, sprites and portraits as gameplay.
+**Cutscenes are in-engine** (GDD §6.2). The cutscene player reads JSON (GDD §6.9) and uses the same tilesets, sprites and portraits as gameplay.
+
+**Video is also supported** (decided November 2026). The game manager can play a video file as a step (`assets/video/`, one persistent HTML `<video>` over the canvas), chosen per step. Use in-engine cutscenes for beats next to gameplay, where GDD §6.7 wants no screen change, and video where a film fits better, such as an intro or an outro. Keep clips small (see `assets/video/README.md`). This relaxes "no video files"; GDD §6.2 and §6.10 have not been changed yet.
 
 ---
 
@@ -115,6 +117,8 @@ Title (with content note)
 - Every episode opens with the shared title card (number, title, date, place) and closes with an archive card (GDD §6.7).
 - Episodes unlock in order on first play, then can be replayed from the episode-select screen.
 - Cutscene → gameplay hand-off has no screen change: the last shot is the gameplay framing and the HUD slides in (GDD §6.7).
+
+**How the code runs this flow.** Each episode is a file in `src/game/episodes/` listing its steps in order: mechanic levels, videos, cutscenes and the archive card. The title card is added automatically. The game manager (`src/core/manager/`) builds the menu from these files (CONTINUE, chapters, settings), plays the steps, and saves progress per episode and step. Unlock rules are in each episode file (`unlock: { after: 'ep1' }`). Chapter locking is a game-wide setting in `src/game/game.ts`: today every chapter is open.
 
 ---
 
@@ -258,79 +262,86 @@ One main theme (flute or solo voice) recurs in every episode, arranged different
 
 ## 10. Code and data layout
 
-Built so far (Episode 2 mechanics). The simulation is plain TypeScript with no Phaser, so it runs in tests:
+The game is **defined as data** and played by a **game manager**. Each kind of gameplay is a **mechanic** in its own folder. Simulation code is plain TypeScript with no Phaser, so it runs in tests. Only scenes, `runtime.ts` files and the manager import Phaser (checked by `tests/architecture.test.ts`).
 
 ```
 src/
-  main.ts  config.ts  save.ts
-  data/      tuning.json  tuning.ts
-  systems/
-    math.ts
-    flight/    FlightModel.ts  GMeter.ts  Fuel.ts  Damage.ts  LowLevel.ts (altitude band, radar, terrain)
-    combat/    Guns.ts (bullets, lead-computing sight)
-    ai/        AI.ts (enemy fighters, bombers, escorted friendlies, Sherdil Two)
-    radio/     Radio.ts
-  sim/       World.ts  types.ts        // aircraft, bullets, events; steps at 60 Hz
-  sortie/    Sortie.ts  Sortie1Scramble.ts  Sortie2Intercept.ts  Sortie3LowAndHome.ts  terrain.ts
-  scenes/    BootScene.ts  MenuScene.ts  FlightScene.ts (renders the sim)  UIScene.ts (HUD + touch)
-  gfx/       pixelArt.ts  textures.ts  // placeholder art generated at boot
-  ui/        widgets.ts
-tests/       systems.test.ts  sorties.test.ts (bot pilots fly every sortie)
-assets/                       // every non-code file; see assets/README.md
-  public/    icon.svg  manifest.webmanifest   // Vite publicDir: copied as-is into the build
-  reference/ people/  places/  aircraft/  reading/   // research only, never shipped
-  screenshots/                // images for the repo README
+  main.ts                    createGame(GAME, EPISODES, DESCRIPTORS, RUNTIMES)
+  game/                      THE GAME SCRIPT
+    game.ts                  game-wide settings (title, menu background, chapter locking, dev flags)
+    episodes/                one file per episode: its steps in order (ep2.sabre-skies.ts ...)
+    registry.ts              finds mechanics/*/index.ts and episodes/*.ts (no Phaser)
+    runtimes.ts              finds mechanics/*/runtime.ts (Phaser)
+  core/                      shared; never imports a mechanic or the game
+    contracts.ts             GameDef, EpisodeDef, Step (level | video | cutscene | card), StepHost, MechanicDescriptor
+    define.ts                defineGame, defineEpisode, defineMechanic, video(), cutscene(), archiveCard()
+    runtime.ts               MechanicRuntime (scenes, entry scene, art, preload)
+    manager/                 Flow.ts (step order, chapters, resume, unlocks: pure)  GameManager.ts  createGame.ts
+                             deeplink.ts (?episode= ?level= ?play=)  validate.ts (checks the definition at boot)
+    scenes/                  BootScene  MenuScene (generated)  CardScene (title + archive)  VideoScene  CutsceneScene (placeholder)
+    media/                   VideoPlayer.ts (HTML <video> overlay)  content.ts (finds assets/video/ and data/cutscenes/)
+    gfx/                     pixel.ts (canvas helpers)  commonArt.ts (ground, tree)  pngArt.ts  textures.ts (ArtKit)
+    ui/                      widgets.ts
+    config.ts  save.ts  math.ts  objectives.ts
+  mechanics/                 one folder per mechanic; see src/mechanics/README.md
+    flight/                  index.ts (descriptor)  runtime.ts  tuning.json  layout.ts
+      sim/  systems/{flight,combat,ai,radio}/  sortie/  scenes/{FlightScene,FlightHudScene}.ts  art/
+    walk/                    index.ts  runtime.ts  tuning.json  WalkWorld.ts  nav.ts  WalkLevel.ts
+      levels/{index,FlightLine}.ts  scenes/WalkScene.ts  art/
+  data/cutscenes/            cutscene scripts (GDD §6.9 JSON), found by file name
+tests/
+  core/                      flow, save migration, deep links
+  game/                      the real game definition: checks + a full Episode 2 playthrough
+  mechanics/<id>/            flight bot pilots and systems; walk pathfinding and levels
+  architecture.test.ts       import rules
+assets/
+  public/  sprites/  video/  reference/  screenshots/     // see assets/README.md
 ```
 
-The in-game art is still generated in code by `src/gfx/`, so `assets/` has no game art yet.
+**How a step runs.** The manager starts the step's scene with `{ host }`. The scene reports through the host (`report`, `advance`, `retry`, `quit`) and never starts another scene, so any level can sit anywhere in any episode. Episode 4 reuses both mechanics with new params, for example `walk.level('phase-1', { map: 'masroor' })` once the walk mechanic has that map and its stealth rules.
 
-Still planned for later episodes:
+Still planned:
 
 ```
 src/
-  scenes/
-    TitleScene.ts  EpisodeSelectScene.ts
-    CutsceneScene.ts        // plays src/data/cutscenes/*.json (Ep 1, 3, 5 and in-episode beats)
-    Ep4MasroorScene.ts      // Phase 1: stealth
-    Ep4BoardingScene.ts     // Phase 2: boarding
-    Ep4FlightScene.ts       // Phase 3: T-33 on the shared flight engine
-    ArchiveScene.ts  AltScenarioScene.ts
-  systems/
-    stealth/   Suspicion.ts  VisionCone.ts  PatrolLoop.ts
-    cockpit/   ControlShare.ts  RhythmPrompt.ts
-    cutscene/  CutscenePlayer.ts
+  mechanics/
+    cutscene/    the full GDD §6.9 player (camera moves, portraits, sound); replaces core's placeholder automatically
+    stealth/ or walk additions: Suspicion, VisionCone (Ep 4 Phase 1)
+    boarding/    Ep 4 Phase 2
+    flight additions: T-33, ControlShare, RhythmPrompt (Ep 4 Phase 3)
   data/
-    dialogue.en.json  dialogue.bn.json  archive.json
+    dialogue.en.json  dialogue.bn.json
     cutscenes/   ep1_01_dhaka.json  ...
 assets/
   palette/master.hex
-  tilesets/  sprites/  portraits/  ui/  audio/  fonts/
+  tilesets/  portraits/  ui/  audio/  fonts/
   archive/                  // real photos, used only in archive cards (cleared copies, not assets/reference/)
 tools/
   check-palette.ts          // fails on off-palette colours
 ```
 
-**Save shape** (localStorage)
+**Save shape** (localStorage key `wof.save`, version 2). A version 1 save from the mechanics build is migrated on first load, and the old copy is kept under `wof.save.bak`.
 
 ```json
 {
-  "version": 1,
-  "unlockedEpisodes": [1, 2, 3, 4],
-  "checkpoint": { "episode": 4, "phase": 3, "id": "corridor_cp2" },
-  "ep2": { "sortiesCleared": [1, 2, 3] },
-  "ep4": { "cleared": true, "levelSeconds": 214 },
-  "archiveCards": ["ep1_dhaka_1941", "ep2_sabre_1965"],
-  "settings": {
-    "lang": "bn",
-    "textSize": 1,
-    "textSpeed": 2,
-    "haptics": true,
-    "assist": 0,
-    "holdToFire": false,
-    "patternCones": false
-  }
+  "version": 2,
+  "unlockedEpisodes": ["ep3"],
+  "episodes": {
+    "ep2": {
+      "completed": ["title", "intro", "flight-line", "sortie-1"],
+      "seen": ["title", "intro", "flight-line", "sortie-1", "beat-1"],
+      "resume": "beat-1",
+      "finished": false,
+      "stats": { "sortie-1.time": "3:12", "sortie-1.airframe": "3/3" }
+    }
+  },
+  "archiveCards": ["ep2_sabre_skies"],
+  "settings": { "lang": "bn", "haptics": true },
+  "mechanics": { "flight": { "gunsMode": "auto" } }
 }
 ```
+
+Step ids are save keys: don't rename one after release. Settings planned in §11 (text size and speed, assist, patterned cones) go in `settings` (game-wide) or `mechanics.<id>` (one mechanic).
 
 ---
 

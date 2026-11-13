@@ -1,2 +1,10 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+# Binary files: never convert line endings or diff them as text
+*.png binary
+*.jpg binary
+*.webp binary
+*.pdf binary
+*.mp4 binary
+*.webm binary
+*.mov binary
