@@ -1,15 +1,21 @@
 // On-foot scene: draws a walk level and turns touch and keys into walking.
+// The GameManager starts it with a StepHost whose params say which level.
 // Tap the ground to walk there, tap a person to walk over and talk, or drag
 // to walk like a stick. Desktop: arrows/WASD walk, Space/E talks or reads on.
 import Phaser from 'phaser';
 import { CSS, GAME_H, GAME_W, PAL } from '../../../core/config';
 import { tuning } from '../tuning';
 import { WALKER_COLS, WALKER_ROWS } from '../art/pixelArt';
-import { makeWalkLevel, type WalkLevelId } from '../levels';
+import { makeWalkLevel } from '../levels';
 import type { Block, BlockStyle, WalkLevel } from '../WalkLevel';
 import { WalkWorld } from '../WalkWorld';
 import { Button, ButtonSet, txt } from '../../../core/ui/widgets';
 import { clamp } from '../../../core/math';
+import type { StepHost } from '../../../core/contracts';
+import type { WalkParams } from '..';
+
+/** This mechanic's scene keys. */
+export const WALK_SCENES = { walk: 'walk:Walk' } as const;
 
 /** Fixed simulation step (60 Hz), as in FlightScene. */
 const STEP = 1 / 60;
@@ -52,7 +58,8 @@ interface DragState {
 export class WalkScene extends Phaser.Scene {
   world!: WalkWorld;
   level!: WalkLevel;
-  private levelId: WalkLevelId = 'flightline';
+  /** How this level reports back to the GameManager. */
+  private host!: StepHost<WalkParams>;
   private acc = 0;
   /** 'title' card, 'play', or the 'done' card. */
   private phase: 'title' | 'play' | 'done' = 'title';
@@ -76,11 +83,11 @@ export class WalkScene extends Phaser.Scene {
   private keys!: Record<'up' | 'down' | 'left' | 'right' | 'w' | 'a' | 's' | 'd', Phaser.Input.Keyboard.Key>;
 
   constructor() {
-    super('Walk');
+    super(WALK_SCENES.walk);
   }
 
-  init(data: { level?: WalkLevelId }): void {
-    this.levelId = data.level ?? 'flightline';
+  init(data: { host: StepHost<WalkParams> }): void {
+    this.host = data.host;
     this.acc = 0;
     this.phase = 'title';
     this.sprites = new Map();
@@ -90,7 +97,7 @@ export class WalkScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.level = makeWalkLevel(this.levelId);
+    this.level = makeWalkLevel(this.host.params.map);
     this.world = new WalkWorld(this.level.map());
     this.level.setup(this.world);
     this.world.locked = true;
@@ -110,7 +117,7 @@ export class WalkScene extends Phaser.Scene {
     this.lineText = txt(this, 18, 0, '', 8, CSS.white, GAME_W - 36).setScrollFactor(0).setDepth(DEPTH_HUD + 1);
 
     this.buttons = new ButtonSet();
-    this.menuBtn = this.buttons.add(new Button(this, GAME_W - 62, 6, 56, 32, 'MENU', () => this.scene.start('Menu')));
+    this.menuBtn = this.buttons.add(new Button(this, GAME_W - 62, 6, 56, 32, 'MENU', () => this.host.quit()));
     this.talkBtn = this.buttons.add(new Button(this, GAME_W - 96, GAME_H - 64, 88, 48, 'TALK', () => this.world.interact(), true));
     for (const b of this.buttons.buttons) {
       b.text.setScrollFactor(0);
@@ -169,7 +176,7 @@ export class WalkScene extends Phaser.Scene {
       kb.on('keydown-SPACE', onAction);
       kb.on('keydown-E', onAction);
       kb.on('keydown-ENTER', onAction);
-      kb.on('keydown-ESC', () => this.scene.start('Menu'));
+      kb.on('keydown-ESC', () => this.host.quit());
     }
 
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
@@ -436,12 +443,11 @@ export class WalkScene extends Phaser.Scene {
     const add = (t: Phaser.GameObjects.Text) => this.cardTexts.push(t.setScrollFactor(0).setDepth(DEPTH_HUD + 3));
     add(txt(this, GAME_W / 2, cy - 70, 'DONE', 16, CSS.ok).setOrigin(0.5));
     add(txt(this, GAME_W / 2, cy - 40, l.doneText, 8, CSS.white, GAME_W - 60).setOrigin(0.5, 0).setAlign('center'));
-    const next = l.next;
-    const btns: Button[] = [];
-    if (next.scene === 'Flight') {
-      btns.push(new Button(this, 40, cy + 10, GAME_W - 80, 44, `FLY SORTIE ${next.sortie}`, () => this.scene.start('Flight', { sortie: next.sortie }), true));
-    }
-    btns.push(new Button(this, 40, cy + 66, GAME_W - 80, 36, 'MENU', () => this.scene.start('Menu')));
+    // Saved as complete; the next button carries on through the episode.
+    this.host.report({ result: 'complete' });
+    const next = this.host.upNext;
+    const btns: Button[] = [new Button(this, 40, cy + 10, GAME_W - 80, 44, next?.label ?? 'DONE', () => this.host.advance(), true)];
+    if (next) btns.push(new Button(this, 40, cy + 66, GAME_W - 80, 36, 'MENU', () => this.host.quit()));
     for (const b of btns) {
       b.text.setScrollFactor(0);
       b.setDepth(DEPTH_HUD + 3);

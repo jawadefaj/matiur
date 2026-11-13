@@ -1,4 +1,4 @@
-// HUD and touch controls for Episode 2. Runs on top of FlightScene.
+// HUD and touch controls for the flight mechanic. Runs on top of FlightScene.
 // Controls (portrait phone):
 //   drag anywhere ........ floating stick: the jet turns toward the drag
 //   THROTTLE (right edge)  speed and fuel burn
@@ -10,10 +10,9 @@ import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../../../core/config';
 import { HUD } from '../layout';
 import { tuning } from '../tuning';
 import { clamp, TAU } from '../../../core/math';
-import { markSortieCleared, updateSettings } from '../../../core/save';
 import { Sortie3LowAndHome } from '../sortie/Sortie3LowAndHome';
 import { Button, ButtonSet, txt } from '../../../core/ui/widgets';
-import type { FlightScene } from './FlightScene';
+import { FLIGHT_SCENES, type FlightScene } from './FlightScene';
 
 /** Stick drag, px, up to which there is no steering input. */
 const DEADZONE = 8;
@@ -60,7 +59,7 @@ export class FlightHudScene extends Phaser.Scene {
   private clock = 0;
 
   constructor() {
-    super('UI');
+    super(FLIGHT_SCENES.hud);
   }
 
   /**
@@ -670,7 +669,7 @@ export class FlightHudScene extends Phaser.Scene {
       3: 'Hold PULL to climb, let go to sink.\nStay 30 to 100 ft. Then land.',
     };
     this.otexts.push(
-      txt(this, cx, oy + 196, 'EPISODE 2 - SABRE SKIES', 8, CSS.dim).setOrigin(0.5),
+      txt(this, cx, oy + 196, episodeLine(this.flight.host.episode), 8, CSS.dim).setOrigin(0.5),
       txt(this, cx, oy + 222, `SORTIE ${s.num}`, 16, CSS.signal).setOrigin(0.5),
       txt(this, cx, oy + 248, s.title.toUpperCase(), 16, CSS.white).setOrigin(0.5),
       txt(this, cx, oy + 274, `${s.place}`, 8, CSS.dim).setOrigin(0.5),
@@ -720,25 +719,32 @@ export class FlightHudScene extends Phaser.Scene {
     const gunsBtn = new Button(this, 60, y, 240, 40, `GUNS: ${this.world.gunsMode.toUpperCase()}`, () => {
       const next = this.world.gunsMode === 'auto' ? 'hold' : 'auto';
       this.world.gunsMode = next;
-      updateSettings({ gunsMode: next });
+      this.flight.host.setSetting('gunsMode', next);
       gunsBtn.setLabel(`GUNS: ${next.toUpperCase()}`);
     });
     this.obtns.add(gunsBtn);
     y += 50;
     if (this.scale.fullscreen.available) add('FULL SCREEN', () => this.scale.toggleFullscreen());
-    add('SORTIE SELECT', () => this.flight.toMenu());
+    add('MENU', () => this.flight.toMenu());
     for (const b of this.obtns.buttons) b.setDepth(21);
     for (const t of this.otexts) t.setDepth(21);
   }
 
-  /** Results: objectives, time, airframe and fuel, then the buttons. A completed sortie is saved. */
+  /** Results: objectives, time, airframe and fuel, then the buttons. The result goes to the GameManager, which saves a completed sortie. */
   private openResult(): void {
     const s = this.flight.sortie;
+    const host = this.flight.host;
     this.releaseAll();
     this.overlay = 'result';
     this.flight.paused = true;
     const ok = s.status === 'complete';
-    if (ok) markSortieCleared(s.num);
+    const mins = Math.floor(s.elapsed / 60);
+    const secs = Math.floor(s.elapsed % 60).toString().padStart(2, '0');
+    const time = `${mins}:${secs}`;
+    host.report({
+      result: ok ? 'complete' : 'failed',
+      stats: { time, airframe: `${this.world.damage.pips}/3`, fuel: `${Math.ceil(this.world.fuel.pct)}%`, restarts: s.restarts },
+    });
     const cx = GAME_W / 2;
     this.otexts.push(
       txt(this, cx, 120, ok ? 'SORTIE COMPLETE' : 'SORTIE FAILED', 16, ok ? CSS.ok : CSS.danger).setOrigin(0.5),
@@ -751,9 +757,7 @@ export class FlightHudScene extends Phaser.Scene {
       y += reason.height + 12;
     }
     const lines = s.objectives.map((o) => `${mark(o.state)} ${o.label}`);
-    const mins = Math.floor(s.elapsed / 60);
-    const secs = Math.floor(s.elapsed % 60).toString().padStart(2, '0');
-    lines.push('', `Time ${mins}:${secs}   Airframe ${this.world.damage.pips}/3   Fuel ${Math.ceil(this.world.fuel.pct)}%`);
+    lines.push('', `Time ${time}   Airframe ${this.world.damage.pips}/3   Fuel ${Math.ceil(this.world.fuel.pct)}%`);
     if (s.restarts > 0) lines.push(`Checkpoint restarts: ${s.restarts}`);
     const list = txt(this, 34, y, lines.join('\n'), 8, CSS.white, 300);
     this.otexts.push(list);
@@ -762,9 +766,10 @@ export class FlightHudScene extends Phaser.Scene {
       this.obtns.add(new Button(this, 60, y, 240, 40, label, fn, primary));
       y += 50;
     };
-    if (ok && s.num < 3) add(`NEXT: SORTIE ${s.num + 1}`, () => this.flight.restartSortie((s.num + 1) as 2 | 3), true);
+    // NEXT goes on through the episode (a cutscene, the next sortie...).
+    if (ok && host.upNext) add(host.upNext.label, () => host.advance(), true);
     add(ok ? 'FLY AGAIN' : 'RETRY', () => this.flight.restartSortie(), !ok);
-    add('SORTIE SELECT', () => this.flight.toMenu());
+    add('MENU', () => this.flight.toMenu());
     for (const b of this.obtns.buttons) b.setDepth(21);
     for (const t of this.otexts) t.setDepth(21);
   }
@@ -808,6 +813,11 @@ export class FlightHudScene extends Phaser.Scene {
     }
     this.obtns.draw(g);
   }
+}
+
+/** The line above the sortie title on the briefing card. */
+function episodeLine(ep: { number: number; title: string } | null): string {
+  return ep ? `EPISODE ${ep.number} - ${ep.title.toUpperCase()}` : 'FLIGHT TEST';
 }
 
 /** Text checkbox for an objective state, for the pause and results lists. */

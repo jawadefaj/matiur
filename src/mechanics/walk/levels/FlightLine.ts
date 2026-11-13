@@ -43,7 +43,6 @@ export class FlightLine extends WalkLevel {
   constructor() {
     super();
     this.groundColor = 0x7c8a52;
-    this.next = { scene: 'Flight', sortie: 1 };
     this.doneText = 'Strapped in. Sherdil flight is ready to scramble.';
     // Ground first, then things on it.
     this.blocks = [

@@ -50,9 +50,6 @@ export interface WalkMarker {
   actor?: string;
 }
 
-/** What to start when the level is complete. */
-export type NextScene = { scene: 'Flight'; sortie: 1 | 2 | 3 } | { scene: 'Menu' };
-
 // -----------------------------------------------------------------------------
 // Sequences: scripted moves that run over several steps, for "walk Two to his
 // jet, then have him say this". Each step starts once and runs until done.
@@ -122,8 +119,6 @@ export abstract class WalkLevel {
   markers: WalkMarker[] = [];
   /** Lines waiting to be read; [0] is on screen. The player can't move while any are left. */
   dialogue: DialogueLine[] = [];
-  /** Where to go after completion. */
-  next: NextScene = { scene: 'Menu' };
   /** Shown on the end card. */
   doneText = '';
 

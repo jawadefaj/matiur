@@ -1,4 +1,5 @@
-// Episode 2 flight scene: runs the simulation at a fixed step and renders it.
+// Flight scene: runs the simulation at a fixed step and renders it. The
+// GameManager starts it with a StepHost whose params say which sortie to fly.
 // The HUD and touch controls live in FlightHudScene, which runs on top.
 import Phaser from 'phaser';
 import { tuning } from '../tuning';
@@ -10,7 +11,12 @@ import { makeSortie, type SortieNum } from '../sortie';
 import type { Airfield, Sortie, TerrainSpec } from '../sortie/Sortie';
 import { HILL_KEYS } from '../art/register';
 import { clamp, frameForHeading, lerp } from '../../../core/math';
-import { loadSave, vibrate } from '../../../core/save';
+import { vibrate } from '../../../core/save';
+import type { StepHost } from '../../../core/contracts';
+import type { FlightParams } from '..';
+
+/** This mechanic's scene keys. */
+export const FLIGHT_SCENES = { flight: 'flight:Flight', hud: 'flight:HUD' } as const;
 
 /** Fixed simulation step in seconds (60 Hz), whatever the display frame rate. */
 const STEP = 1 / 60;
@@ -41,6 +47,8 @@ interface CloudView {
 }
 
 export class FlightScene extends Phaser.Scene {
+  /** How this sortie reports back to the GameManager. The HUD uses it too. */
+  host!: StepHost<FlightParams>;
   world!: World;
   sortie!: Sortie;
   sortieNum: SortieNum = 1;
@@ -72,15 +80,16 @@ export class FlightScene extends Phaser.Scene {
   private lookY = 0;
 
   constructor() {
-    super('Flight');
+    super(FLIGHT_SCENES.flight);
   }
 
   /**
-   * Scene data: the sortie to fly (default 1). Resets per-run state, because
-   * Phaser reuses this scene object on every restart.
+   * Scene data: the host, whose params say which sortie to fly. Resets per-run
+   * state, because Phaser reuses this scene object on every restart.
    */
-  init(data: { sortie?: SortieNum }): void {
-    this.sortieNum = data.sortie ?? 1;
+  init(data: { host: StepHost<FlightParams> }): void {
+    this.host = data.host;
+    this.sortieNum = data.host.params.sortie;
     this.paused = true; // until the title card is dismissed
     this.acc = 0;
     this.hitFlash = 0;
@@ -95,7 +104,7 @@ export class FlightScene extends Phaser.Scene {
   create(): void {
     // A fixed seed per sortie, so the sim's random choices repeat for the same inputs.
     this.world = new World(1000 + this.sortieNum);
-    this.world.gunsMode = loadSave().settings.gunsMode;
+    this.world.gunsMode = this.host.setting<'auto' | 'hold'>('gunsMode');
     this.sortie = makeSortie(this.sortieNum);
     this.sortie.setup(this.world);
 
@@ -114,21 +123,19 @@ export class FlightScene extends Phaser.Scene {
     this.syncVisuals(0);
 
     // Run the HUD on top. It reads this scene's sim and sets `paused`.
-    this.scene.launch('UI', { flight: this });
+    this.scene.launch(FLIGHT_SCENES.hud, { flight: this });
     // Dev builds only: a handle for the browser console.
     if (import.meta.env.DEV) (window as unknown as { __wof: unknown }).__wof = { scene: this };
   }
 
-  /** Start this sortie again, or sortie n. create() then relaunches the HUD. */
-  restartSortie(n: SortieNum = this.sortieNum): void {
-    this.scene.stop('UI');
-    this.scene.start('Flight', { sortie: n });
+  /** Fly this sortie again. The GameManager restarts this scene and the HUD. */
+  restartSortie(): void {
+    this.host.retry();
   }
 
-  /** Back to the sortie menu, closing the HUD too. */
+  /** Back to the menu. The GameManager stops this scene and the HUD. */
   toMenu(): void {
-    this.scene.stop('UI');
-    this.scene.start('Menu');
+    this.host.quit();
   }
 
   update(_time: number, deltaMs: number): void {
