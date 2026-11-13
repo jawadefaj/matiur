@@ -6,6 +6,7 @@ import { BootScene } from './scenes/BootScene';
 import { MenuScene } from './scenes/MenuScene';
 import { FlightScene } from './scenes/FlightScene';
 import { UIScene } from './scenes/UIScene';
+import { WalkScene } from './scenes/WalkScene';
 
 async function start(): Promise<void> {
   // Text is drawn to canvas, so the pixel font must be ready first.
@@ -40,7 +41,7 @@ async function start(): Promise<void> {
     // Order matters. The first scene (Boot) starts automatically. Phaser
     // updates scenes in reverse list order and renders them in list order, so
     // UI writes the controls before Flight steps the sim, and the HUD draws on top.
-    scene: [BootScene, MenuScene, FlightScene, UIScene],
+    scene: [BootScene, MenuScene, FlightScene, UIScene, WalkScene],
   });
 }
 

@@ -3,6 +3,7 @@ import Phaser from 'phaser';
 import { CSS, EXTRA_H, GAME_H, GAME_W } from '../config';
 import { loadSave, updateSettings } from '../save';
 import { SORTIE_LIST } from '../sortie';
+import { WALK_LIST } from '../walk';
 import { Button, ButtonSet, txt } from '../ui/widgets';
 
 export class MenuScene extends Phaser.Scene {
@@ -36,27 +37,32 @@ export class MenuScene extends Phaser.Scene {
         new Button(this, 30, y, 300, 44, `SORTIE ${s.num}: ${s.title.toUpperCase()}${cleared}`, () => this.start(s.num), true),
       );
       txt(this, GAME_W / 2, y + 52, s.teaches, 8, CSS.dim).setOrigin(0.5);
-      y += 74;
+      y += 64;
+    }
+    // On-foot levels. The flight line leads into sortie 1.
+    for (const l of WALK_LIST) {
+      this.buttons.add(new Button(this, 30, y, 300, 36, `ON FOOT: ${l.title.toUpperCase()}`, () => this.scene.start('Walk', { level: l.id })));
+      y += 44;
     }
 
     // Setting toggles. Each tap saves at once; FlightScene reads the guns mode
     // when a sortie starts.
     const guns = this.buttons.add(
-      new Button(this, 30, oy + 362, 145, 36, `GUNS: ${save.settings.gunsMode.toUpperCase()}`, () => {
+      new Button(this, 30, oy + 374, 145, 36, `GUNS: ${save.settings.gunsMode.toUpperCase()}`, () => {
         const next = loadSave().settings.gunsMode === 'auto' ? 'hold' : 'auto';
         updateSettings({ gunsMode: next });
         guns.setLabel(`GUNS: ${next.toUpperCase()}`);
       }),
     );
     const hapt = this.buttons.add(
-      new Button(this, 185, oy + 362, 145, 36, `BUZZ: ${save.settings.haptics ? 'ON' : 'OFF'}`, () => {
+      new Button(this, 185, oy + 374, 145, 36, `BUZZ: ${save.settings.haptics ? 'ON' : 'OFF'}`, () => {
         const next = !loadSave().settings.haptics;
         updateSettings({ haptics: next });
         hapt.setLabel(`BUZZ: ${next ? 'ON' : 'OFF'}`);
       }),
     );
     if (this.scale.fullscreen.available) {
-      this.buttons.add(new Button(this, 30, oy + 406, 300, 36, 'FULL SCREEN', () => this.scale.toggleFullscreen()));
+      this.buttons.add(new Button(this, 30, oy + 416, 300, 36, 'FULL SCREEN', () => this.scale.toggleFullscreen()));
     }
 
     const help = [
@@ -69,7 +75,7 @@ export class MenuScene extends Phaser.Scene {
       'Content note: depicts the 1965 air war.',
       'Hit aircraft break off; none explode.',
     ];
-    txt(this, GAME_W / 2, oy + 458, help.join('\n'), 8, CSS.dim).setOrigin(0.5, 0).setAlign('center');
+    txt(this, GAME_W / 2, oy + 462, help.join('\n'), 8, CSS.dim).setOrigin(0.5, 0).setAlign('center');
 
     // ButtonSet does its own hit-testing. Keys 1-3 start a sortie on desktop.
     this.input.on('pointerdown', (p: Phaser.Input.Pointer) => this.buttons.pointerDown(p.id, p.x, p.y));
@@ -77,6 +83,7 @@ export class MenuScene extends Phaser.Scene {
     this.input.keyboard?.on('keydown-ONE', () => this.start(1));
     this.input.keyboard?.on('keydown-TWO', () => this.start(2));
     this.input.keyboard?.on('keydown-THREE', () => this.start(3));
+    this.input.keyboard?.on('keydown-FOUR', () => this.scene.start('Walk', { level: WALK_LIST[0].id }));
   }
 
   private start(n: 1 | 2 | 3): void {

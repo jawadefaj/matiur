@@ -13,7 +13,12 @@ import {
   bakeHut,
   bakePuff,
   bakePylon,
+  bakeParkedSabre,
   bakeTree,
+  bakeWalker,
+  WALKER_COLS,
+  WALKER_LOOKS,
+  WALKER_ROWS,
   type BakedSheet,
 } from './pixelArt';
 
@@ -79,6 +84,18 @@ export function registerTextures(scene: Phaser.Scene): void {
   addCanvas(tm, 'puff_fuel', art(tm, 'puff_fuel', () => bakePuff(4, '#e8e6dc')));
   addCanvas(tm, 'spark', art(tm, 'spark', () => bakePuff(4, '#ffe27a')));
   addCanvas(tm, 'dust', art(tm, 'dust', () => bakePuff(10, '#8c7f6a')));
+  // Walking characters: a sheet of WALKER_ROWS × WALKER_COLS frames, numbered
+  // row by row (frame = row * WALKER_COLS + col). A PNG must use the same grid.
+  for (const look of Object.keys(WALKER_LOOKS)) {
+    const sheet = art(tm, look, () => bakeWalker(look));
+    const tex = addCanvas(tm, look, sheet);
+    const fw = sheet.width / WALKER_COLS;
+    const fh = sheet.height / WALKER_ROWS.length;
+    for (let r = 0; r < WALKER_ROWS.length; r++) {
+      for (let c = 0; c < WALKER_COLS; c++) tex.add(r * WALKER_COLS + c, 0, c * fw, r * fh, fw, fh);
+    }
+  }
+  addCanvas(tm, 'sabre_parked', art(tm, 'sabre_parked', bakeParkedSabre));
   // Three cloud shapes, each with a black copy for its ground shadow. A cloud
   // PNG gets its shadow made from it unless cloudsh<n>.png is also given.
   for (let v = 0; v < 3; v++) {
