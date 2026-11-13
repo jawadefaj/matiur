@@ -1,0 +1,27 @@
+# Checks every push to main and every pull request: types, tests (including the
+# game definition and architecture rules), the build, and video file sizes.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          # Vitest 5 needs Node 22.12 or newer.
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+      - name: Videos are 20 MB or less
+        run: |
+          big=$(find assets/video -type f \( -name '*.mp4' -o -name '*.webm' \) -size +20M)
+          if [ -n "$big" ]; then echo "These videos are over 20 MB (see assets/video/README.md):"; echo "$big"; exit 1; fi

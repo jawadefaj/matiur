@@ -16,16 +16,18 @@ After you add or rename a PNG, restart `npm run dev` so it finds the new file. E
 
 | File | What it is | Template size | Notes |
 |---|---|---|---|
+| **Shared** | *made in src/core/gfx/* | | |
+| `ground_farmland.png` | Farmland ground (menu and flight) | 128 × 128 | Must tile seamlessly: it repeats in every direction |
+| `ground_plains.png` | Plains ground (sortie 3) | 128 × 128 | Must tile seamlessly |
+| `tree.png` | Tree (flight and walk) | 8 × 8 | |
+| **Flight** | *made in src/mechanics/flight/art/* | | |
 | `sabre.png` | Player's F-86 Sabre and Sherdil Two | 17 × 21 | Aircraft: see below |
 | `mystere.png` | Mystère IV | 17 × 21 | Aircraft |
 | `hunter.png` | Hawker Hunter | 21 × 23 | Aircraft |
 | `gnat.png` | Folland Gnat | 17 × 15 | Aircraft |
 | `canberra.png` | Canberra bomber | 29 × 23 | Aircraft |
 | `b57.png` | B-57 bomber (friendly Bulldog flight) | 29 × 23 | Aircraft |
-| `ground_farmland.png` | Farmland ground | 128 × 128 | Must tile seamlessly: it repeats in every direction |
-| `ground_plains.png` | Plains ground (sortie 3) | 128 × 128 | Must tile seamlessly |
 | `hill24.png` `hill32.png` `hill40.png` `hill48.png` | Hills on the low-level route, by radius | 52, 68, 84, 100 square | Keep each hill near its template size, because the collision radius is fixed |
-| `tree.png` | Tree | 8 × 8 | |
 | `hut.png` | Village hut | 7 × 7 | |
 | `pylon.png` | Power-line pylon | 5 × 5 | |
 | `cloud0.png` `cloud1.png` `cloud2.png` | Three cloud shapes | 56 × 32 | The ground shadow is made from the cloud. To draw the shadow yourself, add `cloudsh0.png` and so on. |
@@ -33,10 +35,11 @@ After you add or rename a PNG, restart `npm run dev` so it finds the new file. E
 | `puff_fuel.png` | Fuel vapour | 4 × 4 | |
 | `spark.png` | Hit spark | 4 × 4 | |
 | `dust.png` | Smoke over a bombed base | 10 × 10 | |
+| **Walk** | *made in src/mechanics/walk/art/* | | |
 | `walker_pilot.png` | Matiur on foot | 48 × 104 | Walker sheet: see below |
 | `walker_wingman.png` | Sherdil Two on foot | 48 × 104 | Walker sheet |
 | `walker_crew.png` | Crew chief | 48 × 104 | Walker sheet |
-| `sabre_parked.png` | Parked Sabre at walking scale, nose up | 100 × 104 | Keep the size: the walk collision boxes in `src/walk/FlightLine.ts` follow it |
+| `sabre_parked.png` | Parked Sabre at walking scale, nose up | 100 × 104 | Keep the size: the walk collision boxes in `src/mechanics/walk/levels/FlightLine.ts` follow it |
 
 ### Walking characters
 
@@ -53,4 +56,6 @@ The game spots a strip by its shape (width = 16 × height). Any other shape is t
 
 ## How it works
 
-`src/gfx/pngArt.ts` finds the PNGs here when the game is built, and `BootScene` loads them before any texture is made. `src/gfx/textures.ts` then uses each PNG if there is one, else the placeholder from `src/gfx/pixelArt.ts`. PNGs here go into the build automatically. Nothing needs to be copied into `public/`.
+`src/core/gfx/pngArt.ts` finds the PNGs here when the game is built, and the boot scene loads them before any texture is made. Then core and each mechanic register their textures (`src/core/gfx/textures.ts` and each mechanic's `art/register.ts`), using each PNG if there is one, else the placeholder drawn in code. PNGs here go into the build automatically. Nothing needs to be copied into `public/`.
+
+A new mechanic should name its keys `<mechanic id>_...` so they can't clash: the boot scene stops if two mechanics register the same key.
