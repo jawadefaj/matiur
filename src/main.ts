@@ -1,12 +1,12 @@
 // Entry point, loaded by index.html. Waits for the pixel font, then creates
 // the Phaser game with every scene.
 import Phaser from 'phaser';
-import { GAME_H, GAME_W } from './config';
-import { BootScene } from './scenes/BootScene';
-import { MenuScene } from './scenes/MenuScene';
-import { FlightScene } from './scenes/FlightScene';
-import { UIScene } from './scenes/UIScene';
-import { WalkScene } from './scenes/WalkScene';
+import { GAME_H, GAME_W } from './core/config';
+import { BootScene } from './core/scenes/BootScene';
+import { MenuScene } from './core/scenes/MenuScene';
+import { FlightScene } from './mechanics/flight/scenes/FlightScene';
+import { UIScene } from './mechanics/flight/scenes/FlightHudScene';
+import { WalkScene } from './mechanics/walk/scenes/WalkScene';
 
 async function start(): Promise<void> {
   // Text is drawn to canvas, so the pixel font must be ready first.
