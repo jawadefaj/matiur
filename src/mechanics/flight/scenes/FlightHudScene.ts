@@ -6,7 +6,8 @@
 //   FIRE ................. only when guns are set to HOLD
 // Desktop: arrows steer, W/S throttle, SPACE pull, F fire, P/ESC pause.
 import Phaser from 'phaser';
-import { CSS, EXTRA_H, GAME_H, GAME_W, HUD, PAL } from '../../../core/config';
+import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../../../core/config';
+import { HUD } from '../layout';
 import { tuning } from '../tuning';
 import { clamp, TAU } from '../../../core/math';
 import { markSortieCleared, updateSettings } from '../../../core/save';
@@ -33,7 +34,7 @@ interface Stick {
 
 type KeyName = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | 'W' | 'S' | 'SPACE' | 'SHIFT' | 'F';
 
-export class UIScene extends Phaser.Scene {
+export class FlightHudScene extends Phaser.Scene {
   private flight!: FlightScene;
   // Graphics layers, back to front: screen effects, HUD, overlays.
   private fx!: Phaser.GameObjects.Graphics;

@@ -3,18 +3,13 @@
 import { tuning } from '../tuning';
 import type { Obstacle } from '../systems/flight/LowLevel';
 import type { World } from '../sim/World';
+import type { Objective } from '../../../core/objectives';
+
+export type { Objective };
 
 export interface Point {
   x: number;
   y: number;
-}
-
-export interface Objective {
-  id: string;
-  label: string;
-  state: 'pending' | 'active' | 'done' | 'failed';
-  /** Short text such as '2/3' or '45%', shown after the hint and in the pause menu. */
-  progress?: string;
 }
 
 /** A world-space marker that FlightScene draws; the HUD adds an edge arrow when it is off-screen. */
@@ -64,7 +59,7 @@ export interface TerrainSpec {
   clouds: Cloud[];
 }
 
-/** Why a sortie failed. UIScene fades to black for 'blackout'. */
+/** Why a sortie failed. FlightHudScene fades to black for 'blackout'. */
 export type FailKind = 'damage' | 'blackout' | 'fuel' | 'other';
 
 /** A blank farmland map, filled in by the generators in terrain.ts. */

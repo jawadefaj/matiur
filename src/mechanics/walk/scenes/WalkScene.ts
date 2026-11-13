@@ -3,8 +3,8 @@
 // to walk like a stick. Desktop: arrows/WASD walk, Space/E talks or reads on.
 import Phaser from 'phaser';
 import { CSS, GAME_H, GAME_W, PAL } from '../../../core/config';
-import { tuning } from '../../flight/tuning';
-import { WALKER_COLS, WALKER_ROWS } from '../../../core/gfx/pixelArt';
+import { tuning } from '../tuning';
+import { WALKER_COLS, WALKER_ROWS } from '../art/pixelArt';
 import { makeWalkLevel, type WalkLevelId } from '../levels';
 import type { Block, BlockStyle, WalkLevel } from '../WalkLevel';
 import { WalkWorld } from '../WalkWorld';

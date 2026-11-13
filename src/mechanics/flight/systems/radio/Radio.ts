@@ -19,7 +19,7 @@ export interface SayOpts {
   dur?: number;
 }
 
-/** The HUD radio. World owns one; UIScene shows `current`. */
+/** The HUD radio. World owns one; FlightHudScene shows `current`. */
 export class Radio {
   /** Message on screen now, or null. */
   current: RadioMsg | null = null;

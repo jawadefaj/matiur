@@ -1,7 +1,7 @@
 // Base class for an on-foot level: the map, goals, dialogue and scripted
 // character moves. A level is like a sortie for walking: WalkScene draws it
 // and feeds it the player's taps; the level decides what each goal needs.
-import type { Objective } from '../flight/sortie/Sortie';
+import type { Objective } from '../../core/objectives';
 import type { Point, Rect, WalkEvent, WalkMap, WalkWorld } from './WalkWorld';
 
 export type { Objective };

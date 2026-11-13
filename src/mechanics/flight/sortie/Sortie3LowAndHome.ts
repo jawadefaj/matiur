@@ -25,7 +25,7 @@ export class Sortie3LowAndHome extends Sortie {
   readonly title = 'Low and Home';
   readonly place = 'Punjab plains to Peshawar';
 
-  /** Terrain, radar and warnings. UIScene reads its radar and warning state. */
+  /** Terrain, radar and warnings. FlightHudScene reads its radar and warning state. */
   ll!: LowLevel;
   /** route: the low-level run home. approach: past LOW_ROUTE.plainsEnd, landing. rollout: on the ground. */
   private stage: 'route' | 'approach' | 'rollout' = 'route';

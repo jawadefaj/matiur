@@ -1,9 +1,8 @@
 // PNG art from assets/sprites/. A file named after a texture key (for example
-// sabre.png or tree.png) replaces that key's placeholder from pixelArt.ts.
-// Keys with no PNG keep the placeholder, so art can arrive one file at a time.
+// sabre.png or tree.png) replaces that key's placeholder art. Keys with no PNG
+// keep the placeholder, so art can arrive one file at a time.
 // See assets/sprites/README.md for the key list and the rules for each kind.
-import { TAU } from '../math';
-import type { BakedSheet } from './pixelArt';
+import { makeCanvas } from './pixel';
 
 // Vite finds every PNG in the folder when it builds, so the game never asks
 // the server for a file that isn't there. Subfolders (like templates/) are ignored.
@@ -20,15 +19,6 @@ export const PNG_ART: Record<string, string> = Object.fromEntries(
 
 /** Key the PNG is loaded under, so it doesn't clash with the final texture key. */
 export const pngKey = (key: string): string => `png:${key}`;
-
-function makeCanvas(w: number, h: number): [HTMLCanvasElement, CanvasRenderingContext2D] {
-  const c = document.createElement('canvas');
-  c.width = w;
-  c.height = h;
-  const ctx = c.getContext('2d')!;
-  ctx.imageSmoothingEnabled = false;
-  return [c, ctx];
-}
 
 type Source = HTMLImageElement | HTMLCanvasElement;
 
@@ -47,46 +37,4 @@ export function silhouette(src: HTMLCanvasElement, color = '#000000'): HTMLCanva
   ctx.fillStyle = color;
   ctx.fillRect(0, 0, src.width, src.height);
   return canvas;
-}
-
-/**
- * Turn an aircraft PNG into a strip of rotation frames, like bakeAircraft().
- * Two layouts work:
- * - One picture of the aircraft facing north (up). It is turned into `frames`
- *   frames here, with nearest-neighbour sampling so the pixels stay sharp.
- * - A strip already drawn by hand: `frames` square frames side by side, frame k
- *   turned k/frames of a full turn clockwise from north.
- */
-export function aircraftSheetFromImage(img: Source, frames = 16): BakedSheet {
-  if (img.width === img.height * frames) {
-    return { canvas: imageToCanvas(img), frameSize: img.height, frames };
-  }
-  const sw = img.width;
-  const sh = img.height;
-  const src = imageToCanvas(img).getContext('2d')!.getImageData(0, 0, sw, sh).data;
-  // Big enough for the picture's diagonal at any angle.
-  const size = Math.ceil(Math.hypot(sw, sh)) + 2;
-  const [canvas, ctx] = makeCanvas(size * frames, size);
-  const out = ctx.createImageData(size * frames, size);
-  for (let k = 0; k < frames; k++) {
-    const th = (k / frames) * TAU;
-    const c = Math.cos(th);
-    const s = Math.sin(th);
-    // Work backwards from each output pixel: rotate its centre into the source
-    // picture and copy the nearest pixel. This leaves no holes.
-    for (let dy = 0; dy < size; dy++) {
-      for (let dx = 0; dx < size; dx++) {
-        const px = dx + 0.5 - size / 2;
-        const py = dy + 0.5 - size / 2;
-        const col = Math.floor(px * c + py * s + sw / 2);
-        const row = Math.floor(-px * s + py * c + sh / 2);
-        if (row < 0 || row >= sh || col < 0 || col >= sw) continue;
-        const i = (row * sw + col) * 4;
-        const o = (dy * size * frames + k * size + dx) * 4;
-        for (let ch = 0; ch < 4; ch++) out.data[o + ch] = src[i + ch];
-      }
-    }
-  }
-  ctx.putImageData(out, 0, 0);
-  return { canvas, frameSize: size, frames };
 }

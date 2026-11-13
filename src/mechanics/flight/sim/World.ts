@@ -17,7 +17,7 @@ import { Radio } from '../systems/radio/Radio';
 import type { AI, Aircraft, GameEvent, Kind, Role, Side } from './types';
 
 /**
- * The player's controls. UIScene writes them from touch and keys (sorties also
+ * The player's controls. FlightHudScene writes them from touch and keys (sorties also
  * set the throttle); World copies them into the player's input each step.
  */
 export interface PlayerControls {

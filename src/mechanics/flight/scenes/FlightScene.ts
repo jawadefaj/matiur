@@ -1,13 +1,14 @@
 // Episode 2 flight scene: runs the simulation at a fixed step and renders it.
-// The HUD and touch controls live in UIScene, which runs on top.
+// The HUD and touch controls live in FlightHudScene, which runs on top.
 import Phaser from 'phaser';
 import { tuning } from '../tuning';
-import { DEPTH, GAME_H, GAME_W, HUD, PAL } from '../../../core/config';
+import { GAME_H, GAME_W, PAL } from '../../../core/config';
+import { DEPTH, HUD } from '../layout';
 import { World } from '../sim/World';
 import type { Aircraft } from '../sim/types';
 import { makeSortie, type SortieNum } from '../sortie';
 import type { Airfield, Sortie, TerrainSpec } from '../sortie/Sortie';
-import { HILL_KEYS } from '../../../core/gfx/textures';
+import { HILL_KEYS } from '../art/register';
 import { clamp, frameForHeading, lerp } from '../../../core/math';
 import { loadSave, vibrate } from '../../../core/save';
 

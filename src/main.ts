@@ -5,7 +5,7 @@ import { GAME_H, GAME_W } from './core/config';
 import { BootScene } from './core/scenes/BootScene';
 import { MenuScene } from './core/scenes/MenuScene';
 import { FlightScene } from './mechanics/flight/scenes/FlightScene';
-import { UIScene } from './mechanics/flight/scenes/FlightHudScene';
+import { FlightHudScene } from './mechanics/flight/scenes/FlightHudScene';
 import { WalkScene } from './mechanics/walk/scenes/WalkScene';
 
 async function start(): Promise<void> {
@@ -41,7 +41,7 @@ async function start(): Promise<void> {
     // Order matters. The first scene (Boot) starts automatically. Phaser
     // updates scenes in reverse list order and renders them in list order, so
     // UI writes the controls before Flight steps the sim, and the HUD draws on top.
-    scene: [BootScene, MenuScene, FlightScene, UIScene, WalkScene],
+    scene: [BootScene, MenuScene, FlightScene, FlightHudScene, WalkScene],
   });
 }
 

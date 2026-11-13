@@ -3,7 +3,7 @@
 // this character along these points). Used for the on-foot parts of the game:
 // the flight line between sorties, Episode 3's camp and Episode 4's tarmac.
 // Engine-independent so it can run in tests and be drawn by WalkScene.
-import { tuning } from '../flight/tuning';
+import { tuning } from './tuning';
 import { NavGrid, type Point, type Rect } from './nav';
 
 export type { Point, Rect } from './nav';

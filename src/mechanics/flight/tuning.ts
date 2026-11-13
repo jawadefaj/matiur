@@ -3,7 +3,7 @@ import raw from './tuning.json';
 
 /** Shape of tuning.json, inferred from the file, so reading a key it lacks is a type error. */
 export type Tuning = typeof raw;
-/** Aircraft type names: the keys of tuning.aircraft. Each one needs art in gfx/pixelArt.ts. */
+/** Aircraft type names: the keys of tuning.aircraft. Each one needs art in art/pixelArt.ts. */
 export type AircraftKind = keyof Tuning['aircraft'];
 /** Gun spec names: the keys of tuning.guns. */
 export type GunKind = keyof Tuning['guns'];
@@ -24,9 +24,5 @@ export type GunKind = keyof Tuning['guns'];
  *   timers (s), terrain collision radius (px).
  * - landing: sortie 3 touchdown limits (kt, degrees, ft) and flare assist (ft, px). rolloutDecel is unused.
  * - camera: FlightScene look-ahead (px) and follow rate (per s).
- * - walk: on-foot scenes (src/walk). speed px/s; cell is the pathfinding grid size and radius the
- *   character's collision radius (px); talkRange is how close to stand to talk, tapRadius how near a
- *   tap must land on a character (px); animFps for the walk cycle; cameraFollow per s; stickDeadZone
- *   and stickMax are drag distances (px) for walking by dragging.
  */
 export const tuning: Tuning = raw;

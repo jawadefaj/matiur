@@ -1,7 +1,9 @@
 // First scene to run (see main.ts): loads any PNG art, makes every texture
 // (PNG or placeholder), then starts the sortie menu.
 import Phaser from 'phaser';
-import { loadPngArt, registerTextures } from '../gfx/textures';
+import { loadPngArt, makeArtKit, registerCommonArt } from '../gfx/textures';
+import { registerFlightArt } from '../../mechanics/flight/art/register';
+import { registerWalkArt } from '../../mechanics/walk/art/register';
 import { WALK_LIST } from '../../mechanics/walk/levels';
 
 export class BootScene extends Phaser.Scene {
@@ -16,7 +18,10 @@ export class BootScene extends Phaser.Scene {
   }
 
   create(): void {
-    registerTextures(this);
+    const owners = new Map<string, string>();
+    registerCommonArt(makeArtKit(this, 'core', owners));
+    registerFlightArt(makeArtKit(this, 'flight', owners));
+    registerWalkArt(makeArtKit(this, 'walk', owners));
     // ?sortie=1|2|3 jumps straight into a sortie and ?walk=flightline into a
     // walk level (handy for testing on a phone).
     const q = new URLSearchParams(location.search);
