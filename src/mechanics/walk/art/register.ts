@@ -38,8 +38,8 @@ export function registerWalkArt(kit: ArtKit): void {
     }
   }
   kit.addCanvas('sabre_parked', kit.art('sabre_parked', bakeParkedSabre));
-  // Level 2: the base map (620 × 470, drawn at 4x) by day and by night, and Bluebird from above.
-  kit.addCanvas('walk_masroor_day', kit.art('walk_masroor_day', flat(620, 470, '#9a8458')));
-  kit.addCanvas('walk_masroor_night', kit.art('walk_masroor_night', flat(620, 470, '#1c2230')));
+  // Level 2: the base map (2480 × 1880, one px per world px) by day and by night, and Bluebird from above.
+  kit.addCanvas('walk_masroor_day', kit.art('walk_masroor_day', flat(2480, 1880, '#9a8458')));
+  kit.addCanvas('walk_masroor_night', kit.art('walk_masroor_night', flat(2480, 1880, '#1c2230')));
   kit.addCanvas('walk_t33', kit.art('walk_t33', flat(40, 40, '#b8bcc0')));
 }

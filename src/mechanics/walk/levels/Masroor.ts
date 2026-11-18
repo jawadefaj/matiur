@@ -4,9 +4,12 @@
 // written in master-map pixels and converted by m(), so they can be read
 // straight off assets/sprites/original/airport-level-map-clean.jpeg.
 //
-// First version: the base map is one picture, characters are single still
-// images, and there are no walls yet, so cones see across buildings.
-import { WalkLevel } from '../WalkLevel';
+// The base map is one picture at full resolution, rebuilt from PixelLab art by
+// assets/art-wip/level-2/build_masroor_map.py, which also writes the colliders
+// (houses, trees, tanks, towers, jets, the perimeter wall) to masroorLayout.json.
+// Characters are single still images.
+import { WalkLevel, type Block } from '../WalkLevel';
+import layout from './masroorLayout.json';
 import { Stealth, type GuardDef } from '../stealth';
 import { tuning } from '../tuning';
 import type { Point, WalkEvent, WalkMap, WalkWorld } from '../WalkWorld';
@@ -27,9 +30,11 @@ export const M_PER_PX = 1.41;
 const PLAYER = 'walk_matiur_sd';
 const GUARD = 'walk_guard';
 
-export const HOME = m(1061, 775);
+/** Matiur's front door in Residential East. */
+export const HOME = m(1064, 788);
 export const OFFICE = m(862, 704);
-export const HOSPITAL = m(882, 812);
+/** The hospital's front door. */
+export const HOSPITAL = m(873, 822);
 export const RAMP_START = m(899, 698);
 
 /** Bluebird's taxi route, East Dispersal to the end of the taxiway. */
@@ -60,6 +65,9 @@ const RAMP_ROAD: GuardDef = {
   patrol: [m(915, 700), m(915, 810)],
 };
 
+/** Every solid thing on the map, from the map builder. */
+const SOLIDS: Block[] = layout.solids.map((r) => ({ ...r, style: 'hidden', solid: true }));
+
 abstract class Masroor extends WalkLevel {
   readonly place = 'PAF Base Masroor, Karachi';
 
@@ -68,8 +76,10 @@ abstract class Masroor extends WalkLevel {
   constructor(night: boolean) {
     super();
     this.night = night;
-    this.backdrop = { key: night ? 'walk_masroor_night' : 'walk_masroor_day', scale: SCALE };
+    // The picture is already at world size (1 px = 1 world px).
+    this.backdrop = { key: night ? 'walk_masroor_night' : 'walk_masroor_day', scale: W / layout.width };
     this.groundColor = night ? 0x1c2230 : 0x9a8458;
+    this.blocks = SOLIDS;
   }
 
   map(): WalkMap {
@@ -100,7 +110,8 @@ export class MasroorSchedule extends Masroor {
       { id: 'road-n', name: 'Naik Hamid', look: GUARD, ...m(920, 690), patrol: [m(920, 690), m(1150, 690)] },
       RAMP_ROAD,
       { id: 'ramp', name: 'Havildar Aslam', look: GUARD, ...m(885, 688), facing: 150, scan: { arc: 110, period: 5 } },
-      { id: 'jets', name: 'Airman Qadir', look: GUARD, ...m(790, 630), patrol: [m(790, 630), m(850, 630), m(850, 668), m(790, 668)] },
+      // Walks the lane between the two rows of parked jets.
+      { id: 'jets', name: 'Airman Qadir', look: GUARD, ...m(775, 662), patrol: [m(775, 662), m(855, 662)] },
       WATCHTOWER,
     ]);
     this.objectives = [{ id: 'office', label: 'Reach the flight-line office on East Ramp', state: 'active' }];
@@ -140,9 +151,10 @@ export class MasroorHospital extends Masroor {
 
   setup(w: WalkWorld): void {
     this.spawn(w, HOME, [
-      { id: 'road-s', name: 'Naik Hamid', look: GUARD, ...m(905, 812), patrol: [m(905, 812), m(1060, 812)] },
+      { id: 'road-s', name: 'Naik Hamid', look: GUARD, ...m(905, 810), patrol: [m(905, 810), m(1060, 810)] },
       RAMP_ROAD,
-      { id: 'door', name: 'Sentry', look: GUARD, ...m(876, 826), facing: 300, scan: { arc: 120, period: 4 } },
+      // At the hospital's east corner, watching the front door.
+      { id: 'door', name: 'Sentry', look: GUARD, ...m(900, 822), facing: 190, scan: { arc: 100, period: 4 } },
       WATCHTOWER,
     ]);
     this.objectives = [{ id: 'dispensary', label: 'Reach the hospital dispensary', state: 'active' }];

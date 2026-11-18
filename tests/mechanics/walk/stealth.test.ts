@@ -107,6 +107,30 @@ describe('Masroor levels', () => {
     }
   });
 
+  it('keeps every start, patrol point and goal clear of the colliders', () => {
+    for (const id of ['masroor-schedule', 'masroor-hospital', 'masroor-intercept'] as const) {
+      const { level, w } = start(id);
+      expect(level.blocks.length).toBeGreaterThan(100);
+      const spots = [w.player, ...w.actors.flatMap((a) => a.patrol ?? []), ...w.zones.map((z) => ({ x: z.x + z.w / 2, y: z.y + z.h / 2 }))];
+      for (const p of spots) expect(w.nav.free(p.x, p.y), `${id} (${p.x}, ${p.y})`).toBe(true);
+      // Every guard's patrol has a walkable path.
+      for (const a of w.actors) {
+        const pts = a.patrol ?? [];
+        for (let i = 1; i < pts.length; i++) expect(w.nav.findPath(pts[i - 1], pts[i]).length, `${id} ${a.id}`).toBeGreaterThan(0);
+      }
+      // And Matiur can walk to his goal.
+      for (const z of w.zones) expect(w.nav.findPath(w.player, { x: z.x + z.w / 2, y: z.y + z.h / 2 }).length, `${id} ${z.id}`).toBeGreaterThan(0);
+    }
+  });
+
+  it('stops Matiur at a house wall', () => {
+    const { w } = start('masroor-schedule');
+    // Walk north from his door into his own house.
+    w.input = { dx: 0, dy: -1 };
+    for (let k = 0; k < 120; k++) w.step(DT);
+    expect(w.player.y).toBeGreaterThan(1400);
+  });
+
   it('The Schedule ends when Matiur reaches the office', () => {
     const { level, w, run } = start('masroor-schedule');
     // Teleport past the guards: this checks the goal, not the stealth.
