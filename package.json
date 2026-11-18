@@ -8,7 +8,8 @@
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host",
     "typecheck": "tsc --noEmit",
-    "test": "vitest run"
+    "test": "vitest run",
+    "build:single": "vite build --config vite.single.config.ts"
   },
   "dependencies": {
     "phaser": "^4.2.1"

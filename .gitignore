@@ -5,3 +5,4 @@ dist/
 # Log files and macOS Finder files
 *.log
 .DS_Store
+dist-single/
