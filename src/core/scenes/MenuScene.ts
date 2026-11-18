@@ -102,7 +102,7 @@ export class MenuScene extends Phaser.Scene {
       y += 18;
       chapters.forEach((c, i) => {
         const label = `${i + 1}. ${c.title.toUpperCase()}${c.done ? '  [DONE]' : c.locked ? '  [LOCKED]' : ''}`;
-        const go = () => !c.locked && this.gm.startStep(c.ref);
+        const go = () => !c.locked && this.gm.playChapter(c.ref);
         this.buttons.add(new Button(this, 30, y, 300, 32, label, go));
         if (i < KEY_NAMES.length) this.input.keyboard?.on(`keydown-${KEY_NAMES[i]}`, go);
         y += 38;

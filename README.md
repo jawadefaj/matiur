@@ -92,6 +92,24 @@ Some parts of the game are played on foot: move a character from one place to an
 
 The same system moves non-player characters: scripts can send anyone along a path (`walk('two', ...)`), loop them on rounds (`setPatrol`), and chain moves, waits and dialogue into short scripted sequences. See [src/mechanics/walk/](src/mechanics/walk/).
 
+## Ads
+
+The game makes money from ads only. Every ad setting is in the `ads` block of [src/game/game.ts](src/game/game.ts); the code is in [src/core/ads/](src/core/ads/).
+
+| Ad | When |
+|---|---|
+| Preroll (full screen) | As the game opens |
+| Interstitial (full screen) | Starting an episode, moving to the next step, RETRY, and back to the menu. At most one per 45 s, none in the first 30 s. |
+| Rewarded | **WATCH AD: SKIP SORTIE** on a failed sortie's results. A full view passes the sortie. |
+| Banner | The bottom of every screen. The game shrinks to sit above it, so it never covers the controls. |
+
+Which network shows them (`provider: 'auto'`):
+- **Dev builds** (`npm run dev`): grey TEST ads drawn in the page, so you can check every placement.
+- **Web build**: Google H5 Games Ads (AdSense for games). Set `web.client` to your `ca-pub-...` id and `web.bannerSlot` to a display-ad slot, then set `web.testMode: false`. The site needs an AdSense account approved for H5 games.
+- **Android/iOS app** (Capacitor): AdMob through `@capacitor-community/admob`. Replace the Google test unit ids in `admob` with your own and set `testing: false`. It asks for EU consent and, on iOS, for tracking.
+
+Add episode ids to `noAdsIn` to keep an episode ad-free. A level can offer the rewarded skip and the results banner through `host.ads`.
+
 ## Tuning
 
 Every gameplay number is in a mechanic's `tuning.json`, not in code:

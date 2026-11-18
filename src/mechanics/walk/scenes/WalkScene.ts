@@ -448,6 +448,7 @@ export class WalkScene extends Phaser.Scene {
     const next = this.host.upNext;
     const btns: Button[] = [new Button(this, 40, cy + 10, GAME_W - 80, 44, next?.label ?? 'DONE', () => this.host.advance(), true)];
     if (next) btns.push(new Button(this, 40, cy + 66, GAME_W - 80, 36, 'MENU', () => this.host.quit()));
+    this.host.ads.resultsBanner(true);
     for (const b of btns) {
       b.text.setScrollFactor(0);
       b.setDepth(DEPTH_HUD + 3);

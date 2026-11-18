@@ -2,6 +2,7 @@
 // makes the GameManager. Called once by src/main.ts.
 import Phaser from 'phaser';
 import { GAME_H, GAME_W } from '../config';
+import { AdManager } from '../ads/AdManager';
 import { HtmlVideoPlayer } from '../media/VideoPlayer';
 import { BootScene } from '../scenes/BootScene';
 import { CardScene } from '../scenes/CardScene';
@@ -53,7 +54,24 @@ export async function createGame(parts: GameParts): Promise<GameManager> {
     scene: [BootScene, MenuScene, CardScene, VideoScene, CutsceneScene, ...runtimes.flatMap((r) => r.scenes)],
   });
 
-  const gm = new GameManager(game, parts, video);
+  let wasMuted = false;
+  const ads = new AdManager(
+    parts.game.ads,
+    {
+      pause: () => {
+        wasMuted = game.sound.mute;
+        game.sound.mute = true;
+        game.loop.sleep();
+      },
+      resume: () => {
+        game.loop.wake();
+        game.sound.mute = wasMuted;
+      },
+      relayout: () => game.scale.refresh(),
+    },
+    import.meta.env.DEV,
+  );
+  const gm = new GameManager(game, parts, video, ads);
   game.registry.set('gm', gm);
   // Dev builds: N finishes the current step, to click through an episode fast.
   if (import.meta.env.DEV && parts.game.dev.skipKey) {

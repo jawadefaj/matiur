@@ -3,15 +3,18 @@
 // reports back through it, so no scene ever starts another.
 import Phaser from 'phaser';
 import type {
+  AdTrigger,
   EpisodeDef,
   GameDef,
   MechanicDescriptor,
   SettingValue,
   Stats,
   Step,
+  StepAds,
   StepHost,
   StepOutcome,
 } from '../contracts';
+import type { AdManager } from '../ads/AdManager';
 import type { MechanicRuntime } from '../runtime';
 import type { VideoPlayer } from '../media/VideoPlayer';
 import { episodeProgress, loadSave, mechanicSetting, setMechanicSetting, writeSave } from '../save';
@@ -59,6 +62,7 @@ export class GameManager {
     private readonly game: Phaser.Game,
     readonly parts: GameParts,
     readonly video: VideoPlayer,
+    readonly ads: AdManager,
   ) {
     this.flow = new Flow(parts.game, parts.episodes, (s) => this.describe(s), import.meta.env.DEV);
     // Switch scenes between frames, never in the middle of a scene's update:
@@ -71,8 +75,12 @@ export class GameManager {
     });
   }
 
-  /** Called by the boot scene once the art is ready: follow the URL, else open the menu. */
+  /** Called by the boot scene once the art is ready: the preroll ad (if on), then the URL or the menu. */
   boot(search: string): void {
+    void this.ads.start().then(() => this.bootNow(search));
+  }
+
+  private bootNow(search: string): void {
     const { link, unlockAll, warning } = parseDeepLink(search);
     if (warning) console.warn(warning);
     this.flow.unlockAll = import.meta.env.DEV && unlockAll;
@@ -93,13 +101,25 @@ export class GameManager {
 
   openMenu(episode?: string): void {
     this.current = null;
+    this.ads.bannerFor('menu', null);
     this.switchTo(CORE_SCENES.menu, { episode } satisfies MenuData);
   }
 
-  /** Play an episode from its first step or from where the player left off. */
+  /** Play an episode from its first step or from where the player left off. An interstitial may show first. */
   startEpisode(epId: string, from: 'start' | 'resume'): void {
     const ref = from === 'resume' ? this.flow.resumePoint(epId, loadSave()) : this.flow.firstRef(epId);
-    if (ref) this.startStep(ref);
+    if (ref) this.playChapter(ref);
+  }
+
+  /** Start a step picked in the menu. An interstitial may show first. */
+  playChapter(ref: string): void {
+    this.afterAd('start', this.flow.resolve(ref)?.episode.id ?? null, ref, () => this.startStep(ref));
+  }
+
+  /** Give the ads an interstitial chance, then run `then`. Ignored while an ad is up. */
+  private afterAd(trigger: AdTrigger, episode: string | null, name: string, then: () => void): void {
+    if (this.ads.busy) return;
+    void this.ads.between(trigger, episode, name).then(then);
   }
 
   /** Play one step. Unless `only`, the episode carries on after it. */
@@ -182,19 +202,28 @@ export class GameManager {
     const id = this.runId + 1;
     const host = new Host(this, id, o);
     this.current = host;
+    this.ads.bannerFor(o.step.kind, o.episode?.id ?? null);
     this.switchTo(scene, { host });
   }
 
   /** The step's next step, or the menu after the last one (or after an `only` / ad-hoc run). */
   goNext(from: Host): void {
     const next = from.ref && !from.only ? this.flow.next(from.ref) : null;
-    if (next) this.startStep(next);
-    else this.openMenu(from.episode?.id);
+    this.afterAd(next ? 'next' : 'quit', from.episode?.id ?? null, from.adKey, () => {
+      if (next) this.startStep(next);
+      else this.openMenu(from.episode?.id);
+    });
   }
 
   replay(from: Host): void {
-    if (from.ref) this.startStep(from.ref, { only: from.only, attempt: from.attempt + 1 });
-    else if (from.adHoc) this.playAdHoc(from.adHoc.what, from.adHoc.q, from.attempt + 1);
+    this.afterAd('retry', from.episode?.id ?? null, from.adKey, () => {
+      if (from.ref) this.startStep(from.ref, { only: from.only, attempt: from.attempt + 1 });
+      else if (from.adHoc) this.playAdHoc(from.adHoc.what, from.adHoc.q, from.attempt + 1);
+    });
+  }
+
+  leave(from: Host): void {
+    this.afterAd('quit', from.episode?.id ?? null, from.adKey, () => this.openMenu(from.episode?.id));
   }
 
   save(ref: string, outcome: StepOutcome): void {
@@ -272,6 +301,7 @@ class Host implements StepHost {
   readonly upNext: { label: string } | null;
   readonly only: boolean;
   readonly adHoc?: { what: string; q: URLSearchParams };
+  readonly ads: StepAds;
   private readonly step: Step;
   private completed = false;
 
@@ -300,10 +330,30 @@ class Host implements StepHost {
     this.upNext = o.upNext;
     this.only = o.only;
     this.adHoc = o.adHoc;
+    const ads = gm.ads;
+    const ep = this.episode?.id ?? null;
+    this.ads = {
+      offerSkip: () => this.live && !this.completed && ads.canOfferSkip(this.adKey, ep),
+      skipWithAd: () => {
+        if (!this.live || ads.busy || this.completed) return;
+        void ads.rewarded(`skip:${this.adKey}`).then((viewed) => {
+          if (viewed && this.live) this.finish({ skipped: 'ad' });
+        });
+      },
+      resultsBanner: (on) => {
+        if (this.live) ads.bannerFor(on ? 'results' : this.step.kind, ep);
+      },
+    };
   }
 
+  /** Names this step for the ads (fail counts, ad placement names). */
+  get adKey(): string {
+    return this.ref ?? `play:${this.adHoc?.what ?? this.step.id}`;
+  }
+
+  /** Current, and no full-screen ad is up. */
   private get live(): boolean {
-    return this.gm.isCurrent(this.runId);
+    return this.gm.isCurrent(this.runId) && !this.gm.ads.busy;
   }
 
   report(o: StepOutcome): void {
@@ -312,6 +362,7 @@ class Host implements StepHost {
       if (this.completed) return;
       this.completed = true;
     }
+    this.gm.ads.noteResult(this.adKey, o.result);
     if (this.ref) this.gm.save(this.ref, o);
   }
 
@@ -343,7 +394,7 @@ class Host implements StepHost {
   }
 
   quit(): void {
-    if (this.live) this.gm.openMenu(this.episode?.id);
+    if (this.live) this.gm.leave(this);
   }
 
   setting<T extends SettingValue>(key: string): T {

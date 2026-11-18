@@ -769,7 +769,10 @@ export class FlightHudScene extends Phaser.Scene {
     // NEXT goes on through the episode (a cutscene, the next sortie...).
     if (ok && host.upNext) add(host.upNext.label, () => host.advance(), true);
     add(ok ? 'FLY AGAIN' : 'RETRY', () => this.flight.restartSortie(), !ok);
+    // After repeated failures: watch a rewarded ad to pass this sortie.
+    if (!ok && host.ads.offerSkip()) add('WATCH AD: SKIP SORTIE', () => host.ads.skipWithAd(), true);
     add('MENU', () => this.flight.toMenu());
+    host.ads.resultsBanner(true);
     for (const b of this.obtns.buttons) b.setDepth(21);
     for (const t of this.otexts) t.setDepth(21);
   }

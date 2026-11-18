@@ -57,6 +57,21 @@ export interface StepHost<P = unknown> {
   /** A saved setting of this mechanic (see MechanicDescriptor.settings). */
   setting<T extends SettingValue>(key: string): T;
   setSetting(key: string, value: SettingValue): void;
+  /** Ads a level can use on its own screens (see AdsConfig). */
+  readonly ads: StepAds;
+}
+
+/** The ad calls a step's scene may make, through its host. */
+export interface StepAds {
+  /**
+   * Offer "skip this level" for a rewarded ad? True once the player has failed
+   * this step rewarded.skipAfterFails times in a row (and ads are on here).
+   */
+  offerSkip(): boolean;
+  /** Show a rewarded ad; on a full view the step is marked complete and the episode moves on. */
+  skipWithAd(): void;
+  /** Show or hide the banner on this step's results screen. */
+  resultsBanner(on: boolean): void;
 }
 
 /** A per-mechanic setting the menu shows as a toggle, e.g. GUNS: AUTO / HOLD. */
@@ -151,6 +166,69 @@ export interface EpisodeDef extends EpisodeMeta {
   steps: Step[];
 }
 
+/** Moments where an interstitial may show (between steps, never inside one). */
+export type AdTrigger =
+  /** Starting an episode from the menu (CONTINUE, PLAY, a chapter). */
+  | 'start'
+  /** Moving on to the next step of an episode. */
+  | 'next'
+  /** RETRY / FLY AGAIN on a level. */
+  | 'retry'
+  /** Back to the menu from a step. */
+  | 'quit';
+
+/** Every ad setting. Set in src/game/game.ts; defaults in core/define.ts. */
+export interface AdsConfig {
+  /** Master switch. */
+  enabled: boolean;
+  /**
+   * Which ad network: 'auto' uses AdMob inside the Capacitor app, the web
+   * network when web.client is set, the test ads in dev builds, else none.
+   */
+  provider: 'auto' | 'none' | 'test' | 'web' | 'admob';
+  /** Google H5 Games Ads (AdSense for games) on the web build. */
+  web: {
+    /** AdSense publisher id, 'ca-pub-...'. Empty: no web ads. */
+    client: string;
+    /** AdSense display-ad slot id for the banner. Empty: no web banner. */
+    bannerSlot: string;
+    /** Ask Google for test ads (data-adbreak-test). Turn off for release. */
+    testMode: boolean;
+  };
+  /** AdMob ad unit ids for the Capacitor app (@capacitor-community/admob). */
+  admob: {
+    interstitialId: string;
+    rewardedId: string;
+    bannerId: string;
+    /** Serve Google's test ads. Turn off for release. */
+    testing: boolean;
+  };
+  /** A full-screen ad when the game first loads (web preroll / app open). */
+  preroll: boolean;
+  interstitial: {
+    /** Which moments may show one. */
+    on: AdTrigger[];
+    /** No interstitial in the first this-many seconds of a session. */
+    firstAfterSec: number;
+    /** At least this long between any two ads. */
+    minGapSec: number;
+    /** Show on every Nth allowed chance (1 = every chance that passes the gap). */
+    everyNth: number;
+  };
+  rewarded: {
+    /** Offer "WATCH AD: SKIP" on a failed level's results. */
+    skipLevel: boolean;
+    /** Failed tries before the skip offer shows. */
+    skipAfterFails: number;
+  };
+  banner: {
+    /** Screens with a banner. 'level' covers live gameplay; 'results' a level's end screen. */
+    on: ('menu' | 'card' | 'video' | 'cutscene' | 'level' | 'results')[];
+  };
+  /** Episode ids that never show any ad. */
+  noAdsIn: string[];
+}
+
 export interface GameDef {
   title: string;
   subtitle: string;
@@ -160,6 +238,7 @@ export interface GameDef {
   chapters: 'open' | 'inOrder';
   /** Only used in dev builds. unlockAll opens every episode and chapter; skipKey makes N finish the current step. */
   dev: { unlockAll: boolean; skipKey: boolean };
+  ads: AdsConfig;
 }
 
 /**
