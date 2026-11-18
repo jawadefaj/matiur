@@ -1,6 +1,7 @@
 // Helpers for writing the game definition (src/game/) and mechanic
 // descriptors. They fill in defaults so the definition stays short.
 import type {
+  AdsConfig,
   ArchiveCard,
   CardStep,
   CutsceneStep,
@@ -13,14 +14,50 @@ import type {
   VideoStep,
 } from './contracts';
 
+/** Ad settings when the game sets none: off. */
+export const DEFAULT_ADS: AdsConfig = {
+  enabled: false,
+  provider: 'auto',
+  web: { client: '', bannerSlot: '', testMode: true },
+  admob: { interstitialId: '', rewardedId: '', bannerId: '', testing: true },
+  preroll: false,
+  interstitial: { on: ['start', 'next', 'retry', 'quit'], firstAfterSec: 60, minGapSec: 90, everyNth: 1 },
+  rewarded: { skipLevel: true, skipAfterFails: 2 },
+  banner: { on: ['menu'] },
+  noAdsIn: [],
+};
+
+/** Ad settings: the defaults, with each given section merged over them. */
+export interface AdsInput extends Partial<Omit<AdsConfig, 'web' | 'admob' | 'interstitial' | 'rewarded' | 'banner'>> {
+  web?: Partial<AdsConfig['web']>;
+  admob?: Partial<AdsConfig['admob']>;
+  interstitial?: Partial<AdsConfig['interstitial']>;
+  rewarded?: Partial<AdsConfig['rewarded']>;
+  banner?: Partial<AdsConfig['banner']>;
+}
+
+export function defineAds(a: AdsInput = {}): AdsConfig {
+  const d = DEFAULT_ADS;
+  return {
+    ...d,
+    ...a,
+    web: { ...d.web, ...a.web },
+    admob: { ...d.admob, ...a.admob },
+    interstitial: { ...d.interstitial, ...a.interstitial },
+    rewarded: { ...d.rewarded, ...a.rewarded },
+    banner: { ...d.banner, ...a.banner },
+  };
+}
+
 /** The game-wide settings. */
-export function defineGame(g: Pick<GameDef, 'title'> & Partial<GameDef>): GameDef {
+export function defineGame(g: Pick<GameDef, 'title'> & Partial<Omit<GameDef, 'ads'>> & { ads?: AdsInput }): GameDef {
   return {
     subtitle: '',
     menuBackground: null,
     chapters: 'open',
     dev: { unlockAll: false, skipKey: false },
     ...g,
+    ads: defineAds(g.ads),
   };
 }
 
