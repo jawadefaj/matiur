@@ -57,7 +57,7 @@ export class MenuScene extends Phaser.Scene {
     episodes.forEach((e, i) => {
       const open = this.gm.flow.isUnlocked(e.id, save);
       const done = episodeProgress(save, e.id).finished ? '  [DONE]' : '';
-      const label = open ? `EP ${e.number}: ${e.title.toUpperCase()}${done}` : `EP ${e.number}: LOCKED`;
+      const label = open ? `LEVEL ${e.number}: ${e.title.toUpperCase()}${done}` : `LEVEL ${e.number}: LOCKED`;
       const go = () => open && this.scene.restart({ episode: e.id } satisfies MenuData);
       this.buttons.add(new Button(this, 30, y, 300, 44, label, go, open));
       txt(this, GAME_W / 2, y + 52, open ? `${e.date} - ${e.kind === 'playable' ? 'playable' : 'story'}` : '', 8, CSS.dim).setOrigin(0.5);
@@ -76,7 +76,7 @@ export class MenuScene extends Phaser.Scene {
     const cx = GAME_W / 2;
     if (withBack) this.buttons.add(new Button(this, 6, 6, 64, 28, '< BACK', () => this.scene.restart({} satisfies MenuData)));
     txt(this, cx, oy + 30, this.gm.parts.game.title.toUpperCase(), 16, CSS.signal).setOrigin(0.5);
-    txt(this, cx, oy + 56, `EPISODE ${ep.number}`, 8, CSS.dim).setOrigin(0.5);
+    txt(this, cx, oy + 56, `LEVEL ${ep.number}`, 8, CSS.dim).setOrigin(0.5);
     txt(this, cx, oy + 72, ep.title.toUpperCase(), 16, CSS.white).setOrigin(0.5);
     txt(this, cx, oy + 94, `${ep.date} - ${ep.place}`, 8, CSS.dim, GAME_W - 20).setOrigin(0.5);
 

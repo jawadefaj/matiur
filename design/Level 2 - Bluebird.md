@@ -20,6 +20,12 @@ The game has **two levels** ([GDD §0](Game%20Design%20Document%20-%20Wings%20of
 - The stealth parts 2.2 and 2.3 happen **at night**.
 - Bluebird is stopped at the **1,150 m mark**, where the taxiway meets the runway. This is a trial: build it, look at it, then decide.
 
+**First version (18 Nov 2026), playable now**
+- The three on-foot parts (2.2, 2.3, 2.5) work end to end, with guards, torch cones, a detection meter, a RETRY card when caught, and Bluebird taxiing to the 1,150 m mark.
+- Minimal art: the base map is one picture (night is a darkened copy), and Matiur, the guards and the T-33 are single still images moved with the arrow keys. No walk animation.
+- Not yet: walls (cones see across buildings), running, the hold-to-take item, the hospital interior, 2.7 Radar Horizon, and the video clips (their steps show fallback text).
+- Try a part on its own: `?play=walk&map=masroor-schedule`, `masroor-hospital` or `masroor-intercept`. Bluebird taxis at 36 px/s after a 4 s wait.
+
 ---
 
 ## 1. The map
