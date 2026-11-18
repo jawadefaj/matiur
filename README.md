@@ -65,7 +65,13 @@ The old `?sortie=N` and `?walk=flightline` links still work. In a dev build (`np
 ```bash
 npm test          # unit tests, bot pilots that fly every sortie, game definition checks
 npm run build     # static build in dist/ (Phaser loads from the jsDelivr CDN)
+npm run build:single  # the whole game in one file: dist-single/index.html
 ```
+
+### Play without installing anything
+
+- **One file:** `npm run build:single` writes `dist-single/index.html` (about 2.4 MB). Phaser, the code and every image are inside it, so you can double-click it, send it to a phone, or upload it anywhere. It plays offline; only the pixel font needs the internet, and the game falls back to a plain font after 3 s without it.
+- **GitHub Pages:** every push to `main` builds and publishes the game with [.github/workflows/pages.yml](.github/workflows/pages.yml), at `https://<owner>.github.io/matiur/`. The one-file build is published next to it as `wings-of-freedom.html`. Turn it on once under **Settings > Pages > Source: GitHub Actions**.
 
 ## Controls
 
