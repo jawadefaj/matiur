@@ -1,19 +1,24 @@
 # Level 2 — Bluebird (plan)
 
 The 20 August 1971 level, built from the art in [assets/sprites/original/](../assets/sprites/original/).
-It is the GDD's **Episode 4, Bluebird** ([GDD §3](Game%20Design%20Document%20-%20Wings%20of%20Freedom.md#episode-4--bluebird-20-august-1971--playable)), reshaped into seven parts: three cinematics and four playable sections.
+The game has **two levels** ([GDD §0](Game%20Design%20Document%20-%20Wings%20of%20Freedom.md#0-the-game-in-one-page)): **Level 1, Sabre Skies** (1965) and **Level 2, Bluebird** (this file). Level 2 is the stealth level. It opens with a video that carries the story on from Level 1. It has seven parts: three cinematics and four playable sections.
 
 | # | Part | Kind | Where on the base | Length | Step id |
 |---|---|---|---|---|---|
-| 2.1 | Prologue | Cinematic | Whole base | 4:00 | `prologue-1`, `prologue-2` |
-| 2.2 | The Schedule | Stealth (on foot) | Residential East → East Ramp | 2–3 min | `schedule` |
-| 2.3 | The Dispensary | Stealth (on foot) | Residential East → Hospital | 2–3 min | `dispensary` |
+| 2.1 | Prologue | Cinematic: the bridge from Level 1 | 1965 → 1971, then the whole base | 4:00 | `prologue-1`, `prologue-2` |
+| 2.2 | The Schedule | Stealth (on foot), **night** | Residential East → East Ramp | 2–3 min | `schedule` |
+| 2.3 | The Dispensary | Stealth (on foot), **night** | Residential East → Hospital | 2–3 min | `dispensary` |
 | 2.4 | Morning | Cinematic | Residential East, East Dispersal | 2:00 | `morning` |
-| 2.5 | Intercept | Timed stealth (on foot) | East Ramp → runway, 1,800 m mark | 1–2 min | `intercept` |
-| 2.6 | Bluebird | Cinematic | Runway, take-off | 2:00 | `boarding` |
+| 2.5 | Intercept | Timed stealth (on foot) | East Ramp → end of the taxiway, 1,150 m mark | 1–2 min | `intercept` |
+| 2.6 | Bluebird | Cinematic | Taxiway, take-off | 2:00 | `boarding` |
 | 2.7 | Radar Horizon | Low-level flight | East of Karachi | ~1 min | `radar-horizon` |
 
-**Total:** about 15–17 minutes, 8 of them cinematic. The GDD aims for 8–12 minutes per playable episode, so the cinematics are where to trim if the level feels long. Every cinematic can be skipped (hold to skip).
+**Total:** about 15–17 minutes, 8 of them cinematic. The GDD aims for 8–12 minutes of play per level, so the cinematics are where to trim if the level feels long. Every cinematic can be skipped (hold to skip).
+
+**Decisions (18 Nov 2026)**
+- The game is two levels. This is **Level 2**, not Episode 4. Ids use `level2`.
+- The stealth parts 2.2 and 2.3 happen **at night**.
+- Bluebird is stopped at the **1,150 m mark**, where the taxiway meets the runway. This is a trial: build it, look at it, then decide.
 
 ---
 
@@ -28,7 +33,7 @@ Drawn on [airport-level-map-clean.jpeg](../assets/sprites/original/airport-level
 **Scale**
 - The runway with overruns is 3,387 m and about 600 px on the master map, so **1 map px ≈ 5.65 m**.
 - The walk map is that region at **4×**: 2,480 × 1,880 world px. A house becomes about 64 × 48 px, roughly four characters wide.
-- Distances shown to the player (Bluebird's metre counter, the 1,800 m mark) use **1 world px ≈ 1.41 m**. Sprites are drawn at readable sizes, not true scale, as on the Episode 2 flight line.
+- Distances shown to the player (Bluebird's metre counter, the 1,150 m mark) use **1 world px ≈ 1.41 m**. Sprites are drawn at readable sizes, not true scale, as on the Level 1 flight line.
 - Walls and zones are written in master-map pixels and multiplied by 4 in code. Anyone can then read a coordinate straight off the map image and put it in the level.
 
 ---
@@ -68,16 +73,27 @@ All uploads are JPEGs without transparency, drawn at high resolution. The sprite
 
 ### 2.1 Prologue — 4:00, video
 
-Two clips of 2:00 each (`ep4_prologue_1`, `ep4_prologue_2`). A single 4-minute clip under the 20 MB limit would need about 650 kbit/s. Two clips also let a player who quits halfway resume at the second.
+Two clips of 2:00 each (`level2_prologue_1`, `level2_prologue_2`). A single 4-minute clip under the 20 MB limit would need about 650 kbit/s. Two clips also let a player who quits halfway resume at the second.
+
+**Clip 1, "Six years": the bridge from Level 1.** It tells the story between the two levels, which the GDD used to give its own cutscene episode ("A Home and a Homeland").
 
 | Time | Shot | Source |
 |---|---|---|
-| 0:00–0:25 | Title. Masroor at dawn: slow pan over the shelter apron and tower. | golden-warm, graded like brown-hangar |
-| 0:25–1:05 | Karachi, May 1971. Matiur walks past officers who watch him. Their vision cones show faintly, which introduces the mechanic. | matiur-turnaround (service dress) |
-| 1:05–1:50 | Grounded, under watch **[verify: Flight Safety Officer]**. Close-up at his desk. | matiur-frontface |
-| 1:50–2:50 | **The plan.** The base map on his desk. His finger goes home → East Ramp → Hospital → East Dispersal → runway, and each name appears as he passes it. This teaches the level's geography before the player walks it. | airport-level-map-clean, engine-drawn labels |
-| 2:50–3:30 | Evening at home in Residential East with his family. No dialogue about the decision (GDD §7). | needs Milly and daughters art |
-| 3:30–4:00 | Night. Patrol torches sweep the streets. The camera settles on the exact framing where 2.2 starts (GDD §6.7). | golden-warm, night tint |
+| 0:00–0:15 | Level 1's last frame: the Sabre parked on the Peshawar flight line, 1965. It fades to sepia, and a title card reads "1968". | Level 1 flight-line art |
+| 0:15–0:40 | Wedding in Dhaka; Milly introduced. Then the Karachi quarters, Mahin and Tuhin as babies. He is now an instructor. | needs Milly and daughters art |
+| 0:40–1:05 | Leave in Dhaka and Ramnagar, early 1971. 25 March is told through the radio, distant sound and the next morning only (GDD §7). | needs Dhaka / Ramnagar art |
+| 1:05–1:40 | The Bhairab camp: he trains volunteers. 14 April: PAF aircraft bomb the empty old site; he had moved the camp in time. | needs camp art |
+| 1:40–2:00 | Title card: "Karachi, 9 May 1971". The family arrives back at Masroor. | golden-warm, graded like brown-hangar |
+
+**Clip 2, "Under watch".**
+
+| Time | Shot | Source |
+|---|---|---|
+| 0:00–0:20 | Masroor at dawn: slow pan over the shelter apron and tower. Matiur walks past officers who watch him. Their vision cones show faintly, which introduces the mechanic. | golden-warm; matiur-turnaround (service dress) |
+| 0:20–0:40 | Grounded, under watch **[verify: Flight Safety Officer]**. Close-up at his desk. | matiur-frontface |
+| 0:40–1:20 | **The plan.** The base map on his desk. His finger goes home → East Ramp → Hospital → East Dispersal → taxiway, and each name appears as he passes it. This teaches the level's geography before the player walks it. | airport-level-map-clean, engine-drawn labels |
+| 1:20–1:40 | Evening at home in Residential East with his family. No dialogue about the decision (GDD §7). | needs Milly and daughters art |
+| 1:40–2:00 | Night. Patrol torches sweep the streets. The camera settles on the exact framing where 2.2 starts (GDD §6.7). | golden-warm, night tint |
 
 ### 2.2 The Schedule — night stealth
 
@@ -94,30 +110,30 @@ Two clips of 2:00 each (`ep4_prologue_1`, `ep4_prologue_2`). A single 4-minute c
 - **New idea:** an **interior**. The hospital corridor and dispensary are wall blocks, like the crew room in [FlightLine.ts](../src/mechanics/walk/levels/FlightLine.ts). Cones are short indoors, but walls cut them, so it plays as close-quarters timing rather than open ground.
 - **Guards (4):** a patrol on the south road; a sentry at the hospital door; a duty orderly walking the corridor; the watchtower again.
 
-### 2.4 Morning — 2:00, video (`ep4_morning`)
+### 2.4 Morning — 2:00, video (`level2_morning`)
 
 Dawn turns to late morning. Matiur leaves home in uniform. At East Dispersal, Rashid in his flight suit reads his flight card (the pose is on his sheet) while ground crew finish. The tower clears Bluebird to taxi. On East Ramp, Matiur checks his watch. The T-33 starts to roll, and the shot cuts to 2.5's framing.
 
 ### 2.5 Intercept — timed stealth, daylight
 
 - **Player:** Matiur on foot, starting on East Ramp.
-- **Bluebird:** the T-33 follows a fixed route from its revetment at East Dispersal, along the taxiway, onto the runway at about 1,150 m, then west along the runway. A HUD counter shows its distance ("BLUEBIRD 1,240 m") with a bar and a tick at 1,800 m. Its path is drawn as a dashed line.
-- **Goal:** stand in the intercept circle (1,800 m along the route) when Bluebird gets there, then tap **SIGNAL** (the salute pose). That ends the part.
-- **Too early:** waiting is fine while hidden. The paved pad just south of the mark is cover. The runway itself is open ground, and a sentry at the North Facility faces it, so standing there too long gets him seen.
+- **Bluebird:** the T-33 follows a fixed route from its revetment at East Dispersal, along the taxiway, to where it meets the runway. A HUD counter shows its distance ("BLUEBIRD 840 m") with a bar and a tick at 1,150 m. Its path is drawn as a dashed line.
+- **Goal:** stand in the intercept circle at the **1,150 m mark** (the end of the taxiway, short of the runway) when Bluebird gets there, then tap **SIGNAL** (the salute pose). That ends the part. Stopping it on the taxiway is what happened (GDD §1.7).
+- **Too early:** waiting is fine while hidden. The runway edge and the open ground beside the taxiway are exposed, and a sentry at the North Facility faces them, so standing there too long gets him seen.
 - **Too late:** Bluebird passes the mark: "Bluebird is lining up." RETRY.
 - **Guards (2):** the North Facility sentry, and an airman by the diagonal-runway crossing. Daylight gives every cone a longer range than at night (set per level).
 - **Run:** hold RUN to move 1.6× faster. A running man is seen at 1.5× the range and detection fills twice as fast.
-- **Numbers to start tuning from:** 1,800 m = 1,274 world px. At 40 px/s Bluebird reaches the mark in about 32 s. Matiur's straight line is about 880 px: 17 s walking, 25–30 s with detours.
+- **Numbers to start tuning from:** 1,150 m = 816 world px. Matiur's straight line from the 2.5 start is about 850 px: 17 s walking, 25–30 s with detours. At 40 px/s Bluebird would arrive in 20 s, too soon, so start Bluebird at **28 px/s** (about 29 s) or hold it at the revetment for a few seconds before it rolls.
 
-### 2.6 Bluebird — 2:00, video (`ep4_boarding`)
+### 2.6 Bluebird — 2:00, video (`level2_boarding`)
 
-Matiur signals and Bluebird stops. The canopy opens. Rashid is confused and polite: one or two plain lines (GDD Phase 2). Matiur climbs into the rear seat (the helmet pose) and the canopy closes. Take-off, a turn east, then down low. The last frame is 2.7's top-down framing.
+Matiur signals and Bluebird stops at the end of the taxiway. The canopy opens. Rashid is confused and polite: one or two plain lines (GDD Phase 2). Matiur climbs into the rear seat (the helmet pose) and the canopy closes. Take-off, a turn east, then down low. The last frame is 2.7's top-down framing.
 
 Later, if wanted: the GDD's interactive version, with timing prompts for signal, approach, climb in.
 
 ### 2.7 Radar Horizon — about 1 minute of flight
 
-Built on Episode 2's Sortie 3 ([Sortie3LowAndHome.ts](../src/mechanics/flight/sortie/Sortie3LowAndHome.ts)), which already has everything the brief asks for.
+Built on Level 1's Sortie 3 ([Sortie3LowAndHome.ts](../src/mechanics/flight/sortie/Sortie3LowAndHome.ts)), which already has everything the brief asks for.
 
 - **Stay low:** the existing [LowLevel](../src/mechanics/flight/systems/flight/LowLevel.ts) band is 30–100 ft. Above 100 ft the radar fills; when full, interceptors arrive in 8 s unless he gets low again. Hitting a dune, a ridge or a power line is a crash.
 - **New:** the T-33 instead of the Sabre; desert, dunes, salt flats and power lines east of Karachi; no guns; no landing.
@@ -179,23 +195,24 @@ w.addGuard({
 | 4 | The three levels: `masroor-schedule`, `masroor-hospital`, `masroor-intercept`, registered in `levels/index.ts`. | `src/mechanics/walk/levels/` | M |
 | 5 | Taxiing Bluebird for 2.5: a vehicle that follows a fixed line at a set speed and reports metres travelled. | `WalkWorld.ts` | S |
 | 6 | Flight: a `t33` aircraft kind, a desert terrain generator, and Sortie 4 "Radar Horizon" (sortie numbers become 1–4). | `src/mechanics/flight/` | M |
-| 7 | The episode file, with video steps that show fallback text until the clips exist. | `src/game/episodes/ep4.bluebird.ts` | S |
+| 7 | The level file, with video steps that show fallback text until the clips exist. | `src/game/episodes/level2.bluebird.ts` | S |
 | 8 | Art pass (section 2) and the three video clips. | `assets/` | L |
 
 Steps 1–7 make the whole level playable end to end with placeholder art. Each part can be tried on its own with `?play=walk&map=masroor-schedule` or `?play=flight&sortie=4`.
 
-### Episode file sketch
+### Level file sketch
 
 ```ts
-// src/game/episodes/ep4.bluebird.ts
+// src/game/episodes/level2.bluebird.ts
+// The code still calls these "episodes"; renaming ep2 → level1 is a separate step.
 export default defineEpisode({
-  id: 'ep4',
-  number: 4,
+  id: 'level2',
+  number: 2,
   kind: 'playable',
   title: 'Bluebird',
   date: '20 August 1971',
   place: 'PAF Base Masroor, Karachi',
-  unlock: { after: 'ep2' },
+  unlock: { after: 'level1' },
   notes: [
     'ON FOOT',
     'Stay out of the guards\' cones',
@@ -207,16 +224,16 @@ export default defineEpisode({
     'Content note: depicts the events of 20 August 1971.',
   ],
   steps: [
-    video('prologue-1', { src: 'ep4_prologue_1', fallback: ['Karachi, May 1971.', 'PAF Base Masroor.'] }),
-    video('prologue-2', { src: 'ep4_prologue_2', fallback: ['He studies the base.', 'Night falls on Residential East.'] }),
+    video('prologue-1', { src: 'level2_prologue_1', fallback: ['1968–1971.', 'A family, a war, a camp at Bhairab.'] }),
+    video('prologue-2', { src: 'level2_prologue_2', fallback: ['Karachi, May 1971. PAF Base Masroor.', 'Night falls on Residential East.'] }),
     walk.level('schedule', { map: 'masroor-schedule' }),
     walk.level('dispensary', { map: 'masroor-hospital' }),
-    video('morning', { src: 'ep4_morning', fallback: ['20 August 1971.', 'Bluebird is on the schedule.'] }),
+    video('morning', { src: 'level2_morning', fallback: ['20 August 1971.', 'Bluebird is on the schedule.'] }),
     walk.level('intercept', { map: 'masroor-intercept' }),
-    video('boarding', { src: 'ep4_boarding', fallback: ['Bluebird stops on the runway.', 'Matiur climbs into the rear seat.'] }),
+    video('boarding', { src: 'level2_boarding', fallback: ['Bluebird stops on the taxiway.', 'Matiur climbs into the rear seat.'] }),
     flight.level('radar-horizon', { sortie: 4 }),
     archiveCard('archive', {
-      cardId: 'ep4_bluebird',
+      cardId: 'level2_bluebird',
       heading: 'Bluebird',
       date: '20 August 1971',
       text: '[Placeholder] Sourced paragraph.\n\nHe held the aircraft under 100 ft for {radar-horizon.lowTime}.',
@@ -234,14 +251,18 @@ Step ids are save keys: settle them before release.
 - **Rashid Minhas** (the GDD's spelling; the upload is named `rashid-minhaj`) is an opponent, not a villain (GDD §2.1): plain, polite lines; no reward sound when he struggles.
 - **The ending** is a cut to white, not a crash (GDD §7). 2.7 always ends as *complete*.
 - **Dramatised:** the night visits in 2.2 and 2.3. The GDD only says he studied flight schedules. **Chloroform** needs a source before it is scripted.
-- **Historically** he stopped the aircraft on the **taxiway** (GDD §1.7). The plan puts the 1,800 m mark on the runway, because the taxi route only reaches about 1,150 m. See the open questions.
+- **Historically** he stopped the aircraft on the **taxiway** (GDD §1.7). The 1,150 m mark is the end of the taxiway, so the level now matches.
 - **Getting caught** means being questioned and sent back. No violence in the stealth parts.
 - **The family** in 2.1: shown with dignity, no invented dialogue about the decision.
 
 ## 7. Open questions
 
-1. **The 1,800 m mark.** Measured from East Dispersal along Bluebird's route, it falls on the runway just west of where the diagonal runway joins (this plan). Measured from the runway's east end, it falls about 1 km further west, roughly level with the control tower. Either way Bluebird must still be taxiing: a jet 1,800 m into its take-off run is already near flying speed. A shorter number, around 1,000 m, would put the stop on the taxiway, as it happened.
-2. **Night for 2.2 and 2.3?** Recommended: it explains why an officer has to sneak on his own base, and torch beams make the cones read naturally. The cost is a tint pass and a change from the GDD's daytime "look normal" stealth.
-3. **Video or in-engine cinematics?** Video steps work today and show fallback text until the clips exist. The GDD (§6.2) prefers in-engine cutscenes, but the cutscene player that would need is not built yet (the current one shows dialogue lines only).
-4. **Show the crash in 2.7?** The plan follows the GDD's cut to white.
-5. **Numbering.** This is "Level 2" in your brief but Episode 4 in the GDD and the code (Episode 2 is Sabre Skies). The plan uses `ep4`. Renumbering is easy now and hard after release, because ids are save keys.
+**Settled (18 Nov 2026)**
+- **Where Bluebird is stopped:** the 1,150 m mark, at the end of the taxiway. A trial: look at it in the build before deciding for good. (The earlier plan had 1,800 m on the runway; a jet that far into a take-off run is near flying speed.)
+- **Night or day for 2.2 and 2.3:** night.
+- **Numbering:** this is Level 2. The game has two levels (GDD §0).
+
+**Still open**
+1. **2.5 in daylight or at night?** History puts the take-off at about 11:30 **[verify]**, so 2.5 is planned in daylight; only 2.2 and 2.3 are at night.
+2. **Video or in-engine cinematics?** Video steps work today and show fallback text until the clips exist. The GDD (§6.2) now allows video for the level-opening clips, as long as they are made from the game's own pixel art.
+3. **Show the crash in 2.7?** The plan follows the GDD's cut to white.
