@@ -9,5 +9,16 @@
     "cameraFollow": 6,
     "stickDeadZone": 10,
     "stickMax": 36
+  },
+  "stealth": {
+    "angle": 70,
+    "range": 120,
+    "turnRate": 180,
+    "fill": 1.2,
+    "drain": 0.4,
+    "nearBoost": 1.5,
+    "suspicious": 0.4,
+    "nightRange": 0.7,
+    "guardSpeed": 30
   }
 }

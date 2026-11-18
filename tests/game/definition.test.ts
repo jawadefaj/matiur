@@ -17,6 +17,7 @@ describe('game definition', () => {
   it('finds every mechanic and episode', () => {
     expect(Object.keys(DESCRIPTORS).sort()).toEqual(['flight', 'walk']);
     expect(EPISODES.map((e) => e.id)).toContain('ep2');
+    expect(EPISODES.map((e) => e.id)).toEqual(['ep2', 'level2']);
   });
 
   it('passes the boot checks', () => {
@@ -46,10 +47,22 @@ describe('game definition', () => {
     ]);
   });
 
+  it('plays Level 2 from the title card to the archive card', () => {
+    const flow = new Flow(GAME, EPISODES, describeStep, false);
+    let save = defaultSave();
+    const order: string[] = [];
+    for (let ref = flow.firstRef('level2'); ref; ref = flow.next(ref)) {
+      order.push(ref.split('/')[1]);
+      save = flow.onReport(flow.onStart(save, ref), ref, { result: 'complete' });
+    }
+    expect(order).toEqual(['title', 'prologue-1', 'prologue-2', 'schedule', 'dispensary', 'morning', 'intercept', 'boarding', 'archive']);
+    expect(episodeProgress(save, 'level2').finished).toBe(true);
+  });
+
   it('reports a broken definition', () => {
     const broken = defineEpisode({
       id: 'ep9',
-      number: 2,
+      number: 1,
       kind: 'playable',
       title: 'x',
       date: 'x',
@@ -63,7 +76,7 @@ describe('game definition', () => {
       ],
     });
     const errors = validateGame([...EPISODES, broken], DESCRIPTORS).join('\n');
-    expect(errors).toMatch(/number 2/);
+    expect(errors).toMatch(/number 1/);
     expect(errors).toMatch(/ep0/);
     expect(errors).toMatch(/no mechanic "nope"/);
     expect(errors).toMatch(/two steps in ep9/);

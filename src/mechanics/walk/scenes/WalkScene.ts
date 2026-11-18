@@ -2,6 +2,8 @@
 // The GameManager starts it with a StepHost whose params say which level.
 // Tap the ground to walk there, tap a person to walk over and talk, or drag
 // to walk like a stick. Desktop: arrows/WASD walk, Space/E talks or reads on.
+// Stealth levels (Level 2) add guards' vision cones, a detection meter and a
+// RETRY card when the player is caught.
 import Phaser from 'phaser';
 import { CSS, GAME_H, GAME_W, PAL } from '../../../core/config';
 import { tuning } from '../tuning';
@@ -9,6 +11,7 @@ import { WALKER_COLS, WALKER_ROWS } from '../art/pixelArt';
 import { makeWalkLevel } from '../levels';
 import type { Block, BlockStyle, WalkLevel } from '../WalkLevel';
 import { WalkWorld } from '../WalkWorld';
+import type { Guard } from '../stealth';
 import { Button, ButtonSet, txt } from '../../../core/ui/widgets';
 import { clamp } from '../../../core/math';
 import type { StepHost } from '../../../core/contracts';
@@ -24,6 +27,7 @@ const STEP = 1 / 60;
 const DEPTH_GROUND = 0;
 const DEPTH_SCENERY = 1;
 const DEPTH_MARKERS = 2;
+const DEPTH_CONES = 2.5;
 const DEPTH_ACTORS = 3;
 const DEPTH_LABELS = 5;
 const DEPTH_HUD = 10;
@@ -64,6 +68,8 @@ export class WalkScene extends Phaser.Scene {
   /** 'title' card, 'play', or the 'done' card. */
   private phase: 'title' | 'play' | 'done' = 'title';
   private sprites = new Map<string, Phaser.GameObjects.Sprite>();
+  private vehicleSprites: Phaser.GameObjects.Image[] = [];
+  private coneG!: Phaser.GameObjects.Graphics;
   private markG!: Phaser.GameObjects.Graphics;
   private hudG!: Phaser.GameObjects.Graphics;
   private hintText!: Phaser.GameObjects.Text;
@@ -91,6 +97,7 @@ export class WalkScene extends Phaser.Scene {
     this.acc = 0;
     this.phase = 'title';
     this.sprites = new Map();
+    this.vehicleSprites = [];
     this.cardTexts = [];
     this.drag = null;
     this.tapMark = { x: 0, y: 0, t: 0 };
@@ -104,9 +111,11 @@ export class WalkScene extends Phaser.Scene {
 
     this.buildScenery();
     this.markG = this.add.graphics().setDepth(DEPTH_MARKERS);
+    this.coneG = this.add.graphics().setDepth(DEPTH_CONES);
     for (const a of this.world.actors) {
       this.sprites.set(a.id, this.add.sprite(0, 0, a.look, 0).setOrigin(0.5, 0.92));
     }
+    this.vehicleSprites = this.level.vehicles.map((v) => this.add.image(0, 0, v.key));
     this.nameText = txt(this, 0, 0, '', 8, CSS.signal).setOrigin(0.5, 1).setDepth(DEPTH_LABELS);
 
     // HUD, pinned to the screen.
@@ -150,6 +159,7 @@ export class WalkScene extends Phaser.Scene {
       }
       if (n >= 5) this.acc = 0;
       if (this.level.status === 'complete') this.showDoneCard();
+      else if (this.level.status === 'failed') this.showFailCard();
     }
     this.tapMark.t = Math.max(0, this.tapMark.t - dt);
     this.syncVisuals(dt);
@@ -219,6 +229,7 @@ export class WalkScene extends Phaser.Scene {
     }
     if (this.phase === 'done') return;
     if (this.level.dialogue.length > 0) this.level.advance();
+    else if (!this.world.locked && this.level.action(this.world)) return;
     else this.world.interact();
   }
 
@@ -254,9 +265,13 @@ export class WalkScene extends Phaser.Scene {
 
   private buildScenery(): void {
     const w = this.world;
+    const bd = this.level.backdrop;
+    if (bd) this.add.image(0, 0, bd.key).setOrigin(0).setScale(bd.scale).setDepth(DEPTH_GROUND - 0.5);
     const g = this.add.graphics().setDepth(DEPTH_GROUND);
-    g.fillStyle(this.level.groundColor, 1);
-    g.fillRect(0, 0, w.width, w.height);
+    if (!bd) {
+      g.fillStyle(this.level.groundColor, 1);
+      g.fillRect(0, 0, w.width, w.height);
+    }
     // Flat ground blocks first, then solid ones, each in list order.
     const sg = this.add.graphics().setDepth(DEPTH_SCENERY);
     const draw = (b: Block) => {
@@ -296,6 +311,14 @@ export class WalkScene extends Phaser.Scene {
       const col = a.moving ? cycle[Math.floor(a.walkTime * fps) % cycle.length] : 0;
       s.setFrame(row * WALKER_COLS + col);
     }
+    this.level.vehicles.forEach((v, i) => {
+      // Drawn nose up, so a heading of -PI/2 (north) is no turn.
+      this.vehicleSprites[i]
+        .setPosition(Math.round(v.x), Math.round(v.y))
+        .setRotation(v.heading + Math.PI / 2)
+        .setDepth(DEPTH_ACTORS + v.y / 10000);
+    });
+    this.drawCones();
     this.updateCamera(dt);
     this.drawMarkers();
     this.drawHud();
@@ -319,6 +342,10 @@ export class WalkScene extends Phaser.Scene {
     if (this.tapMark.t > 0) {
       g.lineStyle(1, PAL.white, this.tapMark.t * 2);
       g.strokeCircle(this.tapMark.x, this.tapMark.y, 6 - this.tapMark.t * 6);
+    }
+    for (const r of this.level.rings) {
+      g.lineStyle(2, 0xe83a2a, 0.9);
+      g.strokeCircle(r.x, r.y, r.r);
     }
     const hud = this.hudG;
     hud.clear();
@@ -351,6 +378,48 @@ export class WalkScene extends Phaser.Scene {
     const near = this.phase === 'play' && !this.world.locked ? this.world.nearestTalkable() : null;
     this.nameText.setVisible(!!near);
     if (near) this.nameText.setText(near.name).setPosition(Math.round(near.x), Math.round(near.y - 26));
+  }
+
+  /** Torch cones, cut short by walls, and a small light around the player at night. */
+  private drawCones(): void {
+    const g = this.coneG;
+    g.clear();
+    const lvl = this.level;
+    if (lvl.night) {
+      const p = this.world.player;
+      g.fillStyle(0xfff2c0, 0.1);
+      g.fillCircle(p.x, p.y - 10, 22);
+    }
+    const st = lvl.stealth;
+    if (!st) return;
+    const RAYS = 24;
+    for (const gd of st.guards) {
+      const a = this.world.actor(gd.id);
+      const color = gd.state === 'caught' ? 0xff4030 : gd.state === 'suspicious' ? 0xffb030 : lvl.night ? 0xffe9a0 : 0xffffff;
+      const pts = [new Phaser.Math.Vector2(a.x, a.y)];
+      for (let i = 0; i <= RAYS; i++) {
+        const ang = gd.look - gd.angle / 2 + (gd.angle * i) / RAYS;
+        const r = this.rayLength(gd, a, ang);
+        pts.push(new Phaser.Math.Vector2(a.x + Math.cos(ang) * r, a.y + Math.sin(ang) * r));
+      }
+      g.fillStyle(color, gd.seen ? 0.38 : lvl.night ? 0.26 : 0.2);
+      g.fillPoints(pts, true);
+    }
+  }
+
+  /** How far a ray from a guard goes before a wall stops it (binary search on the nav grid). */
+  private rayLength(gd: Guard, from: { x: number; y: number }, ang: number): number {
+    const nav = this.world.nav;
+    const end = (r: number) => ({ x: from.x + Math.cos(ang) * r, y: from.y + Math.sin(ang) * r });
+    if (nav.clearLine(from, end(gd.range))) return gd.range;
+    let lo = 0;
+    let hi = gd.range;
+    for (let k = 0; k < 6; k++) {
+      const mid = (lo + hi) / 2;
+      if (nav.clearLine(from, end(mid))) lo = mid;
+      else hi = mid;
+    }
+    return lo;
   }
 
   private drawHud(): void {
@@ -401,7 +470,19 @@ export class WalkScene extends Phaser.Scene {
     this.speakerText.setVisible(!!line && playing);
     this.lineText.setVisible(!!line && playing);
 
-    this.talkBtn.setVisible(playing && !line && !this.world.locked && !!this.world.nearestTalkable());
+    // Detection meter: the most alarmed guard.
+    const st = lvl.stealth;
+    if (st && playing) {
+      const alarm = st.alarm;
+      g.fillStyle(PAL.ink, 0.8);
+      g.fillRect(GAME_W - 112, 30, 104, 8);
+      g.fillStyle(alarm >= 0.4 ? 0xffb030 : 0xffe9a0, 1);
+      g.fillRect(GAME_W - 110, 32, Math.round(100 * alarm), 4);
+    }
+    const free = playing && !line && !this.world.locked;
+    const actLabel = free ? lvl.actionLabel(this.world) : null;
+    this.talkBtn.setLabel(actLabel ?? 'TALK');
+    this.talkBtn.setVisible(free && (!!actLabel || !!this.world.nearestTalkable()));
     this.menuBtn.setVisible(this.phase !== 'done');
     this.buttons.draw(g);
   }
@@ -420,7 +501,10 @@ export class WalkScene extends Phaser.Scene {
     add(txt(this, GAME_W / 2, cy - 14, l.place, 8, CSS.white).setOrigin(0.5));
     const goals = l.objectives.map((o) => `- ${o.label}`).join('\n');
     add(txt(this, 30, cy + 10, goals, 8, CSS.dim, GAME_W - 60));
-    add(txt(this, GAME_W / 2, cy + 90, 'Tap to walk. Tap a person to talk.\nOr drag to walk.', 8, CSS.dim).setOrigin(0.5, 0).setAlign('center'));
+    const how = l.stealth
+      ? 'Arrow keys / WASD, or drag, to walk.\nStay out of the torch beams.'
+      : 'Tap to walk. Tap a person to talk.\nOr drag to walk.';
+    add(txt(this, GAME_W / 2, cy + 90, how, 8, CSS.dim).setOrigin(0.5, 0).setAlign('center'));
     add(txt(this, GAME_W / 2, cy + 140, 'TAP TO BEGIN', 8, CSS.signal).setOrigin(0.5));
   }
 
@@ -431,6 +515,31 @@ export class WalkScene extends Phaser.Scene {
     this.cardTexts = [];
     this.cardBg?.destroy();
     this.cardBg = null;
+  }
+
+  /** Caught or too late: report the failure and offer RETRY. */
+  private showFailCard(): void {
+    if (this.phase === 'done') return;
+    this.phase = 'done';
+    this.world.input = { dx: 0, dy: 0 };
+    const cy = GAME_H / 2;
+    this.cardBg = this.add.rectangle(0, 0, GAME_W, GAME_H, 0x0b0c0d, 0.7).setOrigin(0).setScrollFactor(0).setDepth(DEPTH_HUD + 2);
+    const add = (t: Phaser.GameObjects.Text) => this.cardTexts.push(t.setScrollFactor(0).setDepth(DEPTH_HUD + 3));
+    add(txt(this, GAME_W / 2, cy - 70, 'CAUGHT', 16, CSS.warn).setOrigin(0.5));
+    add(txt(this, GAME_W / 2, cy - 40, this.level.failText, 8, CSS.white, GAME_W - 60).setOrigin(0.5, 0).setAlign('center'));
+    this.host.report({ result: 'failed' });
+    const btns = [
+      new Button(this, 40, cy + 10, GAME_W - 80, 44, 'RETRY', () => this.host.retry(), true),
+      new Button(this, 40, cy + 66, GAME_W - 80, 36, 'MENU', () => this.host.quit()),
+    ];
+    for (const b of btns) {
+      b.text.setScrollFactor(0);
+      b.setDepth(DEPTH_HUD + 3);
+      this.buttons.add(b);
+    }
+    this.hudG.setDepth(DEPTH_HUD + 2.5);
+    // Space / Enter retries too.
+    this.input.keyboard?.once('keydown-ENTER', () => this.host.retry());
   }
 
   private showDoneCard(): void {

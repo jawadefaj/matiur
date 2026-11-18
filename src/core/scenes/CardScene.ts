@@ -31,7 +31,7 @@ export class CardScene extends Phaser.Scene {
     g.strokeRect(20.5, oy + 140.5, GAME_W - 41, 359);
 
     if (card.type === 'title') {
-      txt(this, cx, oy + 200, ep ? `EPISODE ${ep.number}` : '', 8, CSS.dim).setOrigin(0.5);
+      txt(this, cx, oy + 200, ep ? `LEVEL ${ep.number}` : '', 8, CSS.dim).setOrigin(0.5);
       txt(this, cx, oy + 232, (ep?.title ?? '').toUpperCase(), 16, CSS.signal).setOrigin(0.5);
       txt(this, cx, oy + 280, ep?.date ?? '', 8, CSS.white).setOrigin(0.5);
       txt(this, cx, oy + 300, ep?.place ?? '', 8, CSS.dim).setOrigin(0.5);

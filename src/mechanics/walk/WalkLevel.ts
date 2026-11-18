@@ -3,6 +3,7 @@
 // and feeds it the player's taps; the level decides what each goal needs.
 import type { Objective } from '../../core/objectives';
 import type { Point, Rect, WalkEvent, WalkMap, WalkWorld } from './WalkWorld';
+import type { Stealth } from './stealth';
 
 export type { Objective };
 
@@ -39,6 +40,29 @@ export interface Prop {
   key: string;
   x: number;
   y: number;
+}
+
+/** One picture under the whole map, drawn at `scale` (pixel art, nearest-neighbour). */
+export interface Backdrop {
+  key: string;
+  scale: number;
+}
+
+/** A moving picture with a heading: Bluebird taxiing. The texture is drawn nose up. */
+export interface Vehicle {
+  key: string;
+  x: number;
+  y: number;
+  /** Heading, radians: 0 east, PI/2 south. */
+  heading: number;
+}
+
+/** A circle drawn on the ground: the intercept point. */
+export interface Ring {
+  x: number;
+  y: number;
+  r: number;
+  label: string;
 }
 
 /** A goal pointer: WalkScene draws a ring and an edge arrow when it is off-screen. */
@@ -112,8 +136,19 @@ export abstract class WalkLevel {
   /** Background colour outside every block. */
   groundColor = 0x6b7a4a;
 
+  /** A picture under everything (the base map). Blocks still draw on top. */
+  backdrop: Backdrop | null = null;
+  /** Night: the HUD says so and a small light follows the player. */
+  night = false;
+  /** Guards with vision cones (stealth levels only). */
+  stealth: Stealth | null = null;
+  vehicles: Vehicle[] = [];
+  rings: Ring[] = [];
+
   objectives: Objective[] = [];
-  status: 'running' | 'complete' = 'running';
+  status: 'running' | 'complete' | 'failed' = 'running';
+  /** Shown on the RETRY card when the level fails. */
+  failText = '';
   /** One-line instruction shown at the top. */
   hint = '';
   markers: WalkMarker[] = [];
@@ -133,6 +168,19 @@ export abstract class WalkLevel {
   /** Per-step logic, after events. Optional. */
   protected script(_w: WalkWorld, _dt: number): void {}
 
+  /**
+   * The action key or button (Space/E, TALK) when no dialogue is open. Return
+   * true if the level used it; otherwise it talks to whoever is near.
+   */
+  action(_w: WalkWorld): boolean {
+    return false;
+  }
+
+  /** Label for the action button when action() would do something, else null. */
+  actionLabel(_w: WalkWorld): string | null {
+    return null;
+  }
+
   /** Map size and zones plus walls from every solid block. */
   protected buildMap(width: number, height: number, zones: WalkMap['zones']): WalkMap {
     const walls = this.blocks.filter((b) => b.solid).map(({ x, y, w, h }) => ({ x, y, w, h }));
@@ -150,6 +198,17 @@ export abstract class WalkLevel {
     this.tickSequences(w, dt);
     this.script(w, dt);
     w.locked = this.dialogue.length > 0 || this.sequences.some((s) => s.lock);
+    if (this.stealth && this.status === 'running') {
+      const by = this.stealth.step(w, dt);
+      if (by) this.fail(`${w.actor(by.id).name}: "Halt! Who goes there?"`);
+    }
+  }
+
+  /** End the level as failed; WalkScene shows the RETRY card. */
+  fail(text: string): void {
+    if (this.status !== 'running') return;
+    this.failText = text;
+    this.status = 'failed';
   }
 
   /** Queue lines of dialogue. The player reads them one tap at a time. */

@@ -1,4 +1,4 @@
-// THE GAME SCRIPT, part 2: Episode 2, Sabre Skies, as a list of steps played
+// THE GAME SCRIPT, part 2: Level 1, Sabre Skies (id 'ep2', kept for saves), as a list of steps played
 // in order. Each step is a video, a mechanic level, a cutscene or a card.
 // Step ids are save keys: don't rename them once released (sortie-1..3 also
 // carry over progress from the old save).
@@ -8,7 +8,7 @@ import { walk } from '../../mechanics/walk';
 
 export default defineEpisode({
   id: 'ep2',
-  number: 2,
+  number: 1,
   kind: 'playable',
   title: 'Sabre Skies',
   date: 'September 1965',

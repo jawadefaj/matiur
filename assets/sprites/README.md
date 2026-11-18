@@ -40,6 +40,10 @@ After you add or rename a PNG, restart `npm run dev` so it finds the new file. E
 | `walker_wingman.png` | Sherdil Two on foot | 48 × 104 | Walker sheet |
 | `walker_crew.png` | Crew chief | 48 × 104 | Walker sheet |
 | `sabre_parked.png` | Parked Sabre at walking scale, nose up | 100 × 104 | Keep the size: the walk collision boxes in `src/mechanics/walk/levels/FlightLine.ts` follow it |
+| `walk_matiur_sd.png` | Matiur in service dress (Level 2) | 60 × 120 | Walker sheet of 20 × 30 frames. First version: one still image per direction |
+| `walk_guard.png` | Masroor guard with a torch (Level 2) | 93 × 128 | Walker sheet. First version: one still image per direction |
+| `walk_masroor_day.png` `walk_masroor_night.png` | Level 2 walk map: master map x 600-1220, y 430-900, rebuilt at full size | 2480 × 1880 | 1 px = 1 world px. Built by `assets/art-wip/level-2/build_masroor_map.py`, which also writes the colliders |
+| `walk_t33.png` | Bluebird, the T-33, from above, nose up | 80 × 94 | Taxis in Intercept |
 
 ### Walking characters
 
