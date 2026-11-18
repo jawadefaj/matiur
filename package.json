@@ -9,7 +9,8 @@
     "preview": "vite preview --host",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "build:single": "vite build --config vite.single.config.ts"
+    "build:single": "vite build --config vite.single.config.ts",
+    "build:play": "npm run build:single && node -e \"require('fs').copyFileSync('dist-single/index.html','play.html')\""
   },
   "dependencies": {
     "phaser": "^4.2.1"

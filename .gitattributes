@@ -8,3 +8,5 @@
 *.mp4 binary
 *.webm binary
 *.mov binary
+# play.html is the one-file build (npm run build:play): generated, not diffed
+play.html -diff linguist-generated

@@ -71,6 +71,7 @@ npm run build:single  # the whole game in one file: dist-single/index.html
 ### Play without installing anything
 
 - **One file:** `npm run build:single` writes `dist-single/index.html` (about 2.4 MB). Phaser, the code and every image are inside it, so you can double-click it, send it to a phone, or upload it anywhere. It plays offline; only the pixel font needs the internet, and the game falls back to a plain font after 3 s without it.
+- **Play now:** https://jawadefaj.github.io/matiur/play.html . This is `play.html` in the repository root, a copy of the one-file build that GitHub Pages serves under either Pages setting. It doesn't update itself: after changing the game, run `npm run build:play` and commit `play.html`.
 - **GitHub Pages:** every push to `main` builds and publishes the game with [.github/workflows/pages.yml](.github/workflows/pages.yml), at `https://<owner>.github.io/matiur/`. The one-file build is published next to it as `wings-of-freedom.html`. Turn it on once under **Settings > Pages > Source: GitHub Actions**.
 
 ## Controls
