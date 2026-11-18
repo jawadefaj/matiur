@@ -1,6 +1,6 @@
 {
-  "name": "Wings of Freedom — Sabre Skies",
-  "short_name": "Sabre Skies",
+  "name": "Wings of Freedom",
+  "short_name": "Wings of Freedom",
   "start_url": "./",
   "display": "fullscreen",
   "orientation": "portrait",
