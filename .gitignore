@@ -6,3 +6,4 @@ dist/
 *.log
 .DS_Store
 dist-single/
+assets/art-wip/*
