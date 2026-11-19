@@ -26,25 +26,30 @@ export default defineEpisode({
     'Hit aircraft break off; none explode.',
   ],
   steps: [
-    // Plays assets/video/ep2_intro.mp4 once it exists; until then, this text.
-    video('intro', { src: 'ep2_intro', fallback: [t('ep2.intro.1'), t('ep2.intro.2')] }),
-    walk.level('flight-line', { map: 'flightline' }),
+    // 1.1: Opening video — learn who Matiur is
+    video('opening', { src: 'ep2_opening', fallback: [t('ep2.intro.1'), t('ep2.intro.2')] }),
+    // 1.2: First flight line scene (30 seconds)
+    video('flight-line', { src: 'ep2_flight_line', fallback: [t('ep2.beat1.1'), t('ep2.beat1.2')] }),
+
+    // 2.1: Sortie 1 (Scramble)
     flight.level('sortie-1', { sortie: 1 }),
-    // Between-sortie beats (GDD §3, Episode 2): in-engine scenes at the flight
-    // line. Placeholder lines until src/data/cutscenes/ep2_beat_*.json are written.
-    cutscene('beat-1', {
-      script: 'ep2_beat_1',
-      placeholder: [
-        { speaker: t('who.crewChief'), text: t('ep2.beat1.1') },
-        { text: t('ep2.beat1.2') },
-      ],
-    }),
+    // 2.2: 15-second beat between sorties
+    video('between-1', { src: 'ep2_between_1', fallback: [t('ep2.beat1.1')] }),
+
+    // 3: Sortie 2 (Intercept)
     flight.level('sortie-2', { sortie: 2 }),
-    cutscene('beat-2', {
-      script: 'ep2_beat_2',
-      placeholder: [{ text: t('ep2.beat2.1') }],
-    }),
+
+    // 4.1: Before final sortie — setup for low-level flight
+    video('pre-sortie-3', { src: 'ep2_pre_sortie_3', fallback: [t('ep2.beat2.1')] }),
+    // 4.2: 30-second mission briefing video
+    video('mission-3', { src: 'ep2_mission_3', fallback: [t('ep2.beat2.1')] }),
+
+    // 4.3: Sortie 3 (Low and Home)
     flight.level('sortie-3', { sortie: 3 }),
+
+    // 4.4: 15-second post-sortie beat
+    video('after-sortie-3', { src: 'ep2_after_sortie_3', fallback: [t('ep2.beat2.1')] }),
+
     archiveCard('archive', {
       cardId: 'ep2_sabre_skies',
       heading: t('ep2.title'),

@@ -92,6 +92,10 @@
     <s id="ep2.beat1.1" en="[Placeholder] Refuelled and rearmed, sir.">[অস্থায়ী] জ্বালানি আর গুলি ভরা হয়েছে, স্যার।</s>
     <s id="ep2.beat1.2" en="[Placeholder] Writer pass needed: a short beat at the flight line.">[অস্থায়ী] লেখা বাকি: ফ্লাইট লাইনে একটি ছোট দৃশ্য।</s>
     <s id="ep2.beat2.1" en="[Placeholder] Writer pass needed: a letter from home.">[অস্থায়ী] লেখা বাকি: বাড়ি থেকে আসা একটি চিঠি।</s>
+    <!-- Between-sortie video beats -->
+    <s id="ep2.flight_line.1" en="[Video: 30s] Flight line preparation">[ভিডিও: ৩০s] ফ্লাইট লাইন প্রস্তুতি</s>
+    <s id="ep2.between_1.1" en="[Video: 15s] Between sorties">[ভিডিও: ১৫s] সর্টির মধ্যে</s>
+    <s id="ep2.mission_3.1" en="[Video: 30s] Final mission briefing">[ভিডিও: ৩০s] চূড়ান্ত মিশন ব্রিফিং</s>
     <!-- {sortie-3.time} and {sortie-3.airframe} are filled in from the save. -->
     <s id="ep2.archive.text" en="[Placeholder] A photo, the date and a short sourced paragraph go here (GDD §0 rule 4).\n\nYour last sortie: {sortie-3.time}, airframe {sortie-3.airframe}.">[অস্থায়ী] এখানে থাকবে একটি ছবি, তারিখ আর তথ্যসূত্রসহ একটি ছোট অনুচ্ছেদ।\n\nআপনার শেষ অভিযান: {sortie-3.time}, কাঠামো {sortie-3.airframe}।</s>
   </group>
@@ -109,6 +113,9 @@
   <!-- ================================================ Level 2: Bluebird -->
   <group name="level2">
     <s id="level2.title" en="Bluebird">ব্লুবার্ড</s>
+    <!-- Between-gameplay video beats -->
+    <s id="level2.schedule.1" en="[Video: 15s] After reading the schedule">[ভিডিও: ১৫s] সময়সূচী পড়ার পরে</s>
+    <s id="level2.dispensary.1" en="[Video: 15s] After the dispensary">[ভিডিও: ১৫s] ডিসপেনসারির পরে</s>
     <s id="level2.date" en="20 August 1971">২০ আগস্ট ১৯৭১</s>
     <s id="level2.place" en="PAF Base Masroor, Karachi">পিএএফ ঘাঁটি মাসরুর, করাচি</s>
     <s id="level2.prologue1.1" en="1965 becomes 1968.">১৯৬৫ গড়িয়ে ১৯৬৮।</s>
