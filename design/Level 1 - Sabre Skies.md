@@ -160,6 +160,28 @@ In Level 2, the player must fly the T-33 from Masroor toward the border at extre
 
 ---
 
+### 4.4 Sub-level: The Orange Raid (night, between Sortie 1 and Sortie 2)
+
+**Type:** on-foot stealth (walk mechanic, map `orchard`, step `orange-raid`). About 3–5 minutes.
+
+**Purpose:** a light, human moment between sorties, and a first lesson in the stealth rules Level 2 is built on (torch beams, cover, patrol timing), the way Sortie 3 rehearses Level 2's low flying. *Dramatised; not a sourced event.*
+
+**Setup:** that night at Peshawar, Sherdil Two bets Matiur dinner that he can't bring back three oranges from the Station Commander's walled orchard without being seen.
+
+**Map (top-down, night):** billets and the road at the south; the orchard inside a hedge, with a gate on the south side and a gap in the west hedge; rows of orange trees either side of a central path; the Station Commander's bungalow and verandah at the north.
+
+**Watchers:**
+- **Chowkidar Rahim** walks the west half of the orchard with a lantern (longest reach).
+- **Gul the mali** sits by the east hedge, sweeping across the trees.
+- **A sentry** on the verandah sweeps the north of the orchard.
+- **Naik Sher Khan** patrols the road between the billets and the orchard.
+
+**Goals:** pick the three ripe trees (PICK when next to one): west, in the chowkidar's round; east, near the mali; north, under the verandah. Then get back to the billet. Being seen fills the detection meter; full means "Halt! Who goes there?" and RETRY. Trees and hedges block the beams.
+
+**Ending:** Sherdil Two: "Three! Not a whistle, not a lantern. How?" Matiur: "Keep low, keep to cover, wait for the gap. Same as flying."
+
+---
+
 ## 5. Between-Sortie Beats
 
 Each sortie ends with a ~10–15 second in-engine cutscene at the flight line:
@@ -198,6 +220,7 @@ The last frame of the archive card is the first frame of Level 2's opening video
 - [ ] Radar warning system and interceptor spawn
 - [ ] Landing sequence and mission success/failure logic
 - [ ] Between-sortie cutscene beats (10–15 s each)
+- [x] The Orange Raid: night stealth sub-level between Sortie 1 and Sortie 2 (placeholder art)
 - [ ] Archive card with period photo and text
 - [ ] Scoring system (objectives, not kill count)
 

@@ -38,11 +38,24 @@ describe('game definition', () => {
       order.push(ref.split('/')[1]);
       save = flow.onReport(flow.onStart(save, ref), ref, { result: 'complete' });
     }
-    expect(order).toEqual(['title', 'intro', 'flight-line', 'sortie-1', 'beat-1', 'sortie-2', 'beat-2', 'sortie-3', 'archive']);
+    expect(order).toEqual([
+      'title',
+      'opening',
+      'flight-line',
+      'sortie-1',
+      'between-1',
+      'orange-raid',
+      'sortie-2',
+      'pre-sortie-3',
+      'mission-3',
+      'sortie-3',
+      'after-sortie-3',
+      'archive',
+    ]);
     expect(episodeProgress(save, 'ep2').finished).toBe(true);
     expect(flow.chapters('ep2', save).map((c) => c.title)).toEqual([
-      t('fl.title'),
       t('flight.sortieTitle', { n: 1, title: t('s1.title') }),
+      t('orchard.title'),
       t('flight.sortieTitle', { n: 2, title: t('s2.title') }),
       t('flight.sortieTitle', { n: 3, title: t('s3.title') }),
     ]);

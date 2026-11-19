@@ -5,6 +5,7 @@
 import { archiveCard, defineEpisode, video } from '../../core/define';
 import { t } from '../../core/i18n';
 import { flight } from '../../mechanics/flight';
+import { walk } from '../../mechanics/walk';
 
 export default defineEpisode({
   id: 'ep2',
@@ -34,6 +35,8 @@ export default defineEpisode({
     flight.level('sortie-1', { sortie: 1 }),
     // 2.2: 15-second beat between sorties
     video('between-1', { src: 'ep2_between_1', fallback: [t('ep2.beat1.1')] }),
+    // 2.3: That night, the orange raid (stealth on foot, a rehearsal for Level 2)
+    walk.level('orange-raid', { map: 'orchard' }),
 
     // 3: Sortie 2 (Intercept)
     flight.level('sortie-2', { sortie: 2 }),

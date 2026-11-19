@@ -19,6 +19,10 @@ export const WALKER_LOOKS: Record<string, Record<string, string> & { cap?: strin
   // Sherdil Two: lighter khaki flight suit.
   walker_wingman: { h: '#2b241e', s: '#a57552', e: '#1d1a17', b: '#8a8058', B: '#6a623f', l: '#5f5a3e', f: '#2a221b' },
   // Crew chief: blue-grey overalls and a cap.
+  // Chowkidar and mali at Peshawar: white turban, pale kurta, dark waistcoat.
+  walker_chowkidar: { h: '#24201c', c: '#e2ddcc', s: '#8e6143', e: '#1d1a17', b: '#cfc6ac', B: '#4a3a2a', l: '#bdb49c', f: '#3a2a1c', cap: 'y' },
+  // A station sentry, 1965: khaki drill and a beret.
+  walker_sentry: { h: '#24201c', c: '#3a3a2a', s: '#946646', e: '#1d1a17', b: '#8a7f55', B: '#5a4a30', l: '#7a7048', f: '#1f1f1f', cap: 'y' },
   walker_crew: { h: '#24201c', c: '#2f3d52', s: '#8e6143', e: '#1d1a17', b: '#5d6b78', B: '#46525d', l: '#4f5b66', f: '#1f1f1f', cap: 'y' },
 };
 

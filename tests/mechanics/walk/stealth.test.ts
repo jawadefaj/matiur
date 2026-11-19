@@ -7,6 +7,7 @@ import { Stealth, angleDiff } from '../../../src/mechanics/walk/stealth';
 import { tuning } from '../../../src/mechanics/walk/tuning';
 import { makeWalkLevel } from '../../../src/mechanics/walk/levels';
 import { INTERCEPT, MasroorIntercept, OFFICE, RAMP_START } from '../../../src/mechanics/walk/levels/Masroor';
+import { BILLET_DOOR, Orchard, PICK_RANGE, RIPE } from '../../../src/mechanics/walk/levels/Orchard';
 
 const DT = 1 / 60;
 
@@ -167,5 +168,82 @@ describe('Masroor levels', () => {
     const { level, w } = start('masroor-intercept');
     expect(w.player.x).toBe(RAMP_START.x);
     expect((level as MasroorIntercept).travelled).toBe(0);
+  });
+});
+
+describe('The Orange Raid (Level 1)', () => {
+  function start() {
+    const level = makeWalkLevel('orchard') as Orchard;
+    const w = new WalkWorld(level.map());
+    level.setup(w);
+    const run = (seconds: number, each?: () => void) => {
+      for (let t = 0; t < seconds && level.status === 'running'; t += DT) {
+        each?.();
+        w.step(DT);
+        level.update(w, DT);
+        while (level.dialogue.length) level.advance();
+      }
+    };
+    return { level, w, run };
+  }
+
+  it('keeps the start, patrols, ripe trees and billet reachable', () => {
+    const { level, w } = start();
+    expect(level.night).toBe(true);
+    expect(level.stealth?.guards.length).toBe(4);
+    for (const a of w.actors) {
+      expect(w.nav.free(a.x, a.y), a.id).toBe(true);
+      const pts = a.patrol ?? [];
+      for (const p of pts) expect(w.nav.free(p.x, p.y), `${a.id} (${p.x}, ${p.y})`).toBe(true);
+      for (let i = 1; i < pts.length; i++) expect(w.nav.findPath(pts[i - 1], pts[i]).length, a.id).toBeGreaterThan(0);
+    }
+    // Every ripe tree can be reached close enough to pick, through the hedge gap.
+    for (const tr of RIPE) {
+      const path = w.nav.findPath(BILLET_DOOR, { x: tr.x, y: tr.y + PICK_RANGE - 6 });
+      const end = path[path.length - 1];
+      expect(Math.hypot(end.x - tr.x, end.y - tr.y), `${tr.x},${tr.y}`).toBeLessThanOrEqual(PICK_RANGE);
+    }
+    // The trees block a guard's line of sight.
+    expect(w.nav.clearLine({ x: RIPE[0].x - 20, y: RIPE[0].y }, { x: RIPE[0].x + 20, y: RIPE[0].y })).toBe(false);
+  });
+
+  it('is safe at the billet door when the road patrol passes', () => {
+    const { level, w, run } = start();
+    run(30, () => w.place('player', BILLET_DOOR.x, BILLET_DOOR.y));
+    expect(level.failText).toBe('');
+    expect(level.status).toBe('running');
+    expect(level.stealth!.alarm).toBe(0);
+  });
+
+  it('picks three oranges, then ends back at the billet', () => {
+    const { level, w, run } = start();
+    expect(level.actionLabel(w)).toBeNull();
+    expect(level.action(w)).toBe(false);
+    // Teleport to each tree: this checks the goals, not the stealth.
+    for (const tr of RIPE) {
+      w.place('player', tr.x, tr.y + 12);
+      expect(level.actionLabel(w)).toBe(t('walk.pick'));
+      expect(level.action(w)).toBe(true);
+      expect(level.actionLabel(w)).toBeNull();
+    }
+    expect(level.obj('pick').state).toBe('done');
+    expect(level.obj('back').state).toBe('active');
+    // Away from the door, then back to it.
+    w.place('player', 120, 560);
+    run(0.2);
+    w.place('player', BILLET_DOOR.x, BILLET_DOOR.y);
+    w.locked = false;
+    run(2);
+    expect(level.status).toBe('complete');
+  });
+
+  it('is caught standing in the chowkidar’s lantern', () => {
+    const { level, w, run } = start();
+    run(20, () => {
+      const c = w.actor('chowkidar');
+      const g = level.stealth!.guards.find((x) => x.id === 'chowkidar')!;
+      w.place('player', c.x + Math.cos(g.look) * 30, c.y + Math.sin(g.look) * 30);
+    });
+    expect(level.status).toBe('failed');
   });
 });

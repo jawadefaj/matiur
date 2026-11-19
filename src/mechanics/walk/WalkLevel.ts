@@ -26,6 +26,8 @@ export type BlockStyle =
   | 'bowser'
   | 'crate'
   | 'sandbag'
+  /** A garden hedge (the Peshawar orchard). */
+  | 'hedge'
   /** Not drawn: collision for something a prop draws (a parked jet). */
   | 'hidden';
 

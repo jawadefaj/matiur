@@ -149,6 +149,9 @@
     <s id="who.havildarAslam" en="Havildar Aslam">হাবিলদার আসলাম</s>
     <s id="who.airmanQadir" en="Airman Qadir">এয়ারম্যান কাদির</s>
     <s id="who.sentry" en="Sentry">সান্ত্রী</s>
+    <s id="who.chowkidar" en="Chowkidar Rahim">চৌকিদার রহিম</s>
+    <s id="who.mali" en="Gul the Mali">মালী গুল</s>
+    <s id="who.naikGul" en="Naik Sher Khan">নায়েক শের খান</s>
     <s id="who.airman" en="Airman">এয়ারম্যান</s>
   </group>
 
@@ -323,6 +326,7 @@
     <s id="walk.onFoot" en="ON FOOT: {title}">পায়ে হেঁটে: {title}</s>
     <s id="walk.talk" en="TALK">কথা বলুন</s>
     <s id="walk.signal" en="SIGNAL">সংকেত দিন</s>
+    <s id="walk.pick" en="PICK">পাড়ুন</s>
     <s id="walk.howStealth" en="Arrow keys / WASD, or drag, to walk.\nStay out of the torch beams.">হাঁটতে অ্যারো কি / WASD চাপুন বা টানুন।\nটর্চের আলো এড়িয়ে চলুন।</s>
     <s id="walk.howTalk" en="Tap to walk. Tap a person to talk.\nOr drag to walk.">হাঁটতে ট্যাপ করুন। কথা বলতে কাউকে ট্যাপ করুন।\nঅথবা টেনে হাঁটুন।</s>
     <s id="walk.goal" en="- {label}">- {label}</s>
@@ -353,6 +357,25 @@
     <s id="fl.chief.1" en="Fuelled, guns loaded, all checks done, sir.">জ্বালানি ভরা, কামানে গুলি ভরা, সব পরীক্ষা শেষ, স্যার।</s>
     <s id="fl.chief.2" en="Form 700 is signed. She's all yours.">ফর্ম ৭০০ সই হয়ে গেছে। এখন এটা আপনার।</s>
     <s id="fl.two.ready" en="Two's strapped in. Ready when you are, One.">টু তৈরি, বেল্ট বাঁধা। তুমি তৈরি হলেই চলবে, ওয়ান।</s>
+  </group>
+
+  <!-- ============================== Walk: The Orange Raid (Level 1, night) -->
+  <group name="orchard">
+    <s id="orchard.title" en="The Orange Raid">কমলা অভিযান</s>
+    <s id="orchard.date" en="September 1965, night">সেপ্টেম্বর ১৯৬৫, রাত</s>
+    <s id="orchard.done" en="Three oranges, and not one whistle blown. Sherdil Two owes you dinner.">তিনটি কমলা, একটি বাঁশিও বাজেনি। শেরদিল টু-র কাছে এক বেলার খাবার পাওনা।</s>
+    <s id="orchard.obj.pick" en="Pick {n} oranges from the Station Commander's orchard">স্টেশন কমান্ডারের বাগান থেকে {n}টি কমলা পাড়ুন</s>
+    <s id="orchard.obj.back" en="Get back to the billet unseen">কারো চোখে না পড়ে ব্যারাকে ফিরুন</s>
+    <s id="orchard.hint.pick" en="Oranges {n}/{total}. Keep to the trees' shadows">কমলা {n}/{total}। গাছের ছায়ায় থাকুন</s>
+    <s id="orchard.hint.back" en="Back to the billet. Sherdil Two is waiting">ব্যারাকে ফিরুন। শেরদিল টু অপেক্ষা করছে</s>
+    <s id="orchard.two.dare1" en="The Station Commander's oranges are the best in Peshawar. He counts them every morning.">স্টেশন কমান্ডারের কমলা পেশোয়ারের সেরা। তিনি প্রতিদিন সকালে গুনে দেখেন।</s>
+    <s id="orchard.two.dare2" en="Bring back three without the chowkidar seeing you, and dinner is on me.">চৌকিদারের চোখ এড়িয়ে তিনটি এনে দাও, রাতের খাবার আমার পক্ষ থেকে।</s>
+    <s id="orchard.matiur.accept" en="Keep the table booked.">টেবিলটা বুক করে রাখো।</s>
+    <s id="orchard.matiur.three" en="Three. Now home, quietly.">তিনটি। এবার চুপিচুপি ফেরা।</s>
+    <s id="orchard.two.waiting" en="Well? I don't see any oranges.">কী হলো? কোনো কমলা তো দেখছি না।</s>
+    <s id="orchard.two.won1" en="Three! Not a whistle, not a lantern. How?">তিনটি! না বাঁশি, না লণ্ঠন। কীভাবে?</s>
+    <s id="orchard.matiur.won" en="Keep low, keep to cover, wait for the gap. Same as flying.">নিচু থাকো, আড়ালে থাকো, ফাঁকের জন্য অপেক্ষা করো। ঠিক ওড়ার মতো।</s>
+    <s id="orchard.two.won2" en="Dinner's mine to buy, then. Get some sleep, One. We fly at dawn.">তাহলে খাবার আমার পক্ষ থেকে। একটু ঘুমিয়ে নাও, ওয়ান। ভোরে আমাদের উড্ডয়ন।</s>
   </group>
 
   <!-- ===================================== Walk: PAF Base Masroor, 1971 -->

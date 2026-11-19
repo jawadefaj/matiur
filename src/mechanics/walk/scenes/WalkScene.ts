@@ -46,6 +46,7 @@ const STYLE: Record<Exclude<BlockStyle, 'hidden'>, { fill: number; edge?: number
   bowser: { fill: 0x5a6a3a, edge: 0x2f3820 },
   crate: { fill: 0x8a6a3e, edge: 0x4a3820 },
   sandbag: { fill: 0xb8a57a, edge: 0x6e5f40 },
+  hedge: { fill: 0x2f4a28, edge: 0x1a2a16 },
 };
 
 /** Drag this far (px) before a touch counts as a drag instead of a tap. */
@@ -128,7 +129,7 @@ export class WalkScene extends Phaser.Scene {
 
     this.buttons = new ButtonSet();
     this.menuBtn = this.buttons.add(new Button(this, GAME_W - 62, 6, 56, 32, t('ui.menu'), () => this.host.quit()));
-    this.talkBtn = this.buttons.add(new Button(this, GAME_W - 96, GAME_H - 64, 88, 48, t('walk.talk'), () => this.world.interact(), true));
+    this.talkBtn = this.buttons.add(new Button(this, GAME_W - 96, GAME_H - 64, 88, 48, t('walk.talk'), () => this.action(), true));
     for (const b of this.buttons.buttons) {
       b.text.setScrollFactor(0);
       b.setDepth(DEPTH_HUD);
@@ -296,6 +297,8 @@ export class WalkScene extends Phaser.Scene {
     for (const b of this.level.blocks) if (!b.solid) draw(b);
     for (const b of this.level.blocks) if (b.solid) draw(b);
     for (const p of this.level.props) this.add.image(Math.round(p.x), Math.round(p.y), p.key).setDepth(DEPTH_SCENERY + 0.5);
+    // Night on a map drawn from blocks: darken the scenery (a backdrop has its own night picture).
+    if (this.level.night && !bd) this.add.rectangle(0, 0, w.width, w.height, 0x0a1020, 0.45).setOrigin(0).setDepth(DEPTH_SCENERY + 0.4);
   }
 
   private syncVisuals(dt: number): void {

@@ -2,7 +2,7 @@
 // Level 2 art (Masroor map, Matiur in service dress, guards, Bluebird).
 // Each key uses its PNG from assets/sprites/ if there is one.
 import type { ArtKit } from '../../../core/gfx/textures';
-import { makeCanvas } from '../../../core/gfx/pixel';
+import { bakeFromRows, makeCanvas } from '../../../core/gfx/pixel';
 import { WALKER_COLS, WALKER_LOOKS, WALKER_ROWS, bakeParkedSabre, bakeWalker } from './pixelArt';
 
 /** Walker sheets that only exist as PNGs, with the baked look to stand in when the PNG is missing. */
@@ -19,6 +19,37 @@ function flat(w: number, h: number, color: string): () => HTMLCanvasElement {
     ctx.fillRect(0, 0, w, h);
     return c;
   };
+}
+
+/** A 16 × 16 orange tree from above; `ripe` dots it with fruit. */
+function bakeOrangeTree(ripe: boolean): () => HTMLCanvasElement {
+  const rows = [
+    '.....oooooo.....',
+    '...ooggggggoo...',
+    '..oggghhgggggo..',
+    '.ogghhhhggRgggo.',
+    '.oggRhhgggggggo.',
+    'ogggggggggRgdgo.',
+    'oggggRgggggggdos',
+    'ogggggggRggdddos',
+    'ogRgggggggggddos',
+    'ogggggRgggdddoss',
+    '.ogggggggddddos.',
+    '.oggdRgdddddoss.',
+    '..ooddddddooss..',
+    '...ooooooooss...',
+    '.....sssssss....',
+    '................',
+  ];
+  return () =>
+    bakeFromRows(rows, {
+      o: '#1f2f1a',
+      g: '#3e6b35',
+      h: '#5a8a47',
+      d: '#2f5228',
+      s: 'rgba(0,0,0,0.25)',
+      R: ripe ? '#f08a1c' : '#3e6b35',
+    });
 }
 
 export function registerWalkArt(kit: ArtKit): void {
@@ -38,6 +69,9 @@ export function registerWalkArt(kit: ArtKit): void {
     }
   }
   kit.addCanvas('sabre_parked', kit.art('sabre_parked', bakeParkedSabre));
+  // Level 1's orchard: orange trees, with and without ripe fruit.
+  kit.addCanvas('walk_orange_tree', kit.art('walk_orange_tree', bakeOrangeTree(true)));
+  kit.addCanvas('walk_orchard_tree', kit.art('walk_orchard_tree', bakeOrangeTree(false)));
   // Level 2: the base map (2480 × 1880, one px per world px) by day and by night, and Bluebird from above.
   kit.addCanvas('walk_masroor_day', kit.art('walk_masroor_day', flat(2480, 1880, '#9a8458')));
   kit.addCanvas('walk_masroor_night', kit.art('walk_masroor_night', flat(2480, 1880, '#1c2230')));
