@@ -96,6 +96,16 @@
     <s id="ep2.archive.text" en="[Placeholder] A photo, the date and a short sourced paragraph go here (GDD §0 rule 4).\n\nYour last sortie: {sortie-3.time}, airframe {sortie-3.airframe}.">[অস্থায়ী] এখানে থাকবে একটি ছবি, তারিখ আর তথ্যসূত্রসহ একটি ছোট অনুচ্ছেদ।\n\nআপনার শেষ অভিযান: {sortie-3.time}, কাঠামো {sortie-3.airframe}।</s>
   </group>
 
+  <!-- ======================================= Bridge: 1965 to 1971 -->
+  <group name="bridge">
+    <s id="bridge.title" en="Homecoming">বাড়ি ফেরা</s>
+    <s id="bridge.date" en="1965–1971">১৯৬৫–১৯৭১</s>
+    <s id="bridge.place" en="Karachi and Dhaka">করাচি এবং ঢাকা</s>
+    <s id="bridge.line1" en="Six years passed.">ছয় বছর কেটে গেল।</s>
+    <s id="bridge.line2" en="Six years of teaching. Of family. Of letters from home.">শেখানোর ছয় বছর। পরিবারের ছয় বছর। বাড়ি থেকে আসা চিঠির ছয় বছর।</s>
+    <s id="bridge.line3" en="Then came March 1971.">তারপর এলো মার্চ ১৯৭১।</s>
+  </group>
+
   <!-- ================================================ Level 2: Bluebird -->
   <group name="level2">
     <s id="level2.title" en="Bluebird">ব্লুবার্ড</s>
