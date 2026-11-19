@@ -8,6 +8,7 @@ import type { CutsceneStep, DialogueLine, StepHost } from '../contracts';
 import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../config';
 import { CORE_SCENES } from '../manager/GameManager';
 import { CUTSCENES, scriptLines } from '../media/content';
+import { t } from '../i18n';
 import { txt } from '../ui/widgets';
 import { onTaps } from './taps';
 
@@ -33,14 +34,14 @@ export class CutsceneScene extends Phaser.Scene {
     const c = this.host.params;
     const script = CUTSCENES[c.script];
     const placeholder = !script;
-    this.lines = script ? scriptLines(script) : (c.placeholder ?? [{ text: `(cutscene "${c.script}" not written yet)` }]);
+    this.lines = script ? scriptLines(script) : (c.placeholder ?? [{ text: t('cutscene.notWritten', { script: c.script }) }]);
     if (!script) console.info(`Cutscene "${c.script}": no src/data/cutscenes/${c.script}.json yet, showing placeholder lines.`);
 
     const ep = this.host.episode;
     const oy = Math.round(EXTRA_H / 2);
     this.add.rectangle(0, 0, GAME_W, GAME_H, 0x15171a).setOrigin(0);
     if (ep) txt(this, GAME_W / 2, oy + 120, `${ep.date}\n${ep.place}`, 8, CSS.dim).setOrigin(0.5, 0).setAlign('center');
-    if (placeholder) txt(this, GAME_W / 2, oy + 170, 'PLACEHOLDER SCENE', 8, CSS.warn).setOrigin(0.5);
+    if (placeholder) txt(this, GAME_W / 2, oy + 170, t('cutscene.placeholder'), 8, CSS.warn).setOrigin(0.5);
 
     // Dialogue box at the bottom, like the walk scene's.
     const boxY = GAME_H - 150;
@@ -51,7 +52,7 @@ export class CutsceneScene extends Phaser.Scene {
     g.strokeRect(10.5, boxY + 0.5, GAME_W - 21, 95);
     this.speaker = txt(this, 20, boxY + 10, '', 8, CSS.signal);
     this.line = txt(this, 20, boxY + 28, '', 8, CSS.white, GAME_W - 40);
-    txt(this, GAME_W / 2, GAME_H - 40, this.host.canSkip ? 'TAP: NEXT   HOLD: SKIP' : 'TAP: NEXT', 8, CSS.dim).setOrigin(0.5);
+    txt(this, GAME_W / 2, GAME_H - 40, this.host.canSkip ? t('cutscene.tapNextHoldSkip') : t('cutscene.tapNext'), 8, CSS.dim).setOrigin(0.5);
     this.bar = this.add.graphics();
 
     this.holdProgress = onTaps(this, {

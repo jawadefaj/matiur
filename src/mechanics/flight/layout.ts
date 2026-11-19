@@ -21,10 +21,11 @@ export const DEPTH = {
 const THR_H = Math.round(230 + EXTRA_H * 0.4);
 
 export const HUD = {
-  topH: 44,
-  // objectiveY and radioY are unused: FlightHudScene hard-codes the hint (y 48) and radio box (y 62).
-  objectiveY: 48,
-  radioY: 62,
+  // Top panel height, then the hint line and the radio box below it. Sized
+  // for Bengali text, whose letters reach higher and lower than Latin ones.
+  topH: 54,
+  objectiveY: 56,
+  radioY: 78,
   // pause, throttle and altGauge are rectangles (top-left x, y); pull and
   // fire are circles (centre x, y and radius r).
   pause: { x: 6, y: GAME_H - 50, w: 44, h: 44 },
@@ -36,6 +37,6 @@ export const HUD = {
   altGauge: { x: 6, y: 150, w: 22, h: Math.round(280 + EXTRA_H * 0.5) },
   // Playfield between the top panels and the bottom controls. The camera
   // centres its look-ahead point in it, and HUD edge arrows stay inside it.
-  playTop: 100,
+  playTop: 120,
   playBottom: GAME_H - 92,
 };

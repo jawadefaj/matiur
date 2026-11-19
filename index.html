@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="bn">
   <head>
     <meta charset="UTF-8" />
     <!-- Production builds load Phaser from the CDN (dev uses node_modules). -->
@@ -21,12 +21,11 @@
          site root (publicDir in vite.config.ts). -->
     <link rel="manifest" href="./manifest.webmanifest" />
     <link rel="icon" href="./icon.svg" type="image/svg+xml" />
-    <!-- "Press Start 2P" is the pixel font for all game text (FONT in src/config.ts).
-         src/main.ts waits for it to load before starting the game. -->
+    <!-- The game's font is set in src/data/strings.xml; src/core/manager/createGame.ts
+         loads it from Google Fonts before the game starts. -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=block" />
-    <title>Wings of Freedom</title>
+    <title>স্বাধীনতার ডানা</title>
     <style>
       /* Lock the page so every touch goes to the game: no scrolling,
          pull-to-refresh, text selection or tap highlight. */

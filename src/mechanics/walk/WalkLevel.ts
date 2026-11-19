@@ -1,6 +1,7 @@
 // Base class for an on-foot level: the map, goals, dialogue and scripted
 // character moves. A level is like a sortie for walking: WalkScene draws it
 // and feeds it the player's taps; the level decides what each goal needs.
+import { t } from '../../core/i18n';
 import type { Objective } from '../../core/objectives';
 import type { Point, Rect, WalkEvent, WalkMap, WalkWorld } from './WalkWorld';
 import type { Stealth } from './stealth';
@@ -200,7 +201,7 @@ export abstract class WalkLevel {
     w.locked = this.dialogue.length > 0 || this.sequences.some((s) => s.lock);
     if (this.stealth && this.status === 'running') {
       const by = this.stealth.step(w, dt);
-      if (by) this.fail(`${w.actor(by.id).name}: "Halt! Who goes there?"`);
+      if (by) this.fail(t('walk.halt', { name: w.actor(by.id).name }));
     }
   }
 

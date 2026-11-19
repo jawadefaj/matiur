@@ -5,15 +5,16 @@
 // low-level flight) is not built yet.
 // Step ids are save keys: don't rename them once released.
 import { archiveCard, defineEpisode, video } from '../../core/define';
+import { t } from '../../core/i18n';
 import { walk } from '../../mechanics/walk';
 
 export default defineEpisode({
   id: 'level2',
   number: 2,
   kind: 'playable',
-  title: 'Bluebird',
-  date: '20 August 1971',
-  place: 'PAF Base Masroor, Karachi',
+  title: t('level2.title'),
+  date: t('level2.date'),
+  place: t('level2.place'),
   unlock: 'always', // becomes { after: 'ep2' } (Level 1) once playtesting is done
   notes: [
     'ON FOOT',
@@ -26,25 +27,25 @@ export default defineEpisode({
   steps: [
     video('prologue-1', {
       src: 'level2_prologue_1',
-      fallback: ['1965 becomes 1968.', 'A wedding in Dhaka. A home in Karachi.', '1971: Bhairab. Then Karachi again, 9 May.'],
+      fallback: [t('level2.prologue1.1'), t('level2.prologue1.2'), t('level2.prologue1.3')],
     }),
     video('prologue-2', {
       src: 'level2_prologue_2',
-      fallback: ['PAF Base Masroor. He is watched.', 'He studies the base.', 'Night falls on Residential East.'],
+      fallback: [t('level2.prologue2.1'), t('level2.prologue2.2'), t('level2.prologue2.3')],
     }),
     walk.level('schedule', { map: 'masroor-schedule' }),
     walk.level('dispensary', { map: 'masroor-hospital' }),
-    video('morning', { src: 'level2_morning', fallback: ['20 August 1971.', 'Bluebird is on the schedule.'] }),
+    video('morning', { src: 'level2_morning', fallback: [t('level2.morning.1'), t('level2.morning.2')] }),
     walk.level('intercept', { map: 'masroor-intercept' }),
     video('boarding', {
       src: 'level2_boarding',
-      fallback: ['Bluebird stops on the taxiway.', 'Matiur climbs into the rear seat.', '[Next: Radar Horizon, not built yet]'],
+      fallback: [t('level2.boarding.1'), t('level2.boarding.2'), t('level2.boarding.3')],
     }),
     archiveCard('archive', {
       cardId: 'level2_bluebird',
-      heading: 'Bluebird',
-      date: '20 August 1971',
-      text: '[Placeholder] A photo, the date and a short sourced paragraph go here.',
+      heading: t('level2.title'),
+      date: t('level2.date'),
+      text: t('level2.archive.text'),
     }),
   ],
 });

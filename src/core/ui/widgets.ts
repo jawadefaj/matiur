@@ -1,9 +1,30 @@
-// Small UI helpers: pixel-font text and tappable buttons with manual
-// hit-testing (works with multi-touch alongside the flight controls).
+// Small UI helpers: game text and tappable buttons with manual hit-testing
+// (works with multi-touch alongside the flight controls).
 import Phaser from 'phaser';
-import { CSS, FONT, PAL } from '../config';
+import { CSS, GAME_H, GAME_W, PAL } from '../config';
+import { FONT, FONT_SCALE, FONT_WEIGHT, localDigits } from '../i18n';
 
-/** Add pixel-font text at (x, y). `size` is in px; `wrap` is a word-wrap width in px (0 = no wrap). */
+/**
+ * Measured for the line height: Latin plus Bengali letters that reach
+ * highest and lowest, so vowel signs above and below are never clipped.
+ */
+const TEST_STRING = '|MÉqgyকিঁর্খুূৃ';
+
+/**
+ * Text is drawn at the screen's real pixel density, then shown on the
+ * 360 px wide game canvas, so Bengali letters stay sharp on a phone.
+ */
+function textResolution(): number {
+  if (typeof window === 'undefined') return 1;
+  const zoom = Math.min(window.innerWidth / GAME_W, window.innerHeight / GAME_H);
+  return Math.max(1, Math.min(4, Math.ceil((window.devicePixelRatio || 1) * zoom)));
+}
+
+/**
+ * Add game text at (x, y). `size` is in px of the original 8 px pixel-font
+ * layout; the font scale in src/data/strings.xml enlarges it. `wrap` is a
+ * word-wrap width in px (0 = no wrap). Digits follow the XML's <digits>.
+ */
 export function txt(
   scene: Phaser.Scene,
   x: number,
@@ -13,14 +34,24 @@ export function txt(
   color = CSS.white,
   wrap = 0,
 ): Phaser.GameObjects.Text {
+  const px = Math.round(size * FONT_SCALE);
   const style: Phaser.Types.GameObjects.Text.TextStyle = {
     fontFamily: FONT,
-    fontSize: `${size}px`,
+    fontStyle: String(FONT_WEIGHT),
+    fontSize: `${px}px`,
     color,
-    lineSpacing: Math.round(size * 0.5),
+    lineSpacing: Math.round(px * 0.15),
+    testString: TEST_STRING,
+    resolution: textResolution(),
   };
   if (wrap > 0) style.wordWrap = { width: wrap };
-  return scene.add.text(x, y, s, style);
+  const text = scene.add.text(x, y, localDigits(s), style);
+  // Smooth, not pixelated: the game's pixelArt setting would make letters jagged.
+  text.texture.setFilter(Phaser.Textures.FilterMode.LINEAR);
+  // Every later setText also gets local digits.
+  const setText = text.setText.bind(text);
+  text.setText = (v: string | string[]) => setText(Array.isArray(v) ? v.map((l) => localDigits(String(l))) : localDigits(String(v)));
+  return text;
 }
 
 /**

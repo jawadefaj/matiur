@@ -1,6 +1,7 @@
 // AI pilots. Each controller writes its aircraft's input every step.
 // Enemies are period aircraft flown with skill, not menace: when hit hard
 // enough they trail smoke and break off for home.
+import { t } from '../../../../core/i18n';
 import { tuning } from '../../tuning';
 import {
   DEG,
@@ -347,7 +348,7 @@ export class WingmanAI implements AI {
         this.mode = 'engage';
         this.targetId = threat.id;
         this.engageTimer = 10;
-        w.radio.say('Sherdil Two', "I'm on him!", { key: 'engage', cooldown: 12 });
+        w.radio.say(t('who.sherdilTwo'), t('flight.engage'), { key: 'engage', cooldown: 12 });
       }
     }
     if (this.mode === 'engage') {
@@ -404,15 +405,14 @@ export class WingmanAI implements AI {
       fresh.forEach((e) => this.spotted.add(e.id));
       const e = fresh[0];
       const clock = clockPosition(angleDiff(p.f.heading, headingTo(p.f.x, p.f.y, e.f.x, e.f.y)));
-      const what = fresh.length > 1 ? `${fresh.length} bandits` : 'Bandit';
-      w.radio.say('Sherdil Two', `${what}, ${clock} o'clock!`, { key: 'spot', cooldown: 5 });
+      const text = fresh.length > 1 ? t('flight.spotMany', { n: fresh.length, clock }) : t('flight.spotOne', { clock });
+      w.radio.say(t('who.sherdilTwo'), text, { key: 'spot', cooldown: 5 });
     }
     // Someone on the player's six.
     const six = w.activeEnemies().find((e) => isThreatening(e, p, 240, 25));
     if (six) {
       const rel = angleDiff(p.f.heading, headingTo(p.f.x, p.f.y, six.f.x, six.f.y));
-      const dir = rel > 0 ? 'right' : 'left';
-      w.radio.say('Sherdil Two', `One, break ${dir}! Bandit on your six!`, {
+      w.radio.say(t('who.sherdilTwo'), rel > 0 ? t('flight.breakRight') : t('flight.breakLeft'), {
         key: 'six',
         cooldown: 7,
         urgent: true,

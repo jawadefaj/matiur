@@ -1,5 +1,6 @@
 // Sortie 1 — Scramble. Take off, join Sherdil Two, fly a short patrol.
 // Doubles as the tutorial: steering, throttle, formation, PULL and G.
+import { t } from '../../../core/i18n';
 import { tuning } from '../tuning';
 import { DEG, angleDiff, dist, rotateOffset } from '../../../core/math';
 import { WingmanAI } from '../systems/ai/AI';
@@ -14,8 +15,8 @@ const SLOT = { x: -34, y: 22 }; // left wing of Sherdil Two
 
 export class Sortie1Scramble extends Sortie {
   readonly num = 1 as const;
-  readonly title = 'Scramble';
-  readonly place = 'PAF Base Peshawar';
+  readonly title = t('s1.title');
+  readonly place = t('s1.place');
 
   /** Runs in order: takeoff, join, patrol, rtb (return to base). */
   private stage: 'takeoff' | 'join' | 'patrol' | 'rtb' = 'takeoff';
@@ -56,20 +57,20 @@ export class Sortie1Scramble extends Sortie {
     });
 
     this.objectives = [
-      { id: 'takeoff', label: 'Take off', state: 'active' },
-      { id: 'join', label: 'Join on Sherdil Two', state: 'pending' },
-      { id: 'patrol', label: 'Fly the patrol', state: 'pending', progress: '0/3' },
-      { id: 'rtb', label: 'Return to base', state: 'pending' },
+      { id: 'takeoff', label: t('s1.obj.takeoff'), state: 'active' },
+      { id: 'join', label: t('s1.obj.join'), state: 'pending' },
+      { id: 'patrol', label: t('s1.obj.patrol'), state: 'pending', progress: '0/3' },
+      { id: 'rtb', label: t('s1.obj.rtb'), state: 'pending' },
     ];
-    w.radio.say('Peshawar Tower', 'Sherdil One, cleared for take-off, runway three-six.');
-    w.radio.say('Peshawar Tower', 'Slide the THROTTLE up to start your roll.');
+    w.radio.say(t('who.tower'), t('s1.cleared'));
+    w.radio.say(t('who.tower'), t('s1.slideThrottle'));
   }
 
   protected script(w: World, dt: number): void {
     const p = w.player;
     switch (this.stage) {
       case 'takeoff': {
-        this.hint = 'Slide THROTTLE up to take off';
+        this.hint = t('s1.hint.takeoff');
         this.markers = [];
         // Lift off at takeoff.rotateSpeed (kt). Sortie.climbAfterTakeoff then handles the climb.
         if (!p.f.airborne && p.f.speed >= tuning.takeoff.rotateSpeed) p.f.airborne = true;
@@ -77,9 +78,9 @@ export class Sortie1Scramble extends Sortie {
           this.setObj('takeoff', 'done');
           this.setObj('join', 'active');
           this.stage = 'join';
-          w.radio.say('Peshawar Tower', 'Sherdil One, airborne. Good luck.');
-          w.radio.say('Sherdil Two', "Two here, north of the field. Join on my left wing.");
-          w.radio.say('Sherdil Two', 'Drag anywhere to steer. The jet turns toward your drag.');
+          w.radio.say(t('who.tower'), t('s1.airborne'));
+          w.radio.say(t('who.sherdilTwo'), t('s1.twoNorth'));
+          w.radio.say(t('who.sherdilTwo'), t('s1.dragToSteer'));
         }
         break;
       }
@@ -93,7 +94,7 @@ export class Sortie1Scramble extends Sortie {
         const inSlot = dd < 18 && hErr < 25 * DEG;
         this.joinTime = inSlot ? this.joinTime + dt : Math.max(0, this.joinTime - dt * 0.5);
         this.setObj('join', 'active', `${Math.round((this.joinTime / JOIN_SECONDS) * 100)}%`);
-        this.hint = dd > 220 ? 'Catch up with Sherdil Two' : inSlot ? 'Hold position...' : 'Slide into the marked slot';
+        this.hint = dd > 220 ? t('s1.hint.catchUp') : inSlot ? t('s1.hint.hold') : t('s1.hint.slide');
 
         // Throttle coaching. `along` is px the slot lies ahead of the player along
         // Two's heading; negative means the player has passed it.
@@ -101,9 +102,9 @@ export class Sortie1Scramble extends Sortie {
           const h = this.two.f.heading;
           const along = (sx - p.f.x) * Math.sin(h) - (sy - p.f.y) * Math.cos(h);
           if (along < -20 && p.f.speed > this.two.f.speed + 15) {
-            w.radio.say('Sherdil Two', "You're overshooting, One. Throttle back.", { key: 'fast', cooldown: 6 });
+            w.radio.say(t('who.sherdilTwo'), t('s1.overshoot'), { key: 'fast', cooldown: 6 });
           } else if (along > 90 && p.f.speed < this.two.f.speed + 10) {
-            w.radio.say('Sherdil Two', 'A bit more throttle to close up.', { key: 'slow', cooldown: 6 });
+            w.radio.say(t('who.sherdilTwo'), t('s1.moreThrottle'), { key: 'slow', cooldown: 6 });
           }
         }
         if (this.joinTime >= JOIN_SECONDS) {
@@ -113,38 +114,38 @@ export class Sortie1Scramble extends Sortie {
           // The player now leads; Two takes the right wing.
           this.twoAI.mode = 'form';
           this.twoAI.slot = { x: 34, y: 22 };
-          w.radio.say('Sherdil Two', "Good join! You have the lead. I'll take your wing.");
-          w.radio.say('Sherdil Two', 'Fly the patrol points. Hold PULL for a tighter turn.');
+          w.radio.say(t('who.sherdilTwo'), t('s1.goodJoin'));
+          w.radio.say(t('who.sherdilTwo'), t('s1.flyPatrol'));
         }
         break;
       }
       case 'patrol': {
         const wpt = this.patrol[this.wp];
         this.markers = [{ x: wpt.x, y: wpt.y, r: 140, kind: 'waypoint', label: `CAP ${this.wp + 1}` }];
-        this.hint = `Fly to patrol point ${this.wp + 1} of 3`;
+        this.hint = t('s1.hint.patrol', { n: this.wp + 1 });
         if (dist(p.f.x, p.f.y, wpt.x, wpt.y) < 140) {
           this.wp++;
           this.setObj('patrol', 'active', `${this.wp}/3`);
           if (this.wp === 1) {
-            w.radio.say('Sherdil Two', 'Point one. Now try a hard turn: hold PULL while you steer.');
+            w.radio.say(t('who.sherdilTwo'), t('s1.point1'));
           } else if (this.wp === 2) {
-            w.radio.say('Sherdil Two', 'Mind the G-meter. Past 5.5 G too long and you grey out.');
-            w.radio.say('Sherdil Two', 'Seven G for more than a second and you black out.');
+            w.radio.say(t('who.sherdilTwo'), t('s1.gmeter'));
+            w.radio.say(t('who.sherdilTwo'), t('s1.sevenG'));
           } else {
             this.setObj('patrol', 'done');
             this.setObj('rtb', 'active');
             this.stage = 'rtb';
-            w.radio.say('Peshawar Control', 'Sherdil flight, patrol complete. Return to base.');
+            w.radio.say(t('who.control'), t('s1.patrolComplete'));
           }
         }
         break;
       }
       case 'rtb': {
         this.markers = [{ x: PESHAWAR.x, y: PESHAWAR.y, r: 260, kind: 'base', label: 'BASE' }];
-        this.hint = 'Return to base';
+        this.hint = t('s1.obj.rtb');
         if (dist(p.f.x, p.f.y, PESHAWAR.x, PESHAWAR.y) < 260) {
           this.setObj('rtb', 'done');
-          w.radio.say('Peshawar Tower', 'Sherdil flight, welcome home.');
+          w.radio.say(t('who.tower'), t('s1.welcomeHome'));
           this.complete();
         }
         break;

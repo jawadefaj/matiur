@@ -6,6 +6,7 @@
 //   FIRE ................. only when guns are set to HOLD
 // Desktop: arrows steer, W/S throttle, SPACE pull, F fire, P/ESC pause.
 import Phaser from 'phaser';
+import { t } from '../../../core/i18n';
 import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../../../core/config';
 import { HUD } from '../layout';
 import { tuning } from '../tuning';
@@ -21,6 +22,9 @@ const STICK_R = 36;
 
 /** What covers the HUD: nothing, a card (title or checkpoint), the pause menu or the results. */
 type Overlay = 'none' | 'card' | 'pause' | 'result';
+
+/** Top of the fuel and G bars and the airframe pips, below their labels. */
+const BAR_Y = 22;
 
 /** The floating stick: its base (ox, oy) and the finger (x, y), in screen px. id is the pointer. */
 interface Stick {
@@ -84,28 +88,28 @@ export class FlightHudScene extends Phaser.Scene {
 
     const W = GAME_W;
     this.t = {
-      fuel: txt(this, 6, 5, 'FUEL', 8, CSS.dim),
-      fuelV: txt(this, 110, 5, '', 8).setOrigin(1, 0),
-      gl: txt(this, 122, 5, 'G', 8, CSS.dim),
-      gV: txt(this, 232, 5, '', 8).setOrigin(1, 0),
-      air: txt(this, 246, 5, 'AIRFRAME', 8, CSS.dim),
-      speed: txt(this, 6, 30, '', 8),
-      alt: txt(this, 122, 30, '', 8),
-      thr: txt(this, 246, 30, '', 8),
-      hint: txt(this, W / 2, 48, '', 8, CSS.signal).setOrigin(0.5, 0),
-      radioFrom: txt(this, 9, 66, '', 8, CSS.friendly),
-      radio: txt(this, 9, 78, '', 8, CSS.white, 340),
-      warn: txt(this, W / 2, 124, '', 16, CSS.danger).setOrigin(0.5, 0),
-      warn2: txt(this, W / 2, 146, '', 8, CSS.white).setOrigin(0.5, 0),
+      fuel: txt(this, 6, 2, t('hud.fuel'), 8, CSS.dim),
+      fuelV: txt(this, 110, 2, '', 8).setOrigin(1, 0),
+      gl: txt(this, 122, 2, t('hud.g'), 8, CSS.dim),
+      gV: txt(this, 232, 2, '', 8).setOrigin(1, 0),
+      air: txt(this, 246, 2, t('hud.airframe'), 8, CSS.dim),
+      speed: txt(this, 6, 33, '', 8),
+      alt: txt(this, 122, 33, '', 8),
+      thr: txt(this, 246, 33, '', 8),
+      hint: txt(this, W / 2, HUD.objectiveY, '', 8, CSS.signal).setOrigin(0.5, 0),
+      radioFrom: txt(this, 9, HUD.radioY + 2, '', 8, CSS.friendly),
+      radio: txt(this, 9, HUD.radioY + 20, '', 8, CSS.white, 340),
+      warn: txt(this, W / 2, 150, '', 16, CSS.danger).setOrigin(0.5, 0),
+      warn2: txt(this, W / 2, 184, '', 8, CSS.white).setOrigin(0.5, 0),
       pause: txt(this, HUD.pause.x + HUD.pause.w / 2, HUD.pause.y + HUD.pause.h / 2, 'II', 8).setOrigin(0.5),
-      pull: txt(this, HUD.pull.x, HUD.pull.y, 'PULL', 8, CSS.signal).setOrigin(0.5),
-      fire: txt(this, HUD.fire.x, HUD.fire.y, 'FIRE', 8, CSS.white).setOrigin(0.5),
-      thrLbl: txt(this, HUD.throttle.x + HUD.throttle.w / 2, HUD.throttle.y - 14, 'THR', 8, CSS.dim).setOrigin(0.5, 0),
+      pull: txt(this, HUD.pull.x, HUD.pull.y, t('hud.pull'), 8, CSS.signal).setOrigin(0.5),
+      fire: txt(this, HUD.fire.x, HUD.fire.y, t('hud.fire'), 8, CSS.white).setOrigin(0.5),
+      thrLbl: txt(this, HUD.throttle.x + HUD.throttle.w / 2, HUD.throttle.y - 14, t('hud.thrLabel'), 8, CSS.dim).setOrigin(0.5, 0),
       altNum: txt(this, HUD.altGauge.x, HUD.altGauge.y + HUD.altGauge.h + 6, '', 8),
-      radar: txt(this, HUD.altGauge.x, HUD.altGauge.y + HUD.altGauge.h + 50, 'RADAR', 8, CSS.dim),
+      radar: txt(this, HUD.altGauge.x, HUD.altGauge.y + HUD.altGauge.h + 50, t('hud.radar'), 8, CSS.dim),
       a100: txt(this, HUD.altGauge.x + HUD.altGauge.w + 3, 0, '100', 8, CSS.dim),
       a30: txt(this, HUD.altGauge.x + HUD.altGauge.w + 3, 0, '30', 8, CSS.dim),
-      slideUp: txt(this, HUD.throttle.x - 4, 0, 'SLIDE\nUP', 8, CSS.signal).setOrigin(1, 0.5).setAlign('right'),
+      slideUp: txt(this, HUD.throttle.x - 4, 0, t('hud.slideUp'), 8, CSS.signal).setOrigin(1, 0.5).setAlign('right'),
     };
     for (const t of Object.values(this.t)) t.setDepth(2);
     // The altitude gauge and radar only show in low-level flight (sortie 3).
@@ -345,7 +349,7 @@ export class FlightHudScene extends Phaser.Scene {
     const fuel = w.fuel.pct;
     const fuelCol = fuel > 25 ? PAL.ok : fuel > tuning.fuel.bingo ? PAL.warn : PAL.danger;
     const fuelShow = fuel > tuning.fuel.bingo || blinkOn;
-    this.bar(g, 6, 16, 104, 8, fuel / 100, fuelShow ? fuelCol : PAL.ink);
+    this.bar(g, 6, BAR_Y, 104, 8, fuel / 100, fuelShow ? fuelCol : PAL.ink);
     this.t.fuelV.setText(`${Math.ceil(fuel)}%`);
 
     // G bar: 0 to 7.5 G, ticks at the greyout and blackout limits. Green below
@@ -354,11 +358,11 @@ export class FlightHudScene extends Phaser.Scene {
     const gmax = 7.5;
     const gCol = gv < 4 ? PAL.ok : gv < tuning.gmeter.greyoutAbove ? PAL.warn : PAL.danger;
     const gFlash = w.gmeter.blackoutWarning !== null && !blinkOn;
-    this.bar(g, 122, 16, 110, 8, gv / gmax, gFlash ? PAL.white : gCol);
+    this.bar(g, 122, BAR_Y, 110, 8, gv / gmax, gFlash ? PAL.white : gCol);
     for (const [mark, col] of [[tuning.gmeter.greyoutAbove, PAL.warn], [tuning.gmeter.blackoutAt, PAL.danger]] as const) {
       const mx = Math.round(122 + (mark / gmax) * 110);
       g.fillStyle(col, 1);
-      g.fillRect(mx, 13, 1, 14);
+      g.fillRect(mx, BAR_Y - 3, 1, 14);
     }
     this.t.gV.setText(gv.toFixed(1));
 
@@ -369,36 +373,38 @@ export class FlightHudScene extends Phaser.Scene {
       const alive = i < pips;
       const col = pips >= 3 ? PAL.ok : pips === 2 ? PAL.warn : PAL.danger;
       g.fillStyle(PAL.ink, 1);
-      g.fillRect(x, 15, 32, 10);
+      g.fillRect(x, BAR_Y - 1, 32, 10);
       if (alive) {
         g.fillStyle(col, 1);
-        g.fillRect(x + 1, 16, 30, 8);
+        g.fillRect(x + 1, BAR_Y, 30, 8);
       } else {
         g.lineStyle(1, PAL.panelEdge, 1);
-        g.strokeRect(x + 1.5, 16.5, 29, 7);
+        g.strokeRect(x + 1.5, BAR_Y + 0.5, 29, 7);
       }
     }
 
-    this.t.speed.setText(`${Math.round(p.speed)} KT`);
+    this.t.speed.setText(t('hud.speed', { v: Math.round(p.speed) }));
     // Low level shows whole feet; at altitude, the nearest 100 ft.
-    this.t.alt.setText(s.lowLevel ? `ALT ${Math.max(0, Math.round(p.altitude))} FT` : `ALT ${Math.round(p.altitude / 100) * 100}`);
-    this.t.thr.setText(`THR ${Math.round(w.controls.throttle * 100)}%`);
+    this.t.alt.setText(s.lowLevel ? t('hud.altLow', { v: Math.max(0, Math.round(p.altitude)) }) : t('hud.alt', { v: Math.round(p.altitude / 100) * 100 }));
+    this.t.thr.setText(t('hud.thr', { v: Math.round(w.controls.throttle * 100) }));
 
     // Objective / hint strip.
     g.fillStyle(0x000000, 0.45);
-    g.fillRect(0, HUD.topH + 1, GAME_W, 14);
+    g.fillRect(0, HUD.topH + 1, GAME_W, 20);
     const act = s.objectives.find((o) => o.state === 'active' && o.progress);
     this.t.hint.setText(s.hint + (act?.progress ? `  ${act.progress}` : ''));
 
     // Radio.
     const msg = w.radio.current;
     if (msg) {
-      g.fillStyle(0x0b0c0d, 0.72);
-      g.fillRect(4, 62, GAME_W - 8, 36);
-      g.lineStyle(1, PAL.panelEdge, 1);
-      g.strokeRect(4.5, 62.5, GAME_W - 9, 35);
-      this.t.radioFrom.setText(msg.from.toUpperCase()).setVisible(true);
+      this.t.radioFrom.setText(msg.from).setVisible(true);
       this.t.radio.setText(msg.text).setVisible(true);
+      // The box grows to fit a message that wraps onto a second line.
+      const h = Math.ceil(this.t.radio.y + this.t.radio.height + 3 - HUD.radioY);
+      g.fillStyle(0x0b0c0d, 0.72);
+      g.fillRect(4, HUD.radioY, GAME_W - 8, h);
+      g.lineStyle(1, PAL.panelEdge, 1);
+      g.strokeRect(4.5, HUD.radioY + 0.5, GAME_W - 9, h - 1);
     } else {
       this.t.radioFrom.setVisible(false);
       this.t.radio.setVisible(false);
@@ -432,25 +438,24 @@ export class FlightHudScene extends Phaser.Scene {
     // Radar and terrain state exist only in sortie 3.
     const ll = s instanceof Sortie3LowAndHome ? s.ll : null;
     if (s.restartIn > 0) {
-      // The headline depends on the wording of the restart reason (softFail in Sortie3LowAndHome).
-      main = s.restartReason.includes('radar') || s.restartReason.includes('Interceptors') ? 'INTERCEPTED' : 'CRASHED';
-      sub = `${s.restartReason}\nRestarting from checkpoint...`;
+      main = s.restartKind === 'intercepted' ? t('hud.intercepted') : t('hud.crashed');
+      sub = t('hud.restarting', { reason: s.restartReason });
     } else if (ll?.contact) {
-      main = blinkOn ? 'RADAR CONTACT' : '';
-      sub = `Get under 100 ft! ${Math.max(0, ll.interceptTimer).toFixed(1)}s`;
+      main = blinkOn ? t('hud.radarContact') : '';
+      sub = t('hud.getUnder', { s: Math.max(0, ll.interceptTimer).toFixed(1) });
     } else if (ll?.warning === 'terrain') {
-      main = blinkOn ? 'PULL UP' : '';
+      main = blinkOn ? t('hud.pullUpWarn') : '';
     } else if (w.gmeter.blackoutWarning !== null) {
-      main = blinkOn ? 'G! EASE OFF' : '';
+      main = blinkOn ? t('hud.gEaseOff') : '';
     } else if (w.gmeter.greyout) {
-      main = 'GREYOUT';
-      sub = 'Controls soft. Ease off PULL.';
+      main = t('hud.greyout');
+      sub = t('hud.greyoutSub');
       col = CSS.warn;
     } else if (ll?.warning === 'low') {
-      main = 'TOO LOW';
+      main = t('hud.tooLow');
       col = CSS.warn;
     } else if (w.fuel.empty && w.player.f.airborne) {
-      main = blinkOn ? 'FLAMEOUT' : '';
+      main = blinkOn ? t('hud.flameout') : '';
     }
     this.t.warn.setText(main).setColor(col);
     this.t.warn2.setText(sub);
@@ -474,7 +479,7 @@ export class FlightHudScene extends Phaser.Scene {
     g.fillStyle(PAL.white, 1);
     g.fillRect(ag.x - 2, py - 1, ag.w + 4, 2);
     g.fillTriangle(ag.x + ag.w + 2, py, ag.x + ag.w + 8, py - 4, ag.x + ag.w + 8, py + 4);
-    this.t.altNum.setText(`${Math.max(0, Math.round(alt))}FT`);
+    this.t.altNum.setText(t('hud.altNum', { v: Math.max(0, Math.round(alt)) }));
 
     // Radar fill.
     const cx = ag.x + 11;
@@ -508,7 +513,7 @@ export class FlightHudScene extends Phaser.Scene {
     g.fillCircle(pu.x, pu.y, pu.r);
     g.lineStyle(2, PAL.signal, 1);
     g.strokeCircle(pu.x, pu.y, pu.r);
-    this.t.pull.setText(this.flight.sortie.lowLevel ? 'PULL\n UP' : 'PULL').setColor(pulling ? '#15171a' : CSS.signal);
+    this.t.pull.setText(this.flight.sortie.lowLevel ? t('hud.pullUp') : t('hud.pull')).setColor(pulling ? '#15171a' : CSS.signal);
 
     // FIRE (hold mode only).
     const showFire = this.fireVisible;
@@ -664,18 +669,17 @@ export class FlightHudScene extends Phaser.Scene {
     const cx = GAME_W / 2;
     const oy = Math.round(EXTRA_H / 2);
     const tips: Record<number, string> = {
-      1: 'Throttle up to roll. Drag to steer.\nJoin your wingman, fly the patrol.',
-      2: 'Get behind them: guns fire on target.\nWatch your G at high speed.',
-      3: 'Hold PULL to climb, let go to sink.\nStay 30 to 100 ft. Then land.',
+      1: t('hud.tip.1'),
+      2: t('hud.tip.2'),
+      3: t('hud.tip.3'),
     };
     this.otexts.push(
-      txt(this, cx, oy + 196, episodeLine(this.flight.host.episode), 8, CSS.dim).setOrigin(0.5),
-      txt(this, cx, oy + 222, `SORTIE ${s.num}`, 16, CSS.signal).setOrigin(0.5),
-      txt(this, cx, oy + 248, s.title.toUpperCase(), 16, CSS.white).setOrigin(0.5),
-      txt(this, cx, oy + 274, `${s.place}`, 8, CSS.dim).setOrigin(0.5),
-      txt(this, cx, oy + 288, s.date, 8, CSS.dim).setOrigin(0.5),
-      txt(this, cx, oy + 318, tips[s.num], 8, CSS.white).setOrigin(0.5, 0).setAlign('center'),
-      txt(this, cx, oy + 372, 'TAP TO START', 8, CSS.signal).setOrigin(0.5),
+      txt(this, cx, oy + 192, episodeLine(this.flight.host.episode), 8, CSS.dim).setOrigin(0.5),
+      txt(this, cx, oy + 216, t('hud.sortie', { n: s.num }), 16, CSS.signal).setOrigin(0.5),
+      txt(this, cx, oy + 246, s.title, 16, CSS.white).setOrigin(0.5),
+      txt(this, cx, oy + 276, t('hud.placeDate', { place: s.place, date: s.date }), 8, CSS.dim).setOrigin(0.5),
+      txt(this, cx, oy + 300, tips[s.num], 8, CSS.white).setOrigin(0.5, 0).setAlign('center'),
+      txt(this, cx, oy + 372, t('hud.tapToStart'), 8, CSS.signal).setOrigin(0.5),
     );
     for (const t of this.otexts) t.setDepth(21);
   }
@@ -687,12 +691,12 @@ export class FlightHudScene extends Phaser.Scene {
     this.flight.paused = true;
     const cx = GAME_W / 2;
     const oy = Math.round(EXTRA_H / 2);
-    const tip = this.flight.sortie.lowLevel ? 'Hold PULL to climb, let go to sink.' : '';
+    const tip = this.flight.sortie.lowLevel ? t('hud.tip.checkpoint') : '';
     this.otexts.push(
-      txt(this, cx, oy + 222, 'CHECKPOINT', 16, CSS.signal).setOrigin(0.5),
+      txt(this, cx, oy + 222, t('hud.checkpoint'), 16, CSS.signal).setOrigin(0.5),
       txt(this, cx, oy + 252, this.flight.sortie.restartReason, 8, CSS.white, 300).setOrigin(0.5, 0).setAlign('center'),
       txt(this, cx, oy + 300, tip, 8, CSS.dim).setOrigin(0.5),
-      txt(this, cx, oy + 372, 'TAP TO CONTINUE', 8, CSS.signal).setOrigin(0.5),
+      txt(this, cx, oy + 372, t('ui.tapToContinue'), 8, CSS.signal).setOrigin(0.5),
     );
     for (const t of this.otexts) t.setDepth(21);
   }
@@ -705,7 +709,7 @@ export class FlightHudScene extends Phaser.Scene {
     this.flight.paused = true;
     const s = this.flight.sortie;
     const cx = GAME_W / 2;
-    this.otexts.push(txt(this, cx, 150, 'PAUSED', 16, CSS.signal).setOrigin(0.5));
+    this.otexts.push(txt(this, cx, 150, t('hud.paused'), 16, CSS.signal).setOrigin(0.5));
     const lines = s.objectives.map((o) => `${mark(o.state)} ${o.label}${o.progress ? ' ' + o.progress : ''}`);
     this.otexts.push(txt(this, 40, 176, lines.join('\n'), 8, CSS.white));
     let y = 260;
@@ -713,19 +717,19 @@ export class FlightHudScene extends Phaser.Scene {
       this.obtns.add(new Button(this, 60, y, 240, 40, label, fn, primary));
       y += 50;
     };
-    add('RESUME', () => this.closeOverlay(), true);
-    add('RESTART SORTIE', () => this.flight.restartSortie());
+    add(t('hud.resume'), () => this.closeOverlay(), true);
+    add(t('hud.restartSortie'), () => this.flight.restartSortie());
     // The GUNS toggle changes the live world and the saved setting together.
-    const gunsBtn = new Button(this, 60, y, 240, 40, `GUNS: ${this.world.gunsMode.toUpperCase()}`, () => {
+    const gunsBtn = new Button(this, 60, y, 240, 40, gunsLabel(this.world.gunsMode), () => {
       const next = this.world.gunsMode === 'auto' ? 'hold' : 'auto';
       this.world.gunsMode = next;
       this.flight.host.setSetting('gunsMode', next);
-      gunsBtn.setLabel(`GUNS: ${next.toUpperCase()}`);
+      gunsBtn.setLabel(gunsLabel(next));
     });
     this.obtns.add(gunsBtn);
     y += 50;
-    if (this.scale.fullscreen.available) add('FULL SCREEN', () => this.scale.toggleFullscreen());
-    add('MENU', () => this.flight.toMenu());
+    if (this.scale.fullscreen.available) add(t('ui.fullScreen'), () => this.scale.toggleFullscreen());
+    add(t('ui.menu'), () => this.flight.toMenu());
     for (const b of this.obtns.buttons) b.setDepth(21);
     for (const t of this.otexts) t.setDepth(21);
   }
@@ -747,8 +751,8 @@ export class FlightHudScene extends Phaser.Scene {
     });
     const cx = GAME_W / 2;
     this.otexts.push(
-      txt(this, cx, 120, ok ? 'SORTIE COMPLETE' : 'SORTIE FAILED', 16, ok ? CSS.ok : CSS.danger).setOrigin(0.5),
-      txt(this, cx, 144, `SORTIE ${s.num}: ${s.title.toUpperCase()}`, 8, CSS.dim).setOrigin(0.5),
+      txt(this, cx, 120, ok ? t('hud.sortieComplete') : t('hud.sortieFailed'), 16, ok ? CSS.ok : CSS.danger).setOrigin(0.5),
+      txt(this, cx, 144, t('flight.sortieTitle', { n: s.num, title: s.title }), 8, CSS.dim).setOrigin(0.5),
     );
     let y = 166;
     if (!ok) {
@@ -757,8 +761,8 @@ export class FlightHudScene extends Phaser.Scene {
       y += reason.height + 12;
     }
     const lines = s.objectives.map((o) => `${mark(o.state)} ${o.label}`);
-    lines.push('', `Time ${time}   Airframe ${this.world.damage.pips}/3   Fuel ${Math.ceil(this.world.fuel.pct)}%`);
-    if (s.restarts > 0) lines.push(`Checkpoint restarts: ${s.restarts}`);
+    lines.push('', t('hud.stats', { time, airframe: this.world.damage.pips, fuel: Math.ceil(this.world.fuel.pct) }));
+    if (s.restarts > 0) lines.push(t('hud.restarts', { n: s.restarts }));
     const list = txt(this, 34, y, lines.join('\n'), 8, CSS.white, 300);
     this.otexts.push(list);
     y = Math.max(y + list.height + 24, 330);
@@ -768,10 +772,10 @@ export class FlightHudScene extends Phaser.Scene {
     };
     // NEXT goes on through the episode (a cutscene, the next sortie...).
     if (ok && host.upNext) add(host.upNext.label, () => host.advance(), true);
-    add(ok ? 'FLY AGAIN' : 'RETRY', () => this.flight.restartSortie(), !ok);
+    add(ok ? t('hud.flyAgain') : t('ui.retry'), () => this.flight.restartSortie(), !ok);
     // After repeated failures: watch a rewarded ad to pass this sortie.
-    if (!ok && host.ads.offerSkip()) add('WATCH AD: SKIP SORTIE', () => host.ads.skipWithAd(), true);
-    add('MENU', () => this.flight.toMenu());
+    if (!ok && host.ads.offerSkip()) add(t('hud.skipWithAd'), () => host.ads.skipWithAd(), true);
+    add(t('ui.menu'), () => this.flight.toMenu());
     host.ads.resultsBanner(true);
     for (const b of this.obtns.buttons) b.setDepth(21);
     for (const t of this.otexts) t.setDepth(21);
@@ -820,13 +824,18 @@ export class FlightHudScene extends Phaser.Scene {
 
 /** The line above the sortie title on the briefing card. */
 function episodeLine(ep: { number: number; title: string } | null): string {
-  return ep ? `EPISODE ${ep.number} - ${ep.title.toUpperCase()}` : 'FLIGHT TEST';
+  return ep ? t('hud.episodeLine', { n: ep.number, title: ep.title }) : t('hud.flightTest');
 }
 
 /** Text checkbox for an objective state, for the pause and results lists. */
 function mark(state: string): string {
-  if (state === 'done') return '[OK]';
-  if (state === 'failed') return '[X] ';
-  if (state === 'active') return '[>] ';
-  return '[ ] ';
+  if (state === 'done') return t('hud.mark.done');
+  if (state === 'failed') return t('hud.mark.failed');
+  if (state === 'active') return t('hud.mark.active');
+  return t('hud.mark.pending');
+}
+
+/** The pause menu's GUNS toggle label, worded like the menu's setting. */
+function gunsLabel(mode: string): string {
+  return t('menu.setting', { label: t('flight.guns'), value: t(mode === 'hold' ? 'flight.guns.hold' : 'flight.guns.auto') });
 }
