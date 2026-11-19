@@ -6,24 +6,26 @@ A mobile-first pixel-art game about Flight Lieutenant Matiur Rahman (1941–1971
 > on-foot flight line, three sorties, placeholder between-sortie scenes and an archive card. It uses placeholder art and has no sound yet.
 > The game runs from a game script: episodes are written as lists of steps in [src/game/](src/game/) and played by a game manager.
 
-## Screenshots
+## Build & Run
 
-Episode 2 on a phone (portrait, 360 px wide, shown at 2×):
+Requires **Node 22.12** or newer.
 
-<table>
-  <tr>
-    <td align="center" width="25%"><img src="assets/screenshots/menu.png" alt="Sortie select menu" width="200"><br><sub>Sortie select</sub></td>
-    <td align="center" width="25%"><img src="assets/screenshots/takeoff.png" alt="Take-off roll on the runway at Peshawar" width="200"><br><sub>Sortie 1: take-off roll at Peshawar</sub></td>
-    <td align="center" width="25%"><img src="assets/screenshots/formation.png" alt="Joining the wingman's formation slot" width="200"><br><sub>Sortie 1: joining Sherdil Two's wing</sub></td>
-    <td align="center" width="25%"><img src="assets/screenshots/intercept.png" alt="Gunsight on an enemy bomber, tracers in the air" width="200"><br><sub>Sortie 2: gunsight on a bomber</sub></td>
-  </tr>
-  <tr>
-    <td align="center"><img src="assets/screenshots/break-off.png" alt="A hit fighter trails smoke and breaks off; the screen edges darken under high G" width="200"><br><sub>Sortie 2: a hit fighter breaks off. The dark edges are G strain.</sub></td>
-    <td align="center"><img src="assets/screenshots/low-level.png" alt="Flying under 100 ft through a valley, climbing over a ridge" width="200"><br><sub>Sortie 3: climbing over a ridge, under 100 ft</sub></td>
-    <td align="center"><img src="assets/screenshots/landing.png" alt="Final approach to the runway" width="200"><br><sub>Sortie 3: final approach</sub></td>
-    <td align="center"><img src="assets/screenshots/results.png" alt="Sortie complete screen listing objectives" width="200"><br><sub>Scored on objectives only, no kill count</sub></td>
-  </tr>
-</table>
+```bash
+# Install dependencies
+npm install
+
+# Development server (run with `npm run dev`, then open the Network address on your phone)
+npm run dev
+
+# Build for production
+npm run build              # Static build in dist/ (Phaser from jsDelivr CDN)
+npm run build:single      # Single self-contained HTML file: dist-single/index.html (~2.4 MB)
+
+# Test
+npm test                  # Unit tests, bot pilots, game and architecture checks
+npm run typecheck         # TypeScript check only
+npm run preview           # Preview the built game locally
+```
 
 ## Episode 2: Sabre Skies
 
