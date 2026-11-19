@@ -64,6 +64,30 @@
   <body>
     <!-- Phaser puts its canvas in #game, and the video player its overlay. src/main.ts is the entry point. -->
     <div id="game"></div>
+    <!-- If the game fails to start (an old browser, no graphics support), show
+         why instead of a blank page. A plain script, so it runs even when the
+         game's module cannot load. -->
+    <script>
+      (function () {
+        function show(msg) {
+          if (document.querySelector('#game canvas') || document.getElementById('boot-error')) return;
+          var box = document.createElement('div');
+          box.id = 'boot-error';
+          box.style.cssText =
+            'position:fixed;inset:0;display:flex;flex-direction:column;justify-content:center;gap:12px;padding:24px;' +
+            'color:#e8e2c8;font:14px/1.5 monospace;background:#111214;text-align:center;z-index:9';
+          box.innerHTML = '<b style="color:#e8c547">The game could not start on this browser.</b>' +
+            '<span>Try the latest Chrome, Safari or Firefox, outside apps such as WhatsApp or Facebook.</span>';
+          var detail = document.createElement('small');
+          detail.style.opacity = '0.6';
+          detail.textContent = String(msg || 'Unknown error');
+          box.appendChild(detail);
+          document.body.appendChild(box);
+        }
+        window.addEventListener('error', function (e) { show(e.message); });
+        window.addEventListener('unhandledrejection', function (e) { show(e.reason && e.reason.message || e.reason); });
+      })();
+    </script>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

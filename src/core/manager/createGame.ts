@@ -31,7 +31,9 @@ export async function createGame(parts: GameParts): Promise<GameManager> {
   // world steps, and draws on top.
   const runtimes = Object.values(parts.runtimes).sort((a, b) => (a.order ?? 0) - (b.order ?? 0) || a.id.localeCompare(b.id));
   const game = new Phaser.Game({
-    type: Phaser.WEBGL,
+    // WebGL where the device has it, otherwise Canvas. Some phones and in-app
+    // browsers cannot make a WebGL context; forcing WebGL left them blank.
+    type: Phaser.AUTO,
     parent: container,
     width: GAME_W,
     height: GAME_H,
