@@ -2,10 +2,9 @@
 // in order. Each step is a video, a mechanic level, a cutscene or a card.
 // Step ids are save keys: don't rename them once released (sortie-1..3 also
 // carry over progress from the old save).
-import { archiveCard, cutscene, defineEpisode, video } from '../../core/define';
+import { archiveCard, defineEpisode, video } from '../../core/define';
 import { t } from '../../core/i18n';
 import { flight } from '../../mechanics/flight';
-import { walk } from '../../mechanics/walk';
 
 export default defineEpisode({
   id: 'ep2',
