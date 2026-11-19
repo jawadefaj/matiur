@@ -4,8 +4,8 @@ import type { DialogueLine } from '../contracts';
 
 // '?url&no-inline' keeps even tiny clips as files: iOS Safari often refuses
 // a video given as a data: URL. Videos are in assets/public/ so they're
-// copied to dist/assets/ by Vite.
-const VIDEO_FILES = import.meta.glob<string>('/assets/public/*.{mp4,webm}', {
+// served from root (/) by Vite and copied to dist/assets/ at build time.
+const VIDEO_FILES = import.meta.glob<string>('/*.{mp4,webm}', {
   eager: true,
   query: '?url&no-inline',
   import: 'default',

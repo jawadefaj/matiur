@@ -25,30 +25,31 @@ export default defineEpisode({
     'Hit aircraft break off; none explode.',
   ],
   steps: [
-    // 1.1: Opening video — learn who Matiur is
-    video('opening', { src: 'ep2_opening', fallback: [t('ep2.intro.1'), t('ep2.intro.2')] }),
-    // 1.2: First flight line scene (30 seconds)
-    video('flight-line', { src: 'ep2_flight_line', fallback: [t('ep2.beat1.1'), t('ep2.beat1.2')] }),
+    // 1: Opening video
+    video('opening', { src: 'ep2_opening', fallback: [t('ep2.intro.1'), t('ep2.intro.2')] }, { title: 'Son of Dhaka' }),
+    // 2: Flight line video (30s)
+    video('flight-line', { src: 'ep2_flight_line', fallback: [t('ep2.beat1.1'), t('ep2.beat1.2')] }, { title: 'Flight Line' }),
 
-    // 2.1: Sortie 1 (Scramble)
+    // 3: Sortie 1 (Scramble)
     flight.level('sortie-1', { sortie: 1 }),
-    // 2.2: 15-second beat between sorties
-    video('between-1', { src: 'ep2_between_1', fallback: [t('ep2.beat1.1')] }),
+    // 4: Between sorties video (15s)
+    video('between-1', { src: 'ep2_between_1', fallback: [t('ep2.beat1.1')] }, { title: 'Refuelled' }),
 
-    // 3: Sortie 2 (Intercept)
+    // 5: Sortie 2 (Intercept)
     flight.level('sortie-2', { sortie: 2 }),
 
-    // 4.1: Before final sortie — setup for low-level flight
-    video('pre-sortie-3', { src: 'ep2_pre_sortie_3', fallback: [t('ep2.beat2.1')] }),
-    // 4.2: 30-second mission briefing video
-    video('mission-3', { src: 'ep2_mission_3', fallback: [t('ep2.beat2.1')] }),
+    // 6: Pre-sortie-3 video
+    video('pre-sortie-3', { src: 'ep2_pre_sortie_3', fallback: [t('ep2.beat2.1')] }, { title: 'Final Mission' }),
+    // 7: Mission briefing video (30s)
+    video('mission-3', { src: 'ep2_mission_3', fallback: [t('ep2.beat2.1')] }, { title: 'Briefing' }),
 
-    // 4.3: Sortie 3 (Low and Home)
+    // 8: Sortie 3 (Low and Home)
     flight.level('sortie-3', { sortie: 3 }),
 
-    // 4.4: 15-second post-sortie beat
-    video('after-sortie-3', { src: 'ep2_after_sortie_3', fallback: [t('ep2.beat2.1')] }),
+    // 9: Post-sortie video (15s)
+    video('after-sortie-3', { src: 'ep2_after_sortie_3', fallback: [t('ep2.beat2.1')] }, { title: 'Return' }),
 
+    // 10: Archive Card
     archiveCard('archive', {
       cardId: 'ep2_sabre_skies',
       heading: t('ep2.title'),

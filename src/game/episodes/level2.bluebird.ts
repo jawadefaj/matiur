@@ -25,37 +25,39 @@ export default defineEpisode({
     'Content note: depicts the events of 20 August 1971.',
   ],
   steps: [
-    // Opening video — 1965–1971 bridge and arrival at Masroor
+    // 1: Opening video — 1965–1971 bridge
     video('prologue-1', {
       src: 'level2_prologue_1',
       fallback: [t('level2.prologue1.1'), t('level2.prologue1.2'), t('level2.prologue1.3')],
-    }),
+    }, { title: 'Six Years' }),
+    // 2: Under watch video
     video('prologue-2', {
       src: 'level2_prologue_2',
       fallback: [t('level2.prologue2.1'), t('level2.prologue2.2'), t('level2.prologue2.3')],
-    }),
+    }, { title: 'Under Watch' }),
 
-    // 5.1: Flight schedule (stealth gameplay)
+    // 3: Flight schedule (stealth gameplay)
     walk.level('schedule', { map: 'masroor-schedule' }),
-    // 5.2: 15-second beat after schedule
-    video('after-schedule', { src: 'level2_after_schedule', fallback: [t('level2.schedule.1')] }),
+    // 4: After schedule video (15s)
+    video('after-schedule', { src: 'level2_after_schedule', fallback: [t('level2.schedule.1')] }, { title: 'Schedule Read' }),
 
-    // 6.1: Dispensary (stealth gameplay)
+    // 5: Dispensary (stealth gameplay)
     walk.level('dispensary', { map: 'masroor-hospital' }),
-    // 6.2: Video beat
-    video('after-dispensary', { src: 'level2_after_dispensary', fallback: [t('level2.dispensary.1')] }),
+    // 6: After dispensary video (15s)
+    video('after-dispensary', { src: 'level2_after_dispensary', fallback: [t('level2.dispensary.1')] }, { title: 'Prepared' }),
 
-    // Morning cinematic transition
-    video('morning', { src: 'level2_morning', fallback: [t('level2.morning.1'), t('level2.morning.2')] }),
+    // 7: Morning transition video
+    video('morning', { src: 'level2_morning', fallback: [t('level2.morning.1'), t('level2.morning.2')] }, { title: 'Morning' }),
 
-    // 7.1: Stop the aircraft (intercept gameplay)
+    // 8: Stop the aircraft (intercept gameplay)
     walk.level('intercept', { map: 'masroor-intercept' }),
-    // 7.2: 1-minute video — boarding and low-level flight
+    // 9: Boarding and flight video (1 min)
     video('boarding', {
       src: 'level2_boarding',
       fallback: [t('level2.boarding.1'), t('level2.boarding.2'), t('level2.boarding.3')],
-    }),
+    }, { title: 'Bluebird' }),
 
+    // 10: Archive Card
     archiveCard('archive', {
       cardId: 'level2_bluebird',
       heading: t('level2.title'),
