@@ -5,6 +5,7 @@
 // Stealth levels (Level 2) add guards' vision cones, a detection meter and a
 // RETRY card when the player is caught.
 import Phaser from 'phaser';
+import { t } from '../../../core/i18n';
 import { CSS, GAME_H, GAME_W, PAL } from '../../../core/config';
 import { tuning } from '../tuning';
 import { WALKER_COLS, WALKER_ROWS } from '../art/pixelArt';
@@ -126,8 +127,8 @@ export class WalkScene extends Phaser.Scene {
     this.lineText = txt(this, 18, 0, '', 8, CSS.white, GAME_W - 36).setScrollFactor(0).setDepth(DEPTH_HUD + 1);
 
     this.buttons = new ButtonSet();
-    this.menuBtn = this.buttons.add(new Button(this, GAME_W - 62, 6, 56, 32, 'MENU', () => this.host.quit()));
-    this.talkBtn = this.buttons.add(new Button(this, GAME_W - 96, GAME_H - 64, 88, 48, 'TALK', () => this.world.interact(), true));
+    this.menuBtn = this.buttons.add(new Button(this, GAME_W - 62, 6, 56, 32, t('ui.menu'), () => this.host.quit()));
+    this.talkBtn = this.buttons.add(new Button(this, GAME_W - 96, GAME_H - 64, 88, 48, t('walk.talk'), () => this.world.interact(), true));
     for (const b of this.buttons.buttons) {
       b.text.setScrollFactor(0);
       b.setDepth(DEPTH_HUD);
@@ -433,7 +434,7 @@ export class WalkScene extends Phaser.Scene {
     g.fillRect(0, 44, GAME_W, 1);
     const done = lvl.objectives.filter((o) => o.state === 'done').length;
     const active = lvl.objectives.find((o) => o.state === 'active');
-    this.goalText.setText(`${lvl.title.toUpperCase()}  ${done}/${lvl.objectives.length}`);
+    this.goalText.setText(t('walk.progress', { title: lvl.title, done, total: lvl.objectives.length }));
     this.hintText.setText(lvl.hint || active?.label || '');
 
     // Drag stick ring while dragging.
@@ -464,7 +465,7 @@ export class WalkScene extends Phaser.Scene {
         g.fillStyle(PAL.signal, 1);
         g.fillTriangle(GAME_W - 26, by + boxH - 16, GAME_W - 18, by + boxH - 12, GAME_W - 26, by + boxH - 8);
       }
-      this.speakerText.setText(line.speaker.toUpperCase()).setPosition(18, by + 10);
+      this.speakerText.setText(line.speaker ?? '').setPosition(18, by + 10);
       this.lineText.setText(line.text).setPosition(18, by + 28);
     }
     this.speakerText.setVisible(!!line && playing);
@@ -481,7 +482,7 @@ export class WalkScene extends Phaser.Scene {
     }
     const free = playing && !line && !this.world.locked;
     const actLabel = free ? lvl.actionLabel(this.world) : null;
-    this.talkBtn.setLabel(actLabel ?? 'TALK');
+    this.talkBtn.setLabel(actLabel ?? t('walk.talk'));
     this.talkBtn.setVisible(free && (!!actLabel || !!this.world.nearestTalkable()));
     this.menuBtn.setVisible(this.phase !== 'done');
     this.buttons.draw(g);
@@ -496,16 +497,16 @@ export class WalkScene extends Phaser.Scene {
     const add = (t: Phaser.GameObjects.Text) => this.cardTexts.push(t.setScrollFactor(0).setDepth(DEPTH_HUD + 3));
     const bg = this.add.rectangle(0, 0, GAME_W, GAME_H, 0x0b0c0d, 0.7).setOrigin(0).setScrollFactor(0).setDepth(DEPTH_HUD + 2);
     this.cardBg = bg;
-    add(txt(this, GAME_W / 2, cy - 60, l.date.toUpperCase(), 8, CSS.dim).setOrigin(0.5));
-    add(txt(this, GAME_W / 2, cy - 38, l.title.toUpperCase(), 16, CSS.signal).setOrigin(0.5));
+    add(txt(this, GAME_W / 2, cy - 60, l.date, 8, CSS.dim).setOrigin(0.5));
+    add(txt(this, GAME_W / 2, cy - 38, l.title, 16, CSS.signal).setOrigin(0.5));
     add(txt(this, GAME_W / 2, cy - 14, l.place, 8, CSS.white).setOrigin(0.5));
-    const goals = l.objectives.map((o) => `- ${o.label}`).join('\n');
+    const goals = l.objectives.map((o) => t('walk.goal', { label: o.label })).join('\n');
     add(txt(this, 30, cy + 10, goals, 8, CSS.dim, GAME_W - 60));
     const how = l.stealth
-      ? 'Arrow keys / WASD, or drag, to walk.\nStay out of the torch beams.'
-      : 'Tap to walk. Tap a person to talk.\nOr drag to walk.';
+      ? t('walk.howStealth')
+      : t('walk.howTalk');
     add(txt(this, GAME_W / 2, cy + 90, how, 8, CSS.dim).setOrigin(0.5, 0).setAlign('center'));
-    add(txt(this, GAME_W / 2, cy + 140, 'TAP TO BEGIN', 8, CSS.signal).setOrigin(0.5));
+    add(txt(this, GAME_W / 2, cy + 140, t('ui.tapToBegin'), 8, CSS.signal).setOrigin(0.5));
   }
 
   private cardBg: Phaser.GameObjects.Rectangle | null = null;
@@ -525,12 +526,12 @@ export class WalkScene extends Phaser.Scene {
     const cy = GAME_H / 2;
     this.cardBg = this.add.rectangle(0, 0, GAME_W, GAME_H, 0x0b0c0d, 0.7).setOrigin(0).setScrollFactor(0).setDepth(DEPTH_HUD + 2);
     const add = (t: Phaser.GameObjects.Text) => this.cardTexts.push(t.setScrollFactor(0).setDepth(DEPTH_HUD + 3));
-    add(txt(this, GAME_W / 2, cy - 70, 'CAUGHT', 16, CSS.warn).setOrigin(0.5));
+    add(txt(this, GAME_W / 2, cy - 70, t('walk.caught'), 16, CSS.warn).setOrigin(0.5));
     add(txt(this, GAME_W / 2, cy - 40, this.level.failText, 8, CSS.white, GAME_W - 60).setOrigin(0.5, 0).setAlign('center'));
     this.host.report({ result: 'failed' });
     const btns = [
-      new Button(this, 40, cy + 10, GAME_W - 80, 44, 'RETRY', () => this.host.retry(), true),
-      new Button(this, 40, cy + 66, GAME_W - 80, 36, 'MENU', () => this.host.quit()),
+      new Button(this, 40, cy + 10, GAME_W - 80, 44, t('ui.retry'), () => this.host.retry(), true),
+      new Button(this, 40, cy + 66, GAME_W - 80, 36, t('ui.menu'), () => this.host.quit()),
     ];
     for (const b of btns) {
       b.text.setScrollFactor(0);
@@ -550,13 +551,13 @@ export class WalkScene extends Phaser.Scene {
     const cy = GAME_H / 2;
     this.cardBg = this.add.rectangle(0, 0, GAME_W, GAME_H, 0x0b0c0d, 0.7).setOrigin(0).setScrollFactor(0).setDepth(DEPTH_HUD + 2);
     const add = (t: Phaser.GameObjects.Text) => this.cardTexts.push(t.setScrollFactor(0).setDepth(DEPTH_HUD + 3));
-    add(txt(this, GAME_W / 2, cy - 70, 'DONE', 16, CSS.ok).setOrigin(0.5));
+    add(txt(this, GAME_W / 2, cy - 70, t('ui.done'), 16, CSS.ok).setOrigin(0.5));
     add(txt(this, GAME_W / 2, cy - 40, l.doneText, 8, CSS.white, GAME_W - 60).setOrigin(0.5, 0).setAlign('center'));
     // Saved as complete; the next button carries on through the episode.
     this.host.report({ result: 'complete' });
     const next = this.host.upNext;
-    const btns: Button[] = [new Button(this, 40, cy + 10, GAME_W - 80, 44, next?.label ?? 'DONE', () => this.host.advance(), true)];
-    if (next) btns.push(new Button(this, 40, cy + 66, GAME_W - 80, 36, 'MENU', () => this.host.quit()));
+    const btns: Button[] = [new Button(this, 40, cy + 10, GAME_W - 80, 44, next?.label ?? t('ui.done'), () => this.host.advance(), true)];
+    if (next) btns.push(new Button(this, 40, cy + 66, GAME_W - 80, 36, t('ui.menu'), () => this.host.quit()));
     this.host.ads.resultsBanner(true);
     for (const b of btns) {
       b.text.setScrollFactor(0);

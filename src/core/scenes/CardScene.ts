@@ -5,6 +5,7 @@ import type { CardStep, StepHost } from '../contracts';
 import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../config';
 import { CORE_SCENES } from '../manager/GameManager';
 import { episodeProgress, loadSave } from '../save';
+import { t } from '../i18n';
 import { txt } from '../ui/widgets';
 import { onTaps } from './taps';
 
@@ -31,20 +32,20 @@ export class CardScene extends Phaser.Scene {
     g.strokeRect(20.5, oy + 140.5, GAME_W - 41, 359);
 
     if (card.type === 'title') {
-      txt(this, cx, oy + 200, ep ? `LEVEL ${ep.number}` : '', 8, CSS.dim).setOrigin(0.5);
-      txt(this, cx, oy + 232, (ep?.title ?? '').toUpperCase(), 16, CSS.signal).setOrigin(0.5);
+      txt(this, cx, oy + 200, ep ? t('card.level', { n: ep.number }) : '', 8, CSS.dim).setOrigin(0.5);
+      txt(this, cx, oy + 232, ep?.title ?? '', 16, CSS.signal).setOrigin(0.5);
       txt(this, cx, oy + 280, ep?.date ?? '', 8, CSS.white).setOrigin(0.5);
       txt(this, cx, oy + 300, ep?.place ?? '', 8, CSS.dim).setOrigin(0.5);
     } else {
       // {step-id.key} placeholders take the stats saved this episode.
       const stats = ep ? episodeProgress(loadSave(), ep.id).stats : {};
       const text = card.text.replace(/\{([^}]+)\}/g, (_m, k: string) => String(stats[k] ?? '-'));
-      txt(this, cx, oy + 160, 'ARCHIVE', 8, CSS.dim).setOrigin(0.5);
-      txt(this, cx, oy + 184, card.heading.toUpperCase(), 16, CSS.signal, GAME_W - 60).setOrigin(0.5, 0).setAlign('center');
+      txt(this, cx, oy + 160, t('card.archive'), 8, CSS.dim).setOrigin(0.5);
+      txt(this, cx, oy + 184, card.heading, 16, CSS.signal, GAME_W - 60).setOrigin(0.5, 0).setAlign('center');
       const body = txt(this, 36, oy + 232, `${card.date ? card.date + '\n\n' : ''}${text}`, 8, CSS.white, GAME_W - 72);
       if (card.source) txt(this, 36, body.y + body.height + 16, card.source, 8, CSS.dim, GAME_W - 72);
     }
-    this.prompt = txt(this, cx, oy + 470, card.type === 'title' ? 'TAP TO BEGIN' : 'TAP TO CONTINUE', 8, CSS.signal).setOrigin(0.5);
+    this.prompt = txt(this, cx, oy + 470, card.type === 'title' ? t('ui.tapToBegin') : t('ui.tapToContinue'), 8, CSS.signal).setOrigin(0.5);
 
     onTaps(this, { tap: () => this.host.finish() });
   }

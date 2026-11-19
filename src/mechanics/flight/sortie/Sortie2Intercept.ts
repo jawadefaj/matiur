@@ -1,6 +1,7 @@
 // Sortie 2 — Intercept. Turn back bombers before they reach the base while
 // keeping a slower friendly formation (Bulldog flight) safe.
 // Score comes from objectives only. There is no kill counter.
+import { t } from '../../../core/i18n';
 import { DEG, dist } from '../../../core/math';
 import { BomberAI, EscorteeAI, FighterAI, WingmanAI, type Point } from '../systems/ai/AI';
 import type { Aircraft } from '../sim/types';
@@ -14,8 +15,8 @@ const ARENA_RADIUS = 2800;
 
 export class Sortie2Intercept extends Sortie {
   readonly num = 2 as const;
-  readonly title = 'Intercept';
-  readonly place = 'Over Peshawar';
+  readonly title = t('s2.title');
+  readonly place = t('s2.place');
 
   /** Seconds of script time; drives the wave timeline. */
   private t = 0;
@@ -43,11 +44,11 @@ export class Sortie2Intercept extends Sortie {
       x: 34, y: 342, heading: 0, speed: 450, ai: two, invulnerable: true,
     });
     this.objectives = [
-      { id: 'base', label: 'Protect the base', state: 'active' },
-      { id: 'escort', label: 'Keep Bulldog flight safe', state: 'pending' },
+      { id: 'base', label: t('s2.obj.base'), state: 'active' },
+      { id: 'escort', label: t('s2.obj.escort'), state: 'pending' },
     ];
-    w.radio.say('Peshawar Control', 'Sherdil flight, bombers with escort inbound from the north-east. Intercept!');
-    w.radio.say('Sherdil Two', 'Guns fire by themselves when the sight is on. Get behind them.');
+    w.radio.say(t('who.control'), t('s2.inbound'));
+    w.radio.say(t('who.sherdilTwo'), t('s2.gunsAuto'));
   }
 
   protected script(w: World, dt: number): void {
@@ -66,14 +67,14 @@ export class Sortie2Intercept extends Sortie {
     for (const e of w.events) {
       if (e.type === 'baseHit') {
         this.setObj('base', 'failed');
-        w.radio.say('Peshawar Control', 'Bombs on the airfield! They got through.', { urgent: true });
+        w.radio.say(t('who.control'), t('s2.baseHit'), { urgent: true });
       } else if (e.type === 'escorteeLost') {
         this.setObj('escort', 'failed');
-        w.radio.say('Bulldog Lead', "Bulldog Two is hit, he's diverting for an emergency landing.", { urgent: true });
+        w.radio.say(t('who.bulldogLead'), t('s2.bulldogLost'), { urgent: true });
       } else if (e.type === 'landed') {
-        w.radio.say('Bulldog Lead', 'Bulldog on the ground. Thanks for the cover, Sherdil.', { key: 'bdland' });
+        w.radio.say(t('who.bulldogLead'), t('s2.bulldogLanded'), { key: 'bdland' });
       } else if (e.type === 'friendlyHit') {
-        w.radio.say('Bulldog Lead', "Bulldog's taking fire! Sherdil, get them off us!", { key: 'bdhit', cooldown: 12 });
+        w.radio.say(t('who.bulldogLead'), t('s2.bulldogHit'), { key: 'bdhit', cooldown: 12 });
       }
     }
 
@@ -90,7 +91,7 @@ export class Sortie2Intercept extends Sortie {
 
     // Leaving the arena.
     if (dist(p.f.x, p.f.y, BASE.x, BASE.y) > ARENA_RADIUS) {
-      w.radio.say('Peshawar Control', "Sherdil One, you're leaving the area. Turn back.", { key: 'arena', cooldown: 10 });
+      w.radio.say(t('who.control'), t('s2.leavingArea'), { key: 'arena', cooldown: 10 });
     }
 
     this.updateMarkersAndHint();
@@ -103,7 +104,7 @@ export class Sortie2Intercept extends Sortie {
       if (threats.length === 0 && bulldogDone) {
         this.endTimer = 4;
         if (this.obj('base').state === 'active') this.setObj('base', 'done');
-        w.radio.say('Peshawar Control', 'All bandits turned back. Sherdil flight, return to base.');
+        w.radio.say(t('who.control'), t('s2.allClear'));
       }
     }
     if (this.endTimer > 0) {
@@ -122,11 +123,11 @@ export class Sortie2Intercept extends Sortie {
     this.markers = [{ x: BASE.x, y: BASE.y, r: 240, kind: 'base', label: 'BASE' }];
     const inbound = this.bombers.filter((b) => b.status === 'active' && !this.bombAI.get(b.id)?.bombed);
     const gnatsActive = this.gnats.some((g) => g.status === 'active');
-    if (inbound.length > 0) this.hint = `Turn back the bombers (${inbound.length} inbound)`;
-    else if (gnatsActive) this.hint = 'Drive the fighters off Bulldog flight';
-    else if (this.bulldog.some((a) => a.status === 'active')) this.hint = 'Cover Bulldog flight to the base';
-    else if (this.wave < 4) this.hint = 'Patrol near the base';
-    else this.hint = 'Clear the sky';
+    if (inbound.length > 0) this.hint = t('s2.hint.bombers', { n: inbound.length });
+    else if (gnatsActive) this.hint = t('s2.hint.gnats');
+    else if (this.bulldog.some((a) => a.status === 'active')) this.hint = t('s2.hint.cover');
+    else if (this.wave < 4) this.hint = t('s2.hint.patrol');
+    else this.hint = t('s2.hint.clear');
   }
 
   /** Raid A: two Canberras from the north-east, each with a Hunter escort on alternate sides. */
@@ -163,7 +164,7 @@ export class Sortie2Intercept extends Sortie {
       });
       this.bulldog.push(a);
     }
-    w.radio.say('Peshawar Control', 'Sherdil, Bulldog flight, two B-57s, coming home from the south-east. Cover them.');
+    w.radio.say(t('who.control'), t('s2.bulldogInbound'));
   }
 
   /** Two Gnats from the east that go after Bulldog flight. */
@@ -179,7 +180,7 @@ export class Sortie2Intercept extends Sortie {
       });
       this.gnats.push(g);
     }
-    w.radio.say('Peshawar Control', 'Two bandits from the east, closing on Bulldog flight!');
+    w.radio.say(t('who.control'), t('s2.gnats'));
   }
 
   /** Raid C: one Canberra from the north-west with a Mystère on each side. */
@@ -201,6 +202,6 @@ export class Sortie2Intercept extends Sortie {
         tag: 'C',
       });
     }
-    w.radio.say('Peshawar Control', 'New raid from the north-west: one bomber, two fighters.');
+    w.radio.say(t('who.control'), t('s2.raidC'));
   }
 }

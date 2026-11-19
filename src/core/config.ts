@@ -26,8 +26,8 @@ function computeGameHeight(): number {
 /** Extra height beyond the 640 baseline (0 on a 9:16 screen). */
 export const EXTRA_H = GAME_H - 640;
 
-/** Font for all game text. index.html loads "Press Start 2P" and main.ts waits for it. */
-export const FONT = '"Press Start 2P", monospace';
+/** Font for all game text: set in src/data/strings.xml, loaded by createGame.ts. */
+export { FONT } from './i18n';
 
 /**
  * Colours as Phaser numbers (0xRRGGBB). Only ochre, deepGreen, slate and

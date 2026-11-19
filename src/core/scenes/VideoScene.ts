@@ -5,6 +5,7 @@ import type { StepHost, VideoStep } from '../contracts';
 import { CSS, GAME_H, GAME_W } from '../config';
 import { CORE_SCENES, gmOf } from '../manager/GameManager';
 import { VIDEOS } from '../media/content';
+import { t } from '../i18n';
 import { txt } from '../ui/widgets';
 import { onTaps } from './taps';
 
@@ -52,7 +53,7 @@ export class VideoScene extends Phaser.Scene {
       return;
     }
     txt(this, GAME_W / 2, GAME_H / 2 - 40, lines.join('\n\n'), 8, CSS.white, GAME_W - 60).setOrigin(0.5, 0).setAlign('center');
-    this.prompt = txt(this, GAME_W / 2, GAME_H - 120, 'TAP TO CONTINUE', 8, CSS.signal).setOrigin(0.5);
+    this.prompt = txt(this, GAME_W / 2, GAME_H - 120, t('ui.tapToContinue'), 8, CSS.signal).setOrigin(0.5);
     onTaps(this, { tap: () => this.host.finish() });
   }
 

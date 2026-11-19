@@ -2,6 +2,7 @@
 // element is made once and never destroyed: phones only let a page play
 // video with sound after a tap, and unlock() spends the first tap on this
 // element so later videos can start on their own. DOM only, no Phaser.
+import { FONT, FONT_SCALE, FONT_WEIGHT, localDigits, t } from '../i18n';
 
 export type VideoEnd = 'ended' | 'skipped' | 'error';
 
@@ -22,7 +23,9 @@ export interface VideoPlayer {
   stop(): void;
 }
 
-const FONT = '"Press Start 2P", monospace';
+const DOM_FONT = `${FONT_WEIGHT} %px ${FONT}`;
+/** CSS font for overlay text at `size` px of the original 8 px layout. */
+const domFont = (size: number) => DOM_FONT.replace('%', String(Math.round(size * FONT_SCALE)));
 
 /** A 0.1 s silent WAV, made in memory, for unlock(). */
 function silentWav(): string {
@@ -81,14 +84,14 @@ export class HtmlVideoPlayer implements VideoPlayer {
 
     const label = (css: Partial<CSSStyleDeclaration>) => {
       const d = document.createElement('div');
-      Object.assign(d.style, { position: 'absolute', left: '0', right: '0', textAlign: 'center', font: `10px ${FONT}`, color: '#b9bdb0', pointerEvents: 'none' }, css);
+      Object.assign(d.style, { position: 'absolute', left: '0', right: '0', textAlign: 'center', font: domFont(10), color: '#b9bdb0', pointerEvents: 'none' }, css);
       return d;
     };
     this.hint = label({ bottom: '18px' });
     this.bar = document.createElement('div');
     Object.assign(this.bar.style, { position: 'absolute', left: '0', bottom: '0', height: '4px', width: '0', background: '#f2d43d', pointerEvents: 'none' });
     this.tapBtn = document.createElement('button');
-    this.tapBtn.textContent = 'TAP TO PLAY';
+    this.tapBtn.textContent = t('video.tapToPlay');
     Object.assign(this.tapBtn.style, {
       position: 'absolute',
       left: '50%',
@@ -96,7 +99,7 @@ export class HtmlVideoPlayer implements VideoPlayer {
       transform: 'translate(-50%, -50%)',
       display: 'none',
       padding: '14px 20px',
-      font: `12px ${FONT}`,
+      font: domFont(12),
       color: '#f2d43d',
       background: '#262a22',
       border: '2px solid #f2d43d',
@@ -128,8 +131,8 @@ export class HtmlVideoPlayer implements VideoPlayer {
 
     this.el.addEventListener('ended', () => this.end('ended'));
     this.el.addEventListener('error', () => this.finish && this.end('error'));
-    this.el.addEventListener('waiting', () => this.finish && this.setHint('LOADING...'));
-    this.el.addEventListener('playing', () => this.setHint(this.opts?.canSkip ? 'HOLD TO SKIP' : ''));
+    this.el.addEventListener('waiting', () => this.finish && this.setHint(t('video.loading')));
+    this.el.addEventListener('playing', () => this.setHint(this.opts?.canSkip ? t('video.holdToSkip') : ''));
     document.addEventListener('visibilitychange', () => {
       if (!this.finish) return;
       if (document.hidden) this.el.pause();
@@ -172,7 +175,7 @@ export class HtmlVideoPlayer implements VideoPlayer {
     this.el.style.objectFit = o.fit;
     this.el.muted = o.muted;
     this.el.src = url;
-    this.setHint('LOADING...');
+    this.setHint(t('video.loading'));
     const done = new Promise<VideoEnd>((resolve) => (this.finish = resolve));
     this.el.play().catch((err: DOMException) => {
       // Not allowed to start without a tap: ask for one.
@@ -192,7 +195,7 @@ export class HtmlVideoPlayer implements VideoPlayer {
   }
 
   private setHint(s: string): void {
-    this.hint.textContent = s;
+    this.hint.textContent = localDigits(s);
   }
 
   /** Grow the hold-to-skip bar while a press is held; skip when it fills. */

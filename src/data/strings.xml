@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  EVERY WORD THE PLAYER SEES, in one file.
+
+  How to edit
+  - Change only the text between <s ...> and </s>. Keep each id="..." as it is:
+    the code looks the text up by its id.
+  - en="..." is the original English, for reference only. The game never shows it.
+  - {name} is filled in by the game (a number, a name...). Keep every {name}
+    that the English has, but you may move it anywhere in the sentence.
+  - \n starts a new line.
+  - Write & as &amp;  < as &lt;  > as &gt;
+  - Save the file. `npm run dev` reloads the game; `npm test` checks that
+    every id the code uses is here and that no {name} went missing.
+
+  <font> sets the font for all game text:
+  - family: a Google Fonts family that has Bengali letters, spelled as on
+    fonts.google.com (e.g. "Hind Siliguri", "Noto Sans Bengali", "Baloo Da 2").
+  - weight: 400 regular ... 700 bold. The family must offer that weight.
+  - scale: the game was laid out for an 8 px pixel font. Every text size is
+    multiplied by this (1.5 turns 8 px into 12 px). Bengali needs the extra size.
+  <digits> is "bangla" (০১২৩৪৫৬৭৮৯) or "latin" (0123456789). It changes every
+  number the game shows, including the HUD.
+-->
+<strings lang="bn">
+  <font family="Hind Siliguri" weight="600" scale="1.5" />
+  <digits>bangla</digits>
+
+  <!-- ===================================================== Game and menu -->
+  <group name="game">
+    <s id="game.title" en="Wings of Freedom">স্বাধীনতার ডানা</s>
+    <s id="game.subtitle" en="The Legend of Matiur Rahman">মতিউর রহমানের কিংবদন্তি</s>
+  </group>
+
+  <group name="ui">
+    <s id="ui.tapToBegin" en="TAP TO BEGIN">শুরু করতে ট্যাপ করুন</s>
+    <s id="ui.tapToContinue" en="TAP TO CONTINUE">এগোতে ট্যাপ করুন</s>
+    <s id="ui.continue" en="CONTINUE">চালিয়ে যান</s>
+    <s id="ui.menu" en="MENU">মেনু</s>
+    <s id="ui.retry" en="RETRY">আবার চেষ্টা</s>
+    <s id="ui.done" en="DONE">সম্পন্ন</s>
+    <s id="ui.fullScreen" en="FULL SCREEN">পূর্ণ পর্দা</s>
+    <s id="ui.on" en="ON">চালু</s>
+    <s id="ui.off" en="OFF">বন্ধ</s>
+  </group>
+
+  <group name="menu">
+    <s id="menu.level" en="LEVEL {n}: {title}">পর্ব {n}: {title}</s>
+    <s id="menu.locked" en="LOCKED">বন্ধ</s>
+    <s id="menu.play" en="PLAY">খেলুন</s>
+    <s id="menu.replay" en="REPLAY">আবার খেলুন</s>
+    <s id="menu.chapter" en="{n}. {title}">{n}. {title}</s>
+    <s id="menu.chapterDone" en="{n}. {title}  [DONE]">{n}. {title}  [শেষ]</s>
+    <s id="menu.chapterLocked" en="{n}. {title}  [LOCKED]">{n}. {title}  [বন্ধ]</s>
+    <s id="menu.setting" en="{label}: {value}">{label}: {value}</s>
+    <s id="menu.buzz" en="BUZZ">কম্পন</s>
+  </group>
+
+  <!-- Names of steps that aren't levels (used if they are listed as chapters). -->
+  <group name="step">
+    <s id="step.film" en="Film">চলচ্চিত্র</s>
+    <s id="step.scene" en="Scene">দৃশ্য</s>
+    <s id="step.title" en="Title">শিরোনাম</s>
+    <s id="step.archive" en="Archive">আর্কাইভ</s>
+  </group>
+
+  <group name="card">
+    <s id="card.level" en="LEVEL {n}">পর্ব {n}</s>
+    <s id="card.archive" en="ARCHIVE">আর্কাইভ</s>
+  </group>
+
+  <group name="cutscene">
+    <s id="cutscene.placeholder" en="PLACEHOLDER SCENE">অস্থায়ী দৃশ্য</s>
+    <s id="cutscene.notWritten" en="(cutscene &quot;{script}&quot; not written yet)">(দৃশ্য "{script}" এখনও লেখা হয়নি)</s>
+    <s id="cutscene.tapNext" en="TAP: NEXT">ট্যাপ: পরের লাইন</s>
+    <s id="cutscene.tapNextHoldSkip" en="TAP: NEXT   HOLD: SKIP">ট্যাপ: পরের লাইন   চেপে ধরুন: বাদ দিন</s>
+  </group>
+
+  <group name="video">
+    <s id="video.tapToPlay" en="TAP TO PLAY">চালাতে ট্যাপ করুন</s>
+    <s id="video.loading" en="LOADING...">লোড হচ্ছে...</s>
+    <s id="video.holdToSkip" en="HOLD TO SKIP">বাদ দিতে চেপে ধরুন</s>
+  </group>
+
+  <!-- ============================================ Level 1: Sabre Skies -->
+  <group name="ep2">
+    <s id="ep2.title" en="Sabre Skies">সেবরের আকাশ</s>
+    <s id="ep2.date" en="September 1965">সেপ্টেম্বর ১৯৬৫</s>
+    <s id="ep2.place" en="PAF Station Peshawar">পিএএফ স্টেশন পেশোয়ার</s>
+    <s id="ep2.intro.1" en="September 1965.">সেপ্টেম্বর ১৯৬৫।</s>
+    <s id="ep2.intro.2" en="PAF Station Peshawar.">পিএএফ স্টেশন পেশোয়ার।</s>
+    <s id="ep2.beat1.1" en="[Placeholder] Refuelled and rearmed, sir.">[অস্থায়ী] জ্বালানি আর গুলি ভরা হয়েছে, স্যার।</s>
+    <s id="ep2.beat1.2" en="[Placeholder] Writer pass needed: a short beat at the flight line.">[অস্থায়ী] লেখা বাকি: ফ্লাইট লাইনে একটি ছোট দৃশ্য।</s>
+    <s id="ep2.beat2.1" en="[Placeholder] Writer pass needed: a letter from home.">[অস্থায়ী] লেখা বাকি: বাড়ি থেকে আসা একটি চিঠি।</s>
+    <!-- {sortie-3.time} and {sortie-3.airframe} are filled in from the save. -->
+    <s id="ep2.archive.text" en="[Placeholder] A photo, the date and a short sourced paragraph go here (GDD §0 rule 4).\n\nYour last sortie: {sortie-3.time}, airframe {sortie-3.airframe}.">[অস্থায়ী] এখানে থাকবে একটি ছবি, তারিখ আর তথ্যসূত্রসহ একটি ছোট অনুচ্ছেদ।\n\nআপনার শেষ অভিযান: {sortie-3.time}, কাঠামো {sortie-3.airframe}।</s>
+  </group>
+
+  <!-- ================================================ Level 2: Bluebird -->
+  <group name="level2">
+    <s id="level2.title" en="Bluebird">ব্লুবার্ড</s>
+    <s id="level2.date" en="20 August 1971">২০ আগস্ট ১৯৭১</s>
+    <s id="level2.place" en="PAF Base Masroor, Karachi">পিএএফ ঘাঁটি মাসরুর, করাচি</s>
+    <s id="level2.prologue1.1" en="1965 becomes 1968.">১৯৬৫ গড়িয়ে ১৯৬৮।</s>
+    <s id="level2.prologue1.2" en="A wedding in Dhaka. A home in Karachi.">ঢাকায় বিয়ে। করাচিতে সংসার।</s>
+    <s id="level2.prologue1.3" en="1971: Bhairab. Then Karachi again, 9 May.">১৯৭১: ভৈরব। তারপর ৯ মে, আবার করাচি।</s>
+    <s id="level2.prologue2.1" en="PAF Base Masroor. He is watched.">পিএএফ ঘাঁটি মাসরুর। তাঁর ওপর নজর রাখা হচ্ছে।</s>
+    <s id="level2.prologue2.2" en="He studies the base.">তিনি ঘাঁটিটি খুঁটিয়ে দেখেন।</s>
+    <s id="level2.prologue2.3" en="Night falls on Residential East.">রেসিডেনশিয়াল ইস্টে রাত নামে।</s>
+    <s id="level2.morning.1" en="20 August 1971.">২০ আগস্ট ১৯৭১।</s>
+    <s id="level2.morning.2" en="Bluebird is on the schedule.">উড্ডয়ন সূচিতে ব্লুবার্ড।</s>
+    <s id="level2.boarding.1" en="Bluebird stops on the taxiway.">ট্যাক্সিওয়েতে ব্লুবার্ড থামে।</s>
+    <s id="level2.boarding.2" en="Matiur climbs into the rear seat.">মতিউর পেছনের আসনে উঠে বসেন।</s>
+    <s id="level2.boarding.3" en="[Next: Radar Horizon, not built yet]">[পরবর্তী: রাডার দিগন্ত, এখনও তৈরি হয়নি]</s>
+    <s id="level2.archive.text" en="[Placeholder] A photo, the date and a short sourced paragraph go here.">[অস্থায়ী] এখানে থাকবে একটি ছবি, তারিখ আর তথ্যসূত্রসহ একটি ছোট অনুচ্ছেদ।</s>
+  </group>
+
+  <!-- ======================================================= Radio names -->
+  <group name="who">
+    <s id="who.sherdilTwo" en="Sherdil Two">শেরদিল টু</s>
+    <s id="who.sherdilTwoRadio" en="Sherdil Two (radio)">শেরদিল টু (রেডিও)</s>
+    <s id="who.tower" en="Peshawar Tower">পেশোয়ার টাওয়ার</s>
+    <s id="who.control" en="Peshawar Control">পেশোয়ার কন্ট্রোল</s>
+    <s id="who.bulldogLead" en="Bulldog Lead">বুলডগ লিড</s>
+    <s id="who.matiur" en="Matiur">মতিউর</s>
+    <s id="who.crewChief" en="Crew Chief">ক্রু চিফ</s>
+    <s id="who.bluebird" en="Bluebird">ব্লুবার্ড</s>
+    <s id="who.schedule" en="Schedule">সূচি</s>
+    <s id="who.watchtower" en="Watchtower">ওয়াচটাওয়ার</s>
+    <s id="who.naikBashir" en="Naik Bashir">নায়েক বশির</s>
+    <s id="who.naikHamid" en="Naik Hamid">নায়েক হামিদ</s>
+    <s id="who.havildarAslam" en="Havildar Aslam">হাবিলদার আসলাম</s>
+    <s id="who.airmanQadir" en="Airman Qadir">এয়ারম্যান কাদির</s>
+    <s id="who.sentry" en="Sentry">সান্ত্রী</s>
+    <s id="who.airman" en="Airman">এয়ারম্যান</s>
+  </group>
+
+  <!-- ==================================================== Flight: shared -->
+  <group name="flight">
+    <s id="flight.sortieTitle" en="Sortie {n}: {title}">অভিযান {n}: {title}</s>
+    <s id="flight.flySortie" en="FLY SORTIE {n}">অভিযান {n} শুরু</s>
+    <s id="flight.date" en="September 1965">সেপ্টেম্বর ১৯৬৫</s>
+    <s id="flight.guns" en="GUNS">কামান</s>
+    <s id="flight.guns.auto" en="AUTO">স্বয়ংক্রিয়</s>
+    <s id="flight.guns.hold" en="HOLD">চেপে ধরে</s>
+    <s id="flight.brokeOff.1" en="He's hit! Smoking and breaking off.">ওকে লেগেছে! ধোঁয়া ছেড়ে সরে যাচ্ছে।</s>
+    <s id="flight.brokeOff.2" en="Good hits, One. He's turning for home.">দারুণ নিশানা, ওয়ান। ও ঘরে ফিরছে।</s>
+    <s id="flight.brokeOff.3" en="That one's out of the fight.">ওটা লড়াই থেকে বাদ।</s>
+    <s id="flight.disengaged" en="That one's low on fuel. He's breaking off for home.">ওটার জ্বালানি ফুরিয়ে আসছে। ঘরে ফিরে যাচ্ছে।</s>
+    <s id="flight.badlyHit" en="One, you're badly hit! Get out of the fight!">ওয়ান, তোমার মারাত্মক ক্ষতি হয়েছে! লড়াই ছেড়ে বেরিয়ে যাও!</s>
+    <s id="flight.hit" en="One, you're hit! Airframe damage.">ওয়ান, তোমাকে লেগেছে! কাঠামোয় ক্ষতি।</s>
+    <s id="flight.takingHits" en="Taking hits, One! Shake him!">গুলি খাচ্ছ, ওয়ান! ওকে ঝেড়ে ফেলো!</s>
+    <s id="flight.bingo" en="Bingo fuel, One. Watch your throttle.">জ্বালানি তলানিতে, ওয়ান। থ্রটলে খেয়াল রাখো।</s>
+    <s id="flight.fail.damage" en="Your Sabre was too badly damaged to fly. You ejected safely.">আপনার সেবর আর ওড়ার মতো ছিল না। আপনি নিরাপদে ইজেক্ট করেছেন।</s>
+    <s id="flight.fail.blackout" en="You blacked out (G-LOC). Ease off PULL at high speed, or slow down first.">আপনি জ্ঞান হারিয়েছেন (জি-লক)। বেশি গতিতে টান কমান, অথবা আগে গতি কমান।</s>
+    <s id="flight.fail.fuel" en="Flameout: the tanks ran dry. Throttle back to save fuel.">ফ্লেমআউট: ট্যাংক খালি। জ্বালানি বাঁচাতে থ্রটল কমান।</s>
+    <!-- Wingman calls from the AI. {clock} is 1 to 12. -->
+    <s id="flight.engage" en="I'm on him!">ওকে ধরেছি!</s>
+    <s id="flight.spotOne" en="Bandit, {clock} o'clock!">শত্রু বিমান, {clock}টার দিকে!</s>
+    <s id="flight.spotMany" en="{n} bandits, {clock} o'clock!">{n}টি শত্রু বিমান, {clock}টার দিকে!</s>
+    <s id="flight.breakLeft" en="One, break left! Bandit on your six!">ওয়ান, বাঁয়ে সরো! ঠিক পেছনে শত্রু!</s>
+    <s id="flight.breakRight" en="One, break right! Bandit on your six!">ওয়ান, ডানে সরো! ঠিক পেছনে শত্রু!</s>
+  </group>
+
+  <!-- ====================================================== Flight: HUD -->
+  <group name="hud">
+    <s id="hud.fuel" en="FUEL">জ্বালানি</s>
+    <s id="hud.g" en="G">জি</s>
+    <s id="hud.airframe" en="AIRFRAME">কাঠামো</s>
+    <s id="hud.speed" en="{v} KT">{v} নট</s>
+    <s id="hud.alt" en="ALT {v}">উচ্চতা {v}</s>
+    <s id="hud.altLow" en="ALT {v} FT">উচ্চতা {v} ফুট</s>
+    <s id="hud.thr" en="THR {v}%">থ্রটল {v}%</s>
+    <s id="hud.thrLabel" en="THR">থ্রটল</s>
+    <s id="hud.altNum" en="{v}FT">{v} ফুট</s>
+    <s id="hud.radar" en="RADAR">রাডার</s>
+    <s id="hud.pull" en="PULL">টান</s>
+    <s id="hud.pullUp" en="PULL\n UP">ওপরে\nটান</s>
+    <s id="hud.fire" en="FIRE">গুলি</s>
+    <s id="hud.slideUp" en="SLIDE\nUP">ওপরে\nটানুন</s>
+    <s id="hud.intercepted" en="INTERCEPTED">ধরা পড়েছেন</s>
+    <s id="hud.crashed" en="CRASHED">বিধ্বস্ত</s>
+    <s id="hud.restarting" en="{reason}\nRestarting from checkpoint...">{reason}\nচেকপয়েন্ট থেকে আবার শুরু...</s>
+    <s id="hud.radarContact" en="RADAR CONTACT">রাডারে ধরা পড়েছেন</s>
+    <s id="hud.getUnder" en="Get under 100 ft! {s}s">১০০ ফুটের নিচে নামুন! {s} সে.</s>
+    <s id="hud.pullUpWarn" en="PULL UP">ওপরে উঠুন</s>
+    <s id="hud.gEaseOff" en="G! EASE OFF">জি! টান কমান</s>
+    <s id="hud.greyout" en="GREYOUT">চোখে ধূসর</s>
+    <s id="hud.greyoutSub" en="Controls soft. Ease off PULL.">নিয়ন্ত্রণ দুর্বল। টান কমান।</s>
+    <s id="hud.tooLow" en="TOO LOW">খুব নিচু</s>
+    <s id="hud.flameout" en="FLAMEOUT">ফ্লেমআউট</s>
+    <s id="hud.tip.1" en="Throttle up to roll. Drag to steer.\nJoin your wingman, fly the patrol.">থ্রটল বাড়িয়ে চলা শুরু করুন। টেনে দিক বদলান।\nউইংম্যানের পাশে যোগ দিন, টহল দিন।</s>
+    <s id="hud.tip.2" en="Get behind them: guns fire on target.\nWatch your G at high speed.">ওদের পেছনে যান: নিশানায় এলেই কামান চলবে।\nবেশি গতিতে জি-র দিকে খেয়াল রাখুন।</s>
+    <s id="hud.tip.3" en="Hold PULL to climb, let go to sink.\nStay 30 to 100 ft. Then land.">উঠতে টান চেপে ধরুন, নামতে ছেড়ে দিন।\n৩০ থেকে ১০০ ফুটে থাকুন। তারপর নামুন।</s>
+    <s id="hud.tip.checkpoint" en="Hold PULL to climb, let go to sink.">উঠতে টান চেপে ধরুন, নামতে ছেড়ে দিন।</s>
+    <s id="hud.sortie" en="SORTIE {n}">অভিযান {n}</s>
+    <s id="hud.placeDate" en="{place}, {date}">{place}, {date}</s>
+    <s id="hud.episodeLine" en="EPISODE {n} - {title}">পর্ব {n} - {title}</s>
+    <s id="hud.flightTest" en="FLIGHT TEST">পরীক্ষামূলক উড্ডয়ন</s>
+    <s id="hud.tapToStart" en="TAP TO START">শুরু করতে ট্যাপ করুন</s>
+    <s id="hud.checkpoint" en="CHECKPOINT">চেকপয়েন্ট</s>
+    <s id="hud.paused" en="PAUSED">বিরতি</s>
+    <s id="hud.resume" en="RESUME">চালিয়ে যান</s>
+    <s id="hud.restartSortie" en="RESTART SORTIE">অভিযান আবার শুরু</s>
+    <s id="hud.sortieComplete" en="SORTIE COMPLETE">অভিযান সফল</s>
+    <s id="hud.sortieFailed" en="SORTIE FAILED">অভিযান ব্যর্থ</s>
+    <s id="hud.stats" en="Time {time}   Airframe {airframe}/3   Fuel {fuel}%">সময় {time}   কাঠামো {airframe}/৩   জ্বালানি {fuel}%</s>
+    <s id="hud.restarts" en="Checkpoint restarts: {n}">চেকপয়েন্ট থেকে আবার শুরু: {n} বার</s>
+    <s id="hud.flyAgain" en="FLY AGAIN">আবার উড়ুন</s>
+    <s id="hud.skipWithAd" en="WATCH AD: SKIP SORTIE">বিজ্ঞাপন দেখে অভিযান বাদ দিন</s>
+    <!-- Objective checkboxes in the pause and results lists. -->
+    <s id="hud.mark.done" en="[OK]">[✓]</s>
+    <s id="hud.mark.failed" en="[X]">[✗]</s>
+    <s id="hud.mark.active" en="[>]">[&gt;]</s>
+    <s id="hud.mark.pending" en="[ ]">[ ]</s>
+  </group>
+
+  <!-- ============================================ Sortie 1: Scramble -->
+  <group name="s1">
+    <s id="s1.title" en="Scramble">জরুরি উড্ডয়ন</s>
+    <s id="s1.place" en="PAF Base Peshawar">পিএএফ ঘাঁটি পেশোয়ার</s>
+    <s id="s1.obj.takeoff" en="Take off">উড্ডয়ন করুন</s>
+    <s id="s1.obj.join" en="Join on Sherdil Two">শেরদিল টু-র পাশে যোগ দিন</s>
+    <s id="s1.obj.patrol" en="Fly the patrol">টহল দিন</s>
+    <s id="s1.obj.rtb" en="Return to base">ঘাঁটিতে ফিরুন</s>
+    <s id="s1.cleared" en="Sherdil One, cleared for take-off, runway three-six.">শেরদিল ওয়ান, রানওয়ে থ্রি-সিক্স থেকে উড্ডয়নের অনুমতি দেওয়া হলো।</s>
+    <s id="s1.slideThrottle" en="Slide the THROTTLE up to start your roll.">চলা শুরু করতে থ্রটল ওপরে টানুন।</s>
+    <s id="s1.hint.takeoff" en="Slide THROTTLE up to take off">উড্ডয়নের জন্য থ্রটল ওপরে টানুন</s>
+    <s id="s1.airborne" en="Sherdil One, airborne. Good luck.">শেরদিল ওয়ান, আকাশে। শুভকামনা।</s>
+    <s id="s1.twoNorth" en="Two here, north of the field. Join on my left wing.">টু বলছি, এয়ারফিল্ডের উত্তরে আছি। আমার বাঁ ডানায় যোগ দাও।</s>
+    <s id="s1.dragToSteer" en="Drag anywhere to steer. The jet turns toward your drag.">দিক বদলাতে যেকোনো জায়গায় টানো। জেট টানার দিকে ঘুরবে।</s>
+    <s id="s1.hint.catchUp" en="Catch up with Sherdil Two">শেরদিল টু-কে ধরে ফেলুন</s>
+    <s id="s1.hint.hold" en="Hold position...">অবস্থান ধরে রাখুন...</s>
+    <s id="s1.hint.slide" en="Slide into the marked slot">চিহ্নিত জায়গায় ঢুকে পড়ুন</s>
+    <s id="s1.overshoot" en="You're overshooting, One. Throttle back.">ছাড়িয়ে যাচ্ছ, ওয়ান। থ্রটল কমাও।</s>
+    <s id="s1.moreThrottle" en="A bit more throttle to close up.">কাছে আসতে আরেকটু থ্রটল দাও।</s>
+    <s id="s1.goodJoin" en="Good join! You have the lead. I'll take your wing.">চমৎকার! এখন তুমি সামনে। আমি তোমার ডানায় থাকছি।</s>
+    <s id="s1.flyPatrol" en="Fly the patrol points. Hold PULL for a tighter turn.">টহল বিন্দুগুলোতে যাও। আরও তীক্ষ্ণ বাঁকের জন্য টান চেপে ধরো।</s>
+    <s id="s1.hint.patrol" en="Fly to patrol point {n} of 3">টহল বিন্দু {n}-এ যান (মোট ৩টি)</s>
+    <s id="s1.point1" en="Point one. Now try a hard turn: hold PULL while you steer.">প্রথম বিন্দু। এবার কড়া বাঁক নাও: দিক বদলানোর সময় টান চেপে ধরো।</s>
+    <s id="s1.gmeter" en="Mind the G-meter. Past 5.5 G too long and you grey out.">জি-মিটারে চোখ রাখো। বেশিক্ষণ ৫.৫ জি-র ওপরে থাকলে চোখে ধূসর দেখবে।</s>
+    <s id="s1.sevenG" en="Seven G for more than a second and you black out.">এক সেকেন্ডের বেশি সাত জি হলে জ্ঞান হারাবে।</s>
+    <s id="s1.patrolComplete" en="Sherdil flight, patrol complete. Return to base.">শেরদিল ফ্লাইট, টহল শেষ। ঘাঁটিতে ফিরে আসুন।</s>
+    <s id="s1.welcomeHome" en="Sherdil flight, welcome home.">শেরদিল ফ্লাইট, ঘরে স্বাগতম।</s>
+  </group>
+
+  <!-- ========================================== Sortie 2: Intercept -->
+  <group name="s2">
+    <s id="s2.title" en="Intercept">শত্রু প্রতিরোধ</s>
+    <s id="s2.place" en="Over Peshawar">পেশোয়ারের আকাশে</s>
+    <s id="s2.obj.base" en="Protect the base">ঘাঁটি রক্ষা করুন</s>
+    <s id="s2.obj.escort" en="Keep Bulldog flight safe">বুলডগ ফ্লাইটকে নিরাপদ রাখুন</s>
+    <s id="s2.inbound" en="Sherdil flight, bombers with escort inbound from the north-east. Intercept!">শেরদিল ফ্লাইট, উত্তর-পূর্ব দিক থেকে পাহারাসহ বোমারু বিমান আসছে। প্রতিরোধ করুন!</s>
+    <s id="s2.gunsAuto" en="Guns fire by themselves when the sight is on. Get behind them.">নিশানা মিললে কামান নিজেই গুলি ছোড়ে। ওদের পেছনে যাও।</s>
+    <s id="s2.baseHit" en="Bombs on the airfield! They got through.">এয়ারফিল্ডে বোমা পড়েছে! ওরা ঢুকে পড়েছে।</s>
+    <s id="s2.bulldogLost" en="Bulldog Two is hit, he's diverting for an emergency landing.">বুলডগ টু আঘাতপ্রাপ্ত, জরুরি অবতরণের জন্য অন্যদিকে যাচ্ছে।</s>
+    <s id="s2.bulldogLanded" en="Bulldog on the ground. Thanks for the cover, Sherdil.">বুলডগ মাটিতে নেমেছে। পাহারার জন্য ধন্যবাদ, শেরদিল।</s>
+    <s id="s2.bulldogHit" en="Bulldog's taking fire! Sherdil, get them off us!">বুলডগের ওপর গুলি চলছে! শেরদিল, ওদের সরাও!</s>
+    <s id="s2.leavingArea" en="Sherdil One, you're leaving the area. Turn back.">শেরদিল ওয়ান, আপনি এলাকা ছেড়ে যাচ্ছেন। ফিরে আসুন।</s>
+    <s id="s2.allClear" en="All bandits turned back. Sherdil flight, return to base.">সব শত্রু বিমান পিছু হটেছে। শেরদিল ফ্লাইট, ঘাঁটিতে ফিরে আসুন।</s>
+    <s id="s2.hint.bombers" en="Turn back the bombers ({n} inbound)">বোমারু বিমান হটিয়ে দিন ({n}টি আসছে)</s>
+    <s id="s2.hint.gnats" en="Drive the fighters off Bulldog flight">বুলডগ ফ্লাইটের কাছ থেকে যুদ্ধবিমান তাড়ান</s>
+    <s id="s2.hint.cover" en="Cover Bulldog flight to the base">বুলডগ ফ্লাইটকে ঘাঁটি পর্যন্ত পাহারা দিন</s>
+    <s id="s2.hint.patrol" en="Patrol near the base">ঘাঁটির কাছে টহল দিন</s>
+    <s id="s2.hint.clear" en="Clear the sky">আকাশ শত্রুমুক্ত করুন</s>
+    <s id="s2.bulldogInbound" en="Sherdil, Bulldog flight, two B-57s, coming home from the south-east. Cover them.">শেরদিল, বুলডগ ফ্লাইট: দুটি বি-৫৭ দক্ষিণ-পূর্ব দিক থেকে ফিরছে। ওদের পাহারা দিন।</s>
+    <s id="s2.gnats" en="Two bandits from the east, closing on Bulldog flight!">পূর্ব দিক থেকে দুটি শত্রু বিমান বুলডগ ফ্লাইটের দিকে এগোচ্ছে!</s>
+    <s id="s2.raidC" en="New raid from the north-west: one bomber, two fighters.">উত্তর-পশ্চিম থেকে নতুন হামলা: একটি বোমারু, দুটি যুদ্ধবিমান।</s>
+  </group>
+
+  <!-- ======================================== Sortie 3: Low and Home -->
+  <group name="s3">
+    <s id="s3.title" en="Low and Home">নিচু দিয়ে ঘরে ফেরা</s>
+    <s id="s3.place" en="Punjab plains to Peshawar">পাঞ্জাবের সমভূমি থেকে পেশোয়ার</s>
+    <s id="s3.obj.route" en="Fly home under 100 ft">১০০ ফুটের নিচ দিয়ে ঘরে ফিরুন</s>
+    <s id="s3.obj.land" en="Land at Peshawar">পেশোয়ারে অবতরণ করুন</s>
+    <s id="s3.leaking" en="One, you're hit and leaking fuel. Stay low, under a hundred feet.">ওয়ান, তোমার জ্বালানি চুইয়ে পড়ছে। নিচু থাকো, একশো ফুটের নিচে।</s>
+    <s id="s3.pullToClimb" en="Hold PULL to climb, let go to ease down. Their radar is watching above.">উঠতে টান চেপে ধরো, ছেড়ে দিলে আস্তে নামবে। ওপরে ওদের রাডার নজর রাখছে।</s>
+    <s id="s3.throttleBack" en="Throttle back to stretch the fuel. Follow the valley north.">জ্বালানি বাঁচাতে থ্রটল কমাও। উপত্যকা ধরে উত্তরে চলো।</s>
+    <s id="s3.hint.rollout" en="Rolling out...">রানওয়েতে থামছে...</s>
+    <s id="s3.onGround" en="Sherdil One, on the ground. Well flown.">শেরদিল ওয়ান, মাটিতে নেমেছেন। চমৎকার উড়েছেন।</s>
+    <s id="s3.checkpoint" en="Checkpoint. Keep it low, One.">চেকপয়েন্ট। নিচু থাকো, ওয়ান।</s>
+    <s id="s3.hardLanding" en="Hard landing. Slow down and line up first.">জোরে অবতরণ। আগে গতি কমান, রানওয়ের সোজা আসুন।</s>
+    <s id="s3.hitGround" en="You hit the ground.">আপনি মাটিতে আছড়ে পড়েছেন।</s>
+    <s id="s3.radarContact" en="They've got you on radar! Get down before the interceptors arrive!">ওদের রাডারে ধরা পড়েছ! ইন্টারসেপ্টর আসার আগে নিচে নামো!</s>
+    <s id="s3.radarLost" en="Good, they've lost you. Stay down.">ভালো, ওরা তোমাকে হারিয়ে ফেলেছে। নিচেই থাকো।</s>
+    <s id="s3.intercepted" en="Interceptors caught you. Stay under 100 ft.">ইন্টারসেপ্টর আপনাকে ধরে ফেলেছে। ১০০ ফুটের নিচে থাকুন।</s>
+    <s id="s3.pullUp" en="Pull up!">ওপরে ওঠো!</s>
+    <s id="s3.offRoute" en="You're off the route, One. Turn back north.">পথ থেকে সরে গেছ, ওয়ান। উত্তরে ফেরো।</s>
+    <s id="s3.straightIn" en="Sherdil One, cleared straight in, runway three-six.">শেরদিল ওয়ান, সরাসরি রানওয়ে থ্রি-সিক্সে নামার অনুমতি দেওয়া হলো।</s>
+    <s id="s3.lineUp" en="Line up, slow below {speed} knots, and let her settle.">রানওয়ের সোজা আসুন, গতি {speed} নটের নিচে নামান, তারপর আলতো করে নামুন।</s>
+    <s id="s3.tooFast" en="Too fast! Throttle back and go around.">খুব জোরে! থ্রটল কমিয়ে আবার ঘুরে আসুন।</s>
+    <s id="s3.alignLand" en="Line up with the runway.">রানওয়ের সোজা আসুন।</s>
+    <s id="s3.overshot" en="Overshot. Turn around and try again from either end.">ছাড়িয়ে গেছেন। ঘুরে যেকোনো প্রান্ত থেকে আবার চেষ্টা করুন।</s>
+    <s id="s3.hint.land" en="Land: under {speed} kt, lined up, let her sink">অবতরণ: {speed} নটের নিচে, সোজা হয়ে, ধীরে নামুন</s>
+    <s id="s3.hint.turnBack" en="Turn back to the runway">রানওয়ের দিকে ফিরুন</s>
+    <s id="s3.hint.tooHigh" en="Too high! Let go of PULL">খুব উঁচুতে! টান ছেড়ে দিন</s>
+    <s id="s3.hint.under" en="Under 100 ft. Follow the valley north">১০০ ফুটের নিচে। উপত্যকা ধরে উত্তরে চলুন</s>
+    <s id="s3.flameout" en="Flameout! You're gliding, One. Make it count.">ফ্লেমআউট! তুমি গ্লাইড করছ, ওয়ান। হিসেব করে চলো।</s>
+    <s id="s3.touchdown" en="Touchdown.">চাকা মাটি ছুঁয়েছে।</s>
+    <s id="s3.backOnTrack" en="Back on track. Low and steady, One.">আবার পথে ফিরেছ। নিচু আর স্থির থাকো, ওয়ান।</s>
+  </group>
+
+  <!-- ====================================================== Walk: shared -->
+  <group name="walk">
+    <s id="walk.onFoot" en="ON FOOT: {title}">পায়ে হেঁটে: {title}</s>
+    <s id="walk.talk" en="TALK">কথা বলুন</s>
+    <s id="walk.signal" en="SIGNAL">সংকেত দিন</s>
+    <s id="walk.howStealth" en="Arrow keys / WASD, or drag, to walk.\nStay out of the torch beams.">হাঁটতে অ্যারো কি / WASD চাপুন বা টানুন।\nটর্চের আলো এড়িয়ে চলুন।</s>
+    <s id="walk.howTalk" en="Tap to walk. Tap a person to talk.\nOr drag to walk.">হাঁটতে ট্যাপ করুন। কথা বলতে কাউকে ট্যাপ করুন।\nঅথবা টেনে হাঁটুন।</s>
+    <s id="walk.goal" en="- {label}">- {label}</s>
+    <s id="walk.progress" en="{title}  {done}/{total}">{title}  {done}/{total}</s>
+    <s id="walk.caught" en="CAUGHT">ধরা পড়েছেন</s>
+    <s id="walk.halt" en="{name}: &quot;Halt! Who goes there?&quot;">{name}: "থামো! কে ওখানে?"</s>
+    <s id="walk.nightDate" en="August 1971, night">আগস্ট ১৯৭১, রাত</s>
+  </group>
+
+  <!-- ============================================ Walk: The Flight Line -->
+  <group name="fl">
+    <s id="fl.title" en="The Flight Line">ফ্লাইট লাইন</s>
+    <s id="fl.place" en="PAF Station Peshawar">পিএএফ স্টেশন পেশোয়ার</s>
+    <s id="fl.date" en="September 1965">সেপ্টেম্বর ১৯৬৫</s>
+    <s id="fl.done" en="Strapped in. Sherdil flight is ready to scramble.">বেল্ট বাঁধা হলো। শেরদিল ফ্লাইট জরুরি উড্ডয়নের জন্য প্রস্তুত।</s>
+    <s id="fl.obj.brief" en="Get the brief from Sherdil Two">শেরদিল টু-র কাছ থেকে ব্রিফিং নিন</s>
+    <s id="fl.obj.chief" en="Find your crew chief">আপনার ক্রু চিফকে খুঁজুন</s>
+    <s id="fl.obj.jet" en="Walk out to your Sabre">হেঁটে আপনার সেবরের কাছে যান</s>
+    <s id="fl.hint.talkTwo" en="Tap Sherdil Two to talk">কথা বলতে শেরদিল টু-কে ট্যাপ করুন</s>
+    <s id="fl.hint.findChief" en="Find the crew chief by your jet">আপনার জেটের পাশে ক্রু চিফকে খুঁজুন</s>
+    <s id="fl.hint.ladder" en="Walk to the ladder by the cockpit">ককপিটের পাশের মইয়ের কাছে যান</s>
+    <s id="fl.two.later" en="See you upstairs, One.">আকাশে দেখা হবে, ওয়ান।</s>
+    <s id="fl.two.brief1" en="Morning, One. Border patrol, two ships. We climb out north.">সুপ্রভাত, ওয়ান। সীমান্ত টহল, দুটি বিমান। আমরা উত্তর দিকে উঠব।</s>
+    <s id="fl.two.brief2" en="Your jet's on the line. Chief has been fussing over it since dawn.">তোমার জেট লাইনে তৈরি। চিফ ভোর থেকে ওটা নিয়ে ব্যস্ত।</s>
+    <s id="fl.two.brief3" en="Join on my wing once we're up. See you out there.">আকাশে উঠে আমার ডানায় যোগ দিও। ওখানে দেখা হবে।</s>
+    <s id="fl.chief.early" en="Morning, sir. Sherdil Two was asking for you in the crew room.">সুপ্রভাত, স্যার। শেরদিল টু ক্রু রুমে আপনাকে খুঁজছিলেন।</s>
+    <s id="fl.chief.later" en="She's ready, sir. Bring her back in one piece.">বিমান তৈরি, স্যার। অক্ষত ফিরিয়ে আনবেন।</s>
+    <s id="fl.chief.1" en="Fuelled, guns loaded, all checks done, sir.">জ্বালানি ভরা, কামানে গুলি ভরা, সব পরীক্ষা শেষ, স্যার।</s>
+    <s id="fl.chief.2" en="Form 700 is signed. She's all yours.">ফর্ম ৭০০ সই হয়ে গেছে। এখন এটা আপনার।</s>
+    <s id="fl.two.ready" en="Two's strapped in. Ready when you are, One.">টু তৈরি, বেল্ট বাঁধা। তুমি তৈরি হলেই চলবে, ওয়ান।</s>
+  </group>
+
+  <!-- ===================================== Walk: PAF Base Masroor, 1971 -->
+  <group name="masroor">
+    <s id="masroor.place" en="PAF Base Masroor, Karachi">পিএএফ ঘাঁটি মাসরুর, করাচি</s>
+    <s id="masroor.hint.beams" en="Stay out of the torch beams">টর্চের আলো এড়িয়ে চলুন</s>
+
+    <s id="schedule.title" en="The Schedule">উড্ডয়ন সূচি</s>
+    <s id="schedule.done" en="Bluebird. Pilot Officer Rashid Minhas. Solo. East Dispersal, 11:30.">ব্লুবার্ড। পাইলট অফিসার রশিদ মিনহাস। একা। ইস্ট ডিসপারসাল, ১১:৩০।</s>
+    <s id="schedule.obj" en="Reach the flight-line office on East Ramp">ইস্ট র‍্যাম্পের ফ্লাইট লাইন অফিসে পৌঁছান</s>
+    <s id="schedule.read" en="Tomorrow's flying programme.">আগামীকালের উড্ডয়ন সূচি।</s>
+    <s id="schedule.entry" en="BLUEBIRD - P/O RASHID MINHAS - SOLO - EAST DISPERSAL - 11:30">ব্লুবার্ড - পা/অ রশিদ মিনহাস - একা - ইস্ট ডিসপারসাল - ১১:৩০</s>
+
+    <s id="hospital.title" en="The Dispensary">ডিসপেনসারি</s>
+    <s id="hospital.done" en="Back home before the next patrol passes.">পরের টহল আসার আগেই ঘরে ফেরা।</s>
+    <s id="hospital.obj" en="Reach the hospital dispensary">হাসপাতালের ডিসপেনসারিতে পৌঁছান</s>
+    <s id="hospital.take" en="[Placeholder] He takes what he came for. (Item to be verified against sources.)">[অস্থায়ী] যা নিতে এসেছিলেন, তিনি তা নিয়ে নেন। (জিনিসটি সূত্রের সাথে মিলিয়ে দেখতে হবে।)</s>
+
+    <s id="intercept.title" en="Intercept">পথ আটকানো</s>
+    <s id="intercept.done" en="Bluebird stops at the end of the taxiway.">ট্যাক্সিওয়ের শেষ মাথায় ব্লুবার্ড থামে।</s>
+    <s id="intercept.obj" en="Be at the end of the taxiway when Bluebird arrives, and signal it">ব্লুবার্ড পৌঁছানোর সময় ট্যাক্সিওয়ের শেষ মাথায় থাকুন এবং থামার সংকেত দিন</s>
+    <s id="intercept.raiseHand" en="(He raises his hand. Stop.)">(তিনি হাত তোলেন। থামো।)</s>
+    <s id="intercept.stopping" en="Bluebird stopping. Sir?">ব্লুবার্ড থামছে। স্যার?</s>
+    <s id="intercept.fail" en="Bluebird is lining up on the runway.">ব্লুবার্ড রানওয়েতে উড্ডয়নের জন্য দাঁড়িয়ে গেছে।</s>
+    <s id="intercept.hint.startup" en="Bluebird is starting up at East Dispersal">ইস্ট ডিসপারসালে ব্লুবার্ডের ইঞ্জিন চালু হচ্ছে</s>
+    <s id="intercept.hint.taxi" en="BLUEBIRD {m} m of {total} m">ব্লুবার্ড: {total} মিটারের মধ্যে {m} মিটার</s>
+  </group>
+</strings>

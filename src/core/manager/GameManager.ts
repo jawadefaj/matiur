@@ -19,6 +19,7 @@ import type { MechanicRuntime } from '../runtime';
 import type { VideoPlayer } from '../media/VideoPlayer';
 import { episodeProgress, loadSave, mechanicSetting, setMechanicSetting, writeSave } from '../save';
 import { parseDeepLink } from './deeplink';
+import { t } from '../i18n';
 import { Flow, metaOf } from './Flow';
 
 /** Everything the game is made of: found by src/game/registry.ts and runtimes.ts. */
@@ -260,14 +261,14 @@ export class GameManager {
     switch (step.kind) {
       case 'level': {
         const d = this.parts.descriptors[step.mechanic];
-        return d ? d.describe(step.params) : { title: step.id, nextLabel: 'CONTINUE' };
+        return d ? d.describe(step.params) : { title: step.id, nextLabel: t('ui.continue') };
       }
       case 'video':
-        return { title: 'Film', nextLabel: 'CONTINUE' };
+        return { title: t('step.film'), nextLabel: t('ui.continue') };
       case 'cutscene':
-        return { title: 'Scene', nextLabel: 'CONTINUE' };
+        return { title: t('step.scene'), nextLabel: t('ui.continue') };
       case 'card':
-        return { title: step.card.type === 'title' ? 'Title' : 'Archive', nextLabel: 'CONTINUE' };
+        return { title: step.card.type === 'title' ? t('step.title') : t('step.archive'), nextLabel: t('ui.continue') };
     }
   }
 

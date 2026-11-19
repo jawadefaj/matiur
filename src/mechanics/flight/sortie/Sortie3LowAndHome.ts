@@ -1,6 +1,7 @@
 // Sortie 3 — Low and Home. Damaged and short of fuel, fly home under 100 ft
 // through a valley and across the plains, then land. Teaches the low-level
 // flying that Episode 4 depends on.
+import { t } from '../../../core/i18n';
 import { tuning } from '../tuning';
 import { DEG, angleDiff, clamp } from '../../../core/math';
 import { Damage } from '../systems/flight/Damage';
@@ -22,8 +23,8 @@ interface Snapshot {
 
 export class Sortie3LowAndHome extends Sortie {
   readonly num = 3 as const;
-  readonly title = 'Low and Home';
-  readonly place = 'Punjab plains to Peshawar';
+  readonly title = t('s3.title');
+  readonly place = t('s3.place');
 
   /** Terrain, radar and warnings. FlightHudScene reads its radar and warning state. */
   ll!: LowLevel;
@@ -54,13 +55,13 @@ export class Sortie3LowAndHome extends Sortie {
     w.player.smoke = w.damage.smoke;
 
     this.objectives = [
-      { id: 'route', label: 'Fly home under 100 ft', state: 'active', progress: '0%' },
-      { id: 'land', label: 'Land at Peshawar', state: 'pending' },
+      { id: 'route', label: t('s3.obj.route'), state: 'active', progress: '0%' },
+      { id: 'land', label: t('s3.obj.land'), state: 'pending' },
     ];
     this.saveCheckpoint(w);
-    w.radio.say('Sherdil Two', "One, you're hit and leaking fuel. Stay low, under a hundred feet.");
-    w.radio.say('Sherdil Two', 'Hold PULL to climb, let go to ease down. Their radar is watching above.');
-    w.radio.say('Sherdil Two', 'Throttle back to stretch the fuel. Follow the valley north.');
+    w.radio.say(t('who.sherdilTwo'), t('s3.leaking'));
+    w.radio.say(t('who.sherdilTwo'), t('s3.pullToClimb'));
+    w.radio.say(t('who.sherdilTwo'), t('s3.throttleBack'));
   }
 
   protected script(w: World, dt: number): void {
@@ -69,10 +70,10 @@ export class Sortie3LowAndHome extends Sortie {
 
     if (this.stage === 'rollout') {
       w.controls.throttle = 0;
-      this.hint = 'Rolling out...';
+      this.hint = t('s3.hint.rollout');
       if (f.speed < 25) {
         this.setObj('land', 'done');
-        w.radio.say('Peshawar Tower', 'Sherdil One, on the ground. Well flown.');
+        w.radio.say(t('who.tower'), t('s3.onGround'));
         this.complete();
       }
       return;
@@ -87,7 +88,7 @@ export class Sortie3LowAndHome extends Sortie {
     if (nextCp !== undefined && travelled > nextCp) {
       this.cpIndex++;
       this.saveCheckpoint(w);
-      w.radio.say('Sherdil Two', 'Checkpoint. Keep it low, One.', { key: `cp${this.cpIndex}` });
+      w.radio.say(t('who.sherdilTwo'), t('s3.checkpoint'), { key: `cp${this.cpIndex}` });
     }
 
     // Flare assist: lined up and slow on final, the jet holds a few feet
@@ -114,23 +115,23 @@ export class Sortie3LowAndHome extends Sortie {
         return;
       }
       w.events.push({ type: 'crash', x: f.x, y: f.y });
-      this.softFail(onRunway ? 'Hard landing. Slow down and line up first.' : 'You hit the ground.');
+      this.softFail(onRunway ? t('s3.hardLanding') : t('s3.hitGround'));
       return;
     }
     if (result === 'contact') {
-      w.radio.say('Sherdil Two', "They've got you on radar! Get down before the interceptors arrive!", { urgent: true });
+      w.radio.say(t('who.sherdilTwo'), t('s3.radarContact'), { urgent: true });
     } else if (result === 'cleared') {
-      w.radio.say('Sherdil Two', "Good, they've lost you. Stay down.", { urgent: true });
+      w.radio.say(t('who.sherdilTwo'), t('s3.radarLost'), { urgent: true });
     } else if (result === 'intercepted') {
       w.events.push({ type: 'crash', x: f.x, y: f.y });
-      this.softFail('Interceptors caught you. Stay under 100 ft.');
+      this.softFail(t('s3.intercepted'), 'intercepted');
       return;
     }
-    if (this.ll.warning === 'terrain') w.radio.say('Sherdil Two', 'Pull up!', { key: 'pullup', cooldown: 4 });
+    if (this.ll.warning === 'terrain') w.radio.say(t('who.sherdilTwo'), t('s3.pullUp'), { key: 'pullup', cooldown: 4 });
 
     // Off the route.
     if (Math.abs(f.x - corridorX(f.y)) > LOW_ROUTE.boundary) {
-      w.radio.say('Sherdil Two', "You're off the route, One. Turn back north.", { key: 'offroute', cooldown: 8 });
+      w.radio.say(t('who.sherdilTwo'), t('s3.offRoute'), { key: 'offroute', cooldown: 8 });
     }
 
     // Approach and landing.
@@ -138,8 +139,8 @@ export class Sortie3LowAndHome extends Sortie {
       this.stage = 'approach';
       this.setObj('route', 'done');
       this.setObj('land', 'active');
-      w.radio.say('Peshawar Tower', 'Sherdil One, cleared straight in, runway three-six.');
-      w.radio.say('Peshawar Tower', `Line up, slow below ${tuning.landing.maxSpeed} knots, and let her settle.`);
+      w.radio.say(t('who.tower'), t('s3.straightIn'));
+      w.radio.say(t('who.tower'), t('s3.lineUp', { speed: tuning.landing.maxSpeed }));
     }
     if (this.stage === 'approach') {
       this.markers = [{ x: LOW_AIRFIELD.x, y: this.runwayBottom, r: 30, kind: 'runway', label: 'RWY' }];
@@ -149,24 +150,24 @@ export class Sortie3LowAndHome extends Sortie {
           return;
         }
         if (f.speed > tuning.landing.maxSpeed) {
-          w.radio.say('Peshawar Tower', 'Too fast! Throttle back and go around.', { key: 'fastland', cooldown: 6 });
+          w.radio.say(t('who.tower'), t('s3.tooFast'), { key: 'fastland', cooldown: 6 });
         } else {
-          w.radio.say('Peshawar Tower', 'Line up with the runway.', { key: 'alignland', cooldown: 6 });
+          w.radio.say(t('who.tower'), t('s3.alignLand'), { key: 'alignland', cooldown: 6 });
         }
       }
       if (f.y < this.runwayTop - 200) {
-        w.radio.say('Peshawar Tower', 'Overshot. Turn around and try again from either end.', { key: 'overshot', cooldown: 10 });
+        w.radio.say(t('who.tower'), t('s3.overshot'), { key: 'overshot', cooldown: 10 });
       }
       this.hint = toThreshold > 0
-        ? `Land: under ${tuning.landing.maxSpeed} kt, lined up, let her sink`
-        : 'Turn back to the runway';
+        ? t('s3.hint.land', { speed: tuning.landing.maxSpeed })
+        : t('s3.hint.turnBack');
     } else {
       this.markers = [];
-      this.hint = f.altitude > tuning.lowLevel.bandHigh ? 'Too high! Let go of PULL' : 'Under 100 ft. Follow the valley north';
+      this.hint = f.altitude > tuning.lowLevel.bandHigh ? t('s3.hint.tooHigh') : t('s3.hint.under');
     }
 
     if (w.fuel.empty) {
-      w.radio.say('Sherdil Two', "Flameout! You're gliding, One. Make it count.", { key: 'flameout' });
+      w.radio.say(t('who.sherdilTwo'), t('s3.flameout'), { key: 'flameout' });
     }
   }
 
@@ -199,7 +200,7 @@ export class Sortie3LowAndHome extends Sortie {
     w.controls.throttle = 0;
     this.stage = 'rollout';
     this.markers = [];
-    w.radio.say('Peshawar Tower', 'Touchdown.', { urgent: true });
+    w.radio.say(t('who.tower'), t('s3.touchdown'), { urgent: true });
   }
 
   /** Save a restart point on the route centre line, heading north. */
@@ -238,6 +239,6 @@ export class Sortie3LowAndHome extends Sortie {
     this.ll.reset();
     this.stage = 'route';
     if (-s.y > LOW_ROUTE.plainsEnd) this.stage = 'approach';
-    w.radio.say('Sherdil Two', 'Back on track. Low and steady, One.');
+    w.radio.say(t('who.sherdilTwo'), t('s3.backOnTrack'));
   }
 }

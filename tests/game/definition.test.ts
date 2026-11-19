@@ -3,6 +3,7 @@
 import { describe, expect, it } from 'vitest';
 import type { EpisodeDef } from '../../src/core/contracts';
 import { defineEpisode } from '../../src/core/define';
+import { t } from '../../src/core/i18n';
 import { Flow } from '../../src/core/manager/Flow';
 import { validateGame } from '../../src/core/manager/validate';
 import { defaultSave, episodeProgress } from '../../src/core/save';
@@ -11,7 +12,7 @@ import { DESCRIPTORS, EPISODES } from '../../src/game/registry';
 import { flight } from '../../src/mechanics/flight';
 
 const describeStep = (s: EpisodeDef['steps'][number]) =>
-  s.kind === 'level' ? DESCRIPTORS[s.mechanic].describe(s.params) : { title: s.id, nextLabel: 'CONTINUE' };
+  s.kind === 'level' ? DESCRIPTORS[s.mechanic].describe(s.params) : { title: s.id, nextLabel: t('ui.continue') };
 
 describe('game definition', () => {
   it('finds every mechanic and episode', () => {
@@ -40,10 +41,10 @@ describe('game definition', () => {
     expect(order).toEqual(['title', 'intro', 'flight-line', 'sortie-1', 'beat-1', 'sortie-2', 'beat-2', 'sortie-3', 'archive']);
     expect(episodeProgress(save, 'ep2').finished).toBe(true);
     expect(flow.chapters('ep2', save).map((c) => c.title)).toEqual([
-      'The Flight Line',
-      'Sortie 1: Scramble',
-      'Sortie 2: Intercept',
-      'Sortie 3: Low and Home',
+      t('fl.title'),
+      t('flight.sortieTitle', { n: 1, title: t('s1.title') }),
+      t('flight.sortieTitle', { n: 2, title: t('s2.title') }),
+      t('flight.sortieTitle', { n: 3, title: t('s3.title') }),
     ]);
   });
 

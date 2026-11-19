@@ -7,6 +7,7 @@ import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../config';
 import { MENU_GIF_KEY } from '../gfx/textures';
 import { CORE_SCENES, gmOf, type GameManager } from '../manager/GameManager';
 import { episodeProgress, loadSave, mechanicSetting, setMechanicSetting, updateSettings } from '../save';
+import { t } from '../i18n';
 import { Button, ButtonSet, txt } from '../ui/widgets';
 
 export class MenuScene extends Phaser.Scene {
@@ -61,7 +62,7 @@ export class MenuScene extends Phaser.Scene {
     const oy = Math.round(EXTRA_H / 2);
     // Text drawn straight on the background gets a dark outline so it reads over the art.
     const onBg = (x: number, y: number, s: string, size: number, color: string) => txt(this, x, y, s, size, color).setStroke('#0b0c0d', 4);
-    onBg(cx, oy + 24, game.title.toUpperCase(), 16, CSS.signal).setOrigin(0.5);
+    onBg(cx, oy + 24, game.title, 16, CSS.signal).setOrigin(0.5);
     if (game.subtitle) onBg(cx, oy + 46, game.subtitle, 8, CSS.dim).setOrigin(0.5);
 
     let y = oy + 66;
@@ -70,10 +71,10 @@ export class MenuScene extends Phaser.Scene {
     for (const ep of episodes) {
       const open = flow.isUnlocked(ep.id, save);
       const p = episodeProgress(save, ep.id);
-      onBg(30, y + 4, `LEVEL ${ep.number}: ${ep.title.toUpperCase()}`, 8, CSS.signal);
+      onBg(30, y + 4, t('menu.level', { n: ep.number, title: ep.title }), 8, CSS.signal);
       onBg(30, y + 18, ep.date, 8, CSS.dim);
       if (!open) {
-        onBg(330, y + 11, 'LOCKED', 8, CSS.dim).setOrigin(1, 0);
+        onBg(330, y + 11, t('menu.locked'), 8, CSS.dim).setOrigin(1, 0);
         y += 44;
         continue;
       }
@@ -82,7 +83,7 @@ export class MenuScene extends Phaser.Scene {
       const resume = p.resume ? flow.resolve(`${ep.id}/${p.resume}`) : null;
       const from = resume && resume.ref !== flow.firstRef(ep.id) ? 'resume' : 'start';
       const play = () => this.gm.startEpisode(ep.id, from);
-      const label = from === 'resume' ? 'CONTINUE' : p.finished ? 'REPLAY' : 'PLAY';
+      const label = from === 'resume' ? t('ui.continue') : p.finished ? t('menu.replay') : t('menu.play');
       this.buttons.add(new Button(this, 240, y, 90, 28, label, play, true));
       // ENTER plays the first episode that isn't finished.
       if (!enter && !p.finished) enter = play;
@@ -90,7 +91,7 @@ export class MenuScene extends Phaser.Scene {
 
       // Chapters: each starts the episode from that step.
       flow.chapters(ep.id, save).forEach((c) => {
-        const label = `${++n}. ${c.title.toUpperCase()}${c.done ? '  [DONE]' : c.locked ? '  [LOCKED]' : ''}`;
+        const label = t(c.done ? 'menu.chapterDone' : c.locked ? 'menu.chapterLocked' : 'menu.chapter', { n: ++n, title: c.title });
         const go = () => !c.locked && this.gm.playChapter(c.ref);
         this.buttons.add(new Button(this, 30, y, 300, 32, label, go));
         if (n <= KEY_NAMES.length) this.input.keyboard?.on(`keydown-${KEY_NAMES[n - 1]}`, go);
@@ -111,7 +112,7 @@ export class MenuScene extends Phaser.Scene {
     const toggles: { label: () => string; next: () => void }[] = defs.map(({ owner, def }) => {
       const value = (): SettingValue => mechanicSetting(owner, def.key) ?? def.default;
       return {
-        label: () => `${def.label}: ${String(value()).toUpperCase()}`,
+        label: () => t('menu.setting', { label: def.label, value: def.valueLabels?.[String(value())] ?? String(value()) }),
         next: () => {
           const i = def.values.indexOf(value());
           setMechanicSetting(owner, def.key, def.values[(i + 1) % def.values.length]);
@@ -119,7 +120,7 @@ export class MenuScene extends Phaser.Scene {
       };
     });
     toggles.push({
-      label: () => `BUZZ: ${loadSave().settings.haptics ? 'ON' : 'OFF'}`,
+      label: () => t('menu.setting', { label: t('menu.buzz'), value: loadSave().settings.haptics ? t('ui.on') : t('ui.off') }),
       next: () => updateSettings({ haptics: !loadSave().settings.haptics }),
     });
     toggles.forEach((t, i) => {
@@ -133,7 +134,7 @@ export class MenuScene extends Phaser.Scene {
       if (i % 2 === 1 || i === toggles.length - 1) y += 38;
     });
     if (this.scale.fullscreen.available) {
-      this.buttons.add(new Button(this, 30, y, 300, 32, 'FULL SCREEN', () => this.scale.toggleFullscreen()));
+      this.buttons.add(new Button(this, 30, y, 300, 32, t('ui.fullScreen'), () => this.scale.toggleFullscreen()));
       y += 38;
     }
     return y;

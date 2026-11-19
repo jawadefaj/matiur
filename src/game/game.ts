@@ -2,11 +2,13 @@
 // Episodes are in ./episodes/ (one file each, found automatically). Mechanics
 // are in src/mechanics/ (one folder each, found automatically).
 import { defineGame } from '../core/define';
+import { t } from '../core/i18n';
 import menuWalkGif from '../../assets/sprites/original/UI/Idle_v3_walking_south.gif?url';
 
 export const GAME = defineGame({
-  title: 'Wings of Freedom',
-  subtitle: 'The Legend of Matiur Rahman',
+  // All player-facing text is in src/data/strings.xml.
+  title: t('game.title'),
+  subtitle: t('game.subtitle'),
   // Tiled behind the menu: an animated GIF, or a texture key such as
   // 'ground_farmland' (made by registerCommonArt in core/gfx/textures.ts).
   menuBackground: { gif: menuWalkGif },

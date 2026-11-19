@@ -1,5 +1,6 @@
 // Stealth (Level 2): vision cones, line of sight, detection, and the three
 // Masroor levels' win and lose conditions.
+import { t } from '../../../src/core/i18n';
 import { describe, expect, it } from 'vitest';
 import { WalkWorld, type WalkMap } from '../../../src/mechanics/walk/WalkWorld';
 import { Stealth, angleDiff } from '../../../src/mechanics/walk/stealth';
@@ -144,7 +145,7 @@ describe('Masroor levels', () => {
     w.place('player', 10, 1800); // safely out of every cone
     run(60);
     expect(level.status).toBe('failed');
-    expect(level.failText).toMatch(/lining up/);
+    expect(level.failText).toBe(t('intercept.fail'));
   });
 
   it('Intercept succeeds when Matiur waits at the mark and signals', () => {
@@ -157,7 +158,7 @@ describe('Masroor levels', () => {
     w.place('player', 10, 1800);
     run(60, () => {
       if (lvl.routeLength - lvl.travelled < 100) w.place('player', INTERCEPT.x, INTERCEPT.y);
-      if (lvl.actionLabel(w) === 'SIGNAL') lvl.action(w);
+      if (lvl.actionLabel(w) === t('walk.signal')) lvl.action(w);
     });
     expect(level.status).toBe('complete');
   });

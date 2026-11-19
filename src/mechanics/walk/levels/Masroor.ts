@@ -8,6 +8,7 @@
 // assets/art-wip/level-2/build_masroor_map.py, which also writes the colliders
 // (houses, trees, tanks, towers, jets, the perimeter wall) to masroorLayout.json.
 // Characters are single still images.
+import { t } from '../../../core/i18n';
 import { WalkLevel, type Block } from '../WalkLevel';
 import layout from './masroorLayout.json';
 import { Stealth, type GuardDef } from '../stealth';
@@ -48,7 +49,7 @@ const zoneAt = (id: string, p: Point, size = 40) => ({ id, x: p.x - size / 2, y:
 /** The watchtower on the east wall, used at night in both night parts. */
 const WATCHTOWER: GuardDef = {
   id: 'tower',
-  name: 'Watchtower',
+  name: t('who.watchtower'),
   look: GUARD,
   ...m(1180, 775),
   facing: 180,
@@ -59,7 +60,7 @@ const WATCHTOWER: GuardDef = {
 /** Patrol on the north-south road by the ramp. */
 const RAMP_ROAD: GuardDef = {
   id: 'road-ns',
-  name: 'Naik Bashir',
+  name: t('who.naikBashir'),
   look: GUARD,
   ...m(915, 700),
   patrol: [m(915, 700), m(915, 810)],
@@ -69,7 +70,7 @@ const RAMP_ROAD: GuardDef = {
 const SOLIDS: Block[] = layout.solids.map((r) => ({ ...r, style: 'hidden', solid: true }));
 
 abstract class Masroor extends WalkLevel {
-  readonly place = 'PAF Base Masroor, Karachi';
+  readonly place = t('masroor.place');
 
   protected zones: WalkMap['zones'] = [];
 
@@ -87,7 +88,7 @@ abstract class Masroor extends WalkLevel {
   }
 
   protected spawn(w: WalkWorld, at: Point, guards: GuardDef[]): void {
-    w.addActor({ id: 'player', name: 'Matiur', look: PLAYER, ...at });
+    w.addActor({ id: 'player', name: t('who.matiur'), look: PLAYER, ...at });
     this.stealth = new Stealth(this.night ? tuning.stealth.nightRange : 1);
     for (const g of guards) this.stealth.add(w, g);
   }
@@ -96,26 +97,26 @@ abstract class Masroor extends WalkLevel {
 /** 2.2 The Schedule: night, home to the flight-line office on East Ramp. */
 export class MasroorSchedule extends Masroor {
   readonly id = 'masroor-schedule';
-  readonly title = 'The Schedule';
-  readonly date = 'August 1971, night';
+  readonly title = t('schedule.title');
+  readonly date = t('walk.nightDate');
 
   constructor() {
     super(true);
     this.zones = [zoneAt('office', OFFICE)];
-    this.doneText = 'Bluebird. Pilot Officer Rashid Minhas. Solo. East Dispersal, 11:30.';
+    this.doneText = t('schedule.done');
   }
 
   setup(w: WalkWorld): void {
     this.spawn(w, HOME, [
-      { id: 'road-n', name: 'Naik Hamid', look: GUARD, ...m(920, 690), patrol: [m(920, 690), m(1150, 690)] },
+      { id: 'road-n', name: t('who.naikHamid'), look: GUARD, ...m(920, 690), patrol: [m(920, 690), m(1150, 690)] },
       RAMP_ROAD,
-      { id: 'ramp', name: 'Havildar Aslam', look: GUARD, ...m(885, 688), facing: 150, scan: { arc: 110, period: 5 } },
+      { id: 'ramp', name: t('who.havildarAslam'), look: GUARD, ...m(885, 688), facing: 150, scan: { arc: 110, period: 5 } },
       // Walks the lane between the two rows of parked jets.
-      { id: 'jets', name: 'Airman Qadir', look: GUARD, ...m(775, 662), patrol: [m(775, 662), m(855, 662)] },
+      { id: 'jets', name: t('who.airmanQadir'), look: GUARD, ...m(775, 662), patrol: [m(775, 662), m(855, 662)] },
       WATCHTOWER,
     ]);
-    this.objectives = [{ id: 'office', label: 'Reach the flight-line office on East Ramp', state: 'active' }];
-    this.hint = 'Stay out of the torch beams';
+    this.objectives = [{ id: 'office', label: t('schedule.obj'), state: 'active' }];
+    this.hint = t('masroor.hint.beams');
     this.markers = [{ ...OFFICE, label: 'OFFICE' }];
   }
 
@@ -126,8 +127,8 @@ export class MasroorSchedule extends Masroor {
       this.run(
         [
           this.talk(
-            { speaker: 'Matiur', text: "Tomorrow's flying programme." },
-            { speaker: 'Schedule', text: 'BLUEBIRD - P/O RASHID MINHAS - SOLO - EAST DISPERSAL - 11:30' },
+            { speaker: t('who.matiur'), text: t('schedule.read') },
+            { speaker: t('who.schedule'), text: t('schedule.entry') },
           ),
           { done: () => (this.complete(), true) },
         ],
@@ -140,25 +141,25 @@ export class MasroorSchedule extends Masroor {
 /** 2.3 The Dispensary: night, home to the hospital. */
 export class MasroorHospital extends Masroor {
   readonly id = 'masroor-hospital';
-  readonly title = 'The Dispensary';
-  readonly date = 'August 1971, night';
+  readonly title = t('hospital.title');
+  readonly date = t('walk.nightDate');
 
   constructor() {
     super(true);
     this.zones = [zoneAt('dispensary', HOSPITAL)];
-    this.doneText = 'Back home before the next patrol passes.';
+    this.doneText = t('hospital.done');
   }
 
   setup(w: WalkWorld): void {
     this.spawn(w, HOME, [
-      { id: 'road-s', name: 'Naik Hamid', look: GUARD, ...m(905, 810), patrol: [m(905, 810), m(1060, 810)] },
+      { id: 'road-s', name: t('who.naikHamid'), look: GUARD, ...m(905, 810), patrol: [m(905, 810), m(1060, 810)] },
       RAMP_ROAD,
       // At the hospital's east corner, watching the front door.
-      { id: 'door', name: 'Sentry', look: GUARD, ...m(900, 822), facing: 190, scan: { arc: 100, period: 4 } },
+      { id: 'door', name: t('who.sentry'), look: GUARD, ...m(900, 822), facing: 190, scan: { arc: 100, period: 4 } },
       WATCHTOWER,
     ]);
-    this.objectives = [{ id: 'dispensary', label: 'Reach the hospital dispensary', state: 'active' }];
-    this.hint = 'Stay out of the torch beams';
+    this.objectives = [{ id: 'dispensary', label: t('hospital.obj'), state: 'active' }];
+    this.hint = t('masroor.hint.beams');
     this.markers = [{ ...HOSPITAL, label: 'HOSPITAL' }];
   }
 
@@ -168,7 +169,7 @@ export class MasroorHospital extends Masroor {
       this.markers = [];
       this.run(
         [
-          this.talk({ speaker: 'Matiur', text: '[Placeholder] He takes what he came for. (Item to be verified against sources.)' }),
+          this.talk({ speaker: t('who.matiur'), text: t('hospital.take') }),
           { done: () => (this.complete(), true) },
         ],
         true,
@@ -180,8 +181,8 @@ export class MasroorHospital extends Masroor {
 /** 2.5 Intercept: daylight, East Ramp to the end of the taxiway before Bluebird gets there. */
 export class MasroorIntercept extends Masroor {
   readonly id = 'masroor-intercept';
-  readonly title = 'Intercept';
-  readonly date = '20 August 1971';
+  readonly title = t('intercept.title');
+  readonly date = t('level2.date');
 
   /** Bluebird's taxi speed (world px/s) and the wait before it rolls (s). */
   static readonly SPEED = 36;
@@ -202,15 +203,15 @@ export class MasroorIntercept extends Masroor {
     const b = BLUEBIRD_ROUTE[1];
     this.vehicles = [{ key: 'walk_t33', x: a.x, y: a.y, heading: Math.atan2(b.y - a.y, b.x - a.x) }];
     this.rings = [{ ...INTERCEPT, r: 24, label: '1,150 m' }];
-    this.doneText = 'Bluebird stops at the end of the taxiway.';
+    this.doneText = t('intercept.done');
   }
 
   setup(w: WalkWorld): void {
     this.spawn(w, RAMP_START, [
-      { id: 'north', name: 'Sentry', look: GUARD, ...m(790, 497), facing: 0, vision: { range: 130 }, scan: { arc: 50, period: 6 } },
-      { id: 'diag', name: 'Airman', look: GUARD, ...m(845, 600), patrol: [m(845, 600), m(887, 547)] },
+      { id: 'north', name: t('who.sentry'), look: GUARD, ...m(790, 497), facing: 0, vision: { range: 130 }, scan: { arc: 50, period: 6 } },
+      { id: 'diag', name: t('who.airman'), look: GUARD, ...m(845, 600), patrol: [m(845, 600), m(887, 547)] },
     ]);
-    this.objectives = [{ id: 'signal', label: 'Be at the end of the taxiway when Bluebird arrives, and signal it', state: 'active' }];
+    this.objectives = [{ id: 'signal', label: t('intercept.obj'), state: 'active' }];
     this.markers = [{ ...INTERCEPT, label: 'MARK' }];
     this.updateHint();
   }
@@ -229,7 +230,7 @@ export class MasroorIntercept extends Masroor {
   }
 
   actionLabel(w: WalkWorld): string | null {
-    return this.canSignal(w) ? 'SIGNAL' : null;
+    return this.canSignal(w) ? t('walk.signal') : null;
   }
 
   action(w: WalkWorld): boolean {
@@ -241,8 +242,8 @@ export class MasroorIntercept extends Masroor {
     this.run(
       [
         this.talk(
-          { speaker: 'Matiur', text: '(He raises his hand. Stop.)' },
-          { speaker: 'Bluebird', text: 'Bluebird stopping. Sir?' },
+          { speaker: t('who.matiur'), text: t('intercept.raiseHand') },
+          { speaker: t('who.bluebird'), text: t('intercept.stopping') },
         ),
         { done: () => (this.complete(), true) },
       ],
@@ -258,7 +259,7 @@ export class MasroorIntercept extends Masroor {
     if (!this.signalled && this.t > MasroorIntercept.DELAY) {
       this.travelled = Math.min(this.routeLength, this.travelled + MasroorIntercept.SPEED * dt);
       this.placeBluebird();
-      if (this.travelled >= this.routeLength) this.fail('Bluebird is lining up on the runway.');
+      if (this.travelled >= this.routeLength) this.fail(t('intercept.fail'));
     }
     this.updateHint();
   }
@@ -286,7 +287,7 @@ export class MasroorIntercept extends Masroor {
     this.hint = this.signalled
       ? ''
       : this.t <= MasroorIntercept.DELAY
-        ? 'Bluebird is starting up at East Dispersal'
-        : `BLUEBIRD ${this.metres.toLocaleString('en')} m of ${total.toLocaleString('en')} m`;
+        ? t('intercept.hint.startup')
+        : t('intercept.hint.taxi', { m: this.metres.toLocaleString('en'), total: total.toLocaleString('en') });
   }
 }

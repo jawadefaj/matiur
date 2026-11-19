@@ -32,6 +32,10 @@ Open the `Network:` address printed by `npm run dev` (for example `http://192.16
 - **One file:** `npm run build:single` writes `dist-single/index.html` (~2.4 MB). Phaser, the code and every image are inside it, so you can double-click it, send it to a phone, or upload it anywhere. It plays offline; only the pixel font needs the internet, and falls back to a plain font after 3 s without it.
 - **GitHub Pages:** every push to `main` builds and publishes the game with [.github/workflows/pages.yml](.github/workflows/pages.yml), at `https://<owner>.github.io/matiur/`. The one-file build is published next to it as `wings-of-freedom.html`. Turn it on once under **Settings > Pages > Source: GitHub Actions**.
 
+## Text and language
+
+The game is in Bangla. Every word the player sees, plus the font and the digit style, is in one file: [src/data/strings.xml](src/data/strings.xml). Edit the text between `<s id="...">` and `</s>`, keeping each `id` and every `{name}`; the `en="..."` attribute is the original English, for reference. `npm test` checks that every id the code uses is in the file and that no `{name}` went missing. In code, use `t('id')` from `src/core/i18n.ts` instead of writing text in quotes.
+
 ## Folder structure
 
 ```

@@ -1,5 +1,6 @@
 // Base class for an Episode 2 sortie: objectives, markers, terrain and
 // the shared failure rules (airframe lost, blackout, flameout).
+import { t } from '../../../core/i18n';
 import { tuning } from '../tuning';
 import type { Obstacle } from '../systems/flight/LowLevel';
 import type { World } from '../sim/World';
@@ -72,7 +73,7 @@ export abstract class Sortie {
   abstract readonly num: 1 | 2 | 3;
   abstract readonly title: string;
   abstract readonly place: string;
-  readonly date = 'September 1965';
+  readonly date = t('flight.date');
 
   objectives: Objective[] = [];
   status: 'running' | 'complete' | 'failed' = 'running';
@@ -90,6 +91,8 @@ export abstract class Sortie {
   restartIn = 0;
   /** Shown while restarting and on the checkpoint card. */
   restartReason = '';
+  /** What caused the restart; picks the HUD headline (INTERCEPTED or CRASHED). */
+  restartKind: 'crash' | 'intercepted' = 'crash';
   /** Checkpoint restarts so far (shown on the results screen). */
   restarts = 0;
   /** Set after a checkpoint restore; the UI shows a "tap to continue" card. */
@@ -139,9 +142,10 @@ export abstract class Sortie {
   protected restoreCheckpoint(_w: World): void {}
 
   /** A setback that costs a checkpoint, not the sortie: freeze for 2.2 s, then restore. */
-  protected softFail(reason: string): void {
+  protected softFail(reason: string, kind: 'crash' | 'intercepted' = 'crash'): void {
     this.restartIn = 2.2;
     this.restartReason = reason;
+    this.restartKind = kind;
     this.restarts++;
   }
 
@@ -186,19 +190,20 @@ export abstract class Sortie {
 
   /** Sherdil Two's radio reactions to this step's events. */
   private reactToEvents(w: World): void {
-    const lines = ["He's hit! Smoking and breaking off.", 'Good hits, One. He\'s turning for home.', "That one's out of the fight."];
+    const lines = [t('flight.brokeOff.1'), t('flight.brokeOff.2'), t('flight.brokeOff.3')];
+    const two = t('who.sherdilTwo');
     for (const e of w.events) {
       if (e.type === 'brokeOff') {
-        const said = w.radio.say('Sherdil Two', lines[this.breakLines % lines.length], { key: 'brk', cooldown: 3 });
+        const said = w.radio.say(two, lines[this.breakLines % lines.length], { key: 'brk', cooldown: 3 });
         if (said) this.breakLines++;
       } else if (e.type === 'disengaged') {
-        w.radio.say('Sherdil Two', "That one's low on fuel. He's breaking off for home.", { key: 'bingoE', cooldown: 4 });
+        w.radio.say(two, t('flight.disengaged'), { key: 'bingoE', cooldown: 4 });
       } else if (e.type === 'pipLost') {
-        const text = e.pips === 1 ? "One, you're badly hit! Get out of the fight!" : "One, you're hit! Airframe damage.";
-        w.radio.say('Sherdil Two', text, { urgent: true });
+        const text = e.pips === 1 ? t('flight.badlyHit') : t('flight.hit');
+        w.radio.say(two, text, { urgent: true });
       } else if (e.type === 'playerHit' && !this.hitCalled) {
         this.hitCalled = true;
-        w.radio.say('Sherdil Two', 'Taking hits, One! Shake him!', { key: 'hit1', urgent: true });
+        w.radio.say(two, t('flight.takingHits'), { key: 'hit1', urgent: true });
       }
     }
   }
@@ -209,15 +214,15 @@ export abstract class Sortie {
    */
   private checkCommonFailures(w: World): void {
     if (w.damage.destroyed) {
-      this.fail('Your Sabre was too badly damaged to fly. You ejected safely.', 'damage');
+      this.fail(t('flight.fail.damage'), 'damage');
     } else if (w.gmeter.blackout) {
-      this.fail('You blacked out (G-LOC). Ease off PULL at high speed, or slow down first.', 'blackout');
+      this.fail(t('flight.fail.blackout'), 'blackout');
     } else if (!this.lowLevel && w.flameoutTime > tuning.fuel.flameoutGrace) {
-      this.fail('Flameout: the tanks ran dry. Throttle back to save fuel.', 'fuel');
+      this.fail(t('flight.fail.fuel'), 'fuel');
     }
     if (!this.bingoCalled && w.fuel.bingo) {
       this.bingoCalled = true;
-      w.radio.say('Sherdil Two', 'Bingo fuel, One. Watch your throttle.', { key: 'bingo' });
+      w.radio.say(t('who.sherdilTwo'), t('flight.bingo'), { key: 'bingo' });
     }
   }
 }

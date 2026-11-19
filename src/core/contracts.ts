@@ -80,6 +80,8 @@ export interface SettingDef {
   label: string;
   values: readonly SettingValue[];
   default: SettingValue;
+  /** What the menu shows for each value (default: the value itself). */
+  valueLabels?: Readonly<Record<string, string>>;
 }
 
 /** Options every step accepts. */

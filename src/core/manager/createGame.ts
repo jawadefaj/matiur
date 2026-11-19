@@ -2,6 +2,7 @@
 // makes the GameManager. Called once by src/main.ts.
 import Phaser from 'phaser';
 import { GAME_H, GAME_W } from '../config';
+import { FONT_WEIGHT, STRINGS } from '../i18n';
 import { AdManager } from '../ads/AdManager';
 import { HtmlVideoPlayer } from '../media/VideoPlayer';
 import { BootScene } from '../scenes/BootScene';
@@ -13,13 +14,8 @@ import { GameManager, type GameParts } from './GameManager';
 
 export async function createGame(parts: GameParts): Promise<GameManager> {
   document.title = parts.game.title;
-  // Text is drawn to canvas, so the pixel font must be ready first.
-  try {
-    // Wait at most 3 s, so a slow or blocked font server cannot stop the game.
-    await Promise.race([document.fonts.load('8px "Press Start 2P"'), new Promise((r) => setTimeout(r, 3000))]);
-  } catch {
-    // Fall back to monospace.
-  }
+  // Text is drawn to canvas, so the font from src/data/strings.xml must be ready first.
+  await loadFont(STRINGS.font.family);
 
   const container = document.getElementById('game');
   if (!container) throw new Error('index.html needs a <div id="game">');
@@ -81,4 +77,25 @@ export async function createGame(parts: GameParts): Promise<GameManager> {
     (window as unknown as { __gm: GameManager }).__gm = gm;
   }
   return gm;
+}
+
+/**
+ * Load `family` from Google Fonts and wait for it, at most 3 s, so a slow or
+ * blocked font server cannot stop the game (it then uses the device's own
+ * Bengali font).
+ */
+async function loadFont(family: string): Promise<void> {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = `https://fonts.googleapis.com/css2?family=${encodeURIComponent(family).replace(/%20/g, '+')}:wght@${FONT_WEIGHT}&display=block`;
+  document.head.appendChild(link);
+  try {
+    const loaded = new Promise<void>((resolve, reject) => {
+      link.onload = () => resolve();
+      link.onerror = () => reject(new Error('font stylesheet failed'));
+    }).then(() => document.fonts.load(`${FONT_WEIGHT} 16px "${family}"`, 'বাংলা'));
+    await Promise.race([loaded, new Promise((r) => setTimeout(r, 3000))]);
+  } catch {
+    console.warn(`Could not load the font "${family}"; using the device's Bengali font.`);
+  }
 }
