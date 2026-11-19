@@ -7,3 +7,8 @@ dist/
 .DS_Store
 dist-single/
 assets/art-wip/*
+assets/videos/demo-15sec/frames/*
+assets/videos/demo-30sec/frames/*
+assets/videos/demo-60sec/frames/*
+design/matiur.pdf
+design/_scratch/*
