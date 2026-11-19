@@ -232,8 +232,11 @@ export interface AdsConfig {
 export interface GameDef {
   title: string;
   subtitle: string;
-  /** Texture key tiled behind the menu, or null for a flat colour. */
-  menuBackground: string | null;
+  /**
+   * Tiled behind the menu: a texture key, or { gif: url } for an animated GIF
+   * (import it with `?url`), which plays at its own speed. null for a flat colour.
+   */
+  menuBackground: string | { gif: string } | null;
   /** 'open': every chapter can be started from the menu. 'inOrder': a chapter opens when the one before it is done. */
   chapters: 'open' | 'inOrder';
   /** Only used in dev builds. unlockAll opens every episode and chapter; skipKey makes N finish the current step. */

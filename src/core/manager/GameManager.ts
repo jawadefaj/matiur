@@ -40,7 +40,7 @@ export const CORE_SCENES = {
 
 /** Data the menu scene is started with. */
 export interface MenuData {
-  /** Open this episode's screen instead of the episode list. */
+  /** The episode the player just left. Unused for now: the menu lists every episode on one screen. */
   episode?: string;
 }
 

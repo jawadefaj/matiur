@@ -4,7 +4,8 @@
 // placeholder drawn in code.
 import Phaser from 'phaser';
 import { bakeGround, bakeTree } from './commonArt';
-import type { BakedSheet } from './pixel';
+import { decodeGif } from './gif';
+import { makeCanvas, type BakedSheet } from './pixel';
 import { PNG_ART, imageToCanvas, pngKey } from './pngArt';
 
 type Source = HTMLImageElement | HTMLCanvasElement;
@@ -65,6 +66,23 @@ export function makeArtKit(scene: Phaser.Scene, owner: string, owners: Map<strin
       return img ? imageToCanvas(img) : placeholder();
     },
   };
+}
+
+/** Texture and animation key of the menu background when the game sets it to a GIF. */
+export const MENU_GIF_KEY = 'menu_bg';
+
+/**
+ * Add an animated GIF as a texture with one frame per GIF frame (named
+ * 0..n-1) and an animation of the same key that loops them at the GIF's speed.
+ */
+export function addGif(kit: ArtKit, anims: Phaser.Animations.AnimationManager, key: string, bytes: ArrayBuffer): void {
+  const { width: w, height: h, frames } = decodeGif(new Uint8Array(bytes));
+  const [canvas, ctx] = makeCanvas(w * frames.length, h);
+  frames.forEach((f, i) => ctx.putImageData(new ImageData(f.rgba, w, h), i * w, 0));
+  const tex = kit.addCanvas(key, canvas);
+  frames.forEach((_, i) => tex.add(i, 0, i * w, 0, w, h));
+  if (anims.exists(key)) anims.remove(key);
+  anims.create({ key, frames: frames.map((f, i) => ({ key, frame: i, duration: f.delay })), repeat: -1 });
 }
 
 /** Textures more than one mechanic uses: the ground patterns and the tree. */

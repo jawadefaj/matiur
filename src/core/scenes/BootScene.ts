@@ -3,7 +3,7 @@
 // definition, then hands over to the GameManager.
 import Phaser from 'phaser';
 import { CSS, GAME_W } from '../config';
-import { loadPngArt, makeArtKit, registerCommonArt } from '../gfx/textures';
+import { MENU_GIF_KEY, addGif, loadPngArt, makeArtKit, registerCommonArt } from '../gfx/textures';
 import { CORE_SCENES, gmOf } from '../manager/GameManager';
 import { validateGame } from '../manager/validate';
 import { txt } from '../ui/widgets';
@@ -17,6 +17,9 @@ export class BootScene extends Phaser.Scene {
     // A missing or broken PNG is logged and that key keeps its placeholder.
     this.load.on('loaderror', (file: Phaser.Loader.File) => console.warn(`Could not load ${file.src}`));
     loadPngArt(this);
+    // A GIF menu background is loaded as bytes: Phaser would show only its first frame.
+    const bg = gmOf(this).parts.game.menuBackground;
+    if (bg && typeof bg === 'object') this.load.binary(MENU_GIF_KEY, bg.gif);
     for (const r of Object.values(gmOf(this).parts.runtimes)) r.preload?.(this);
   }
 
@@ -24,7 +27,16 @@ export class BootScene extends Phaser.Scene {
     const gm = gmOf(this);
     const { episodes, descriptors, runtimes } = gm.parts;
     const owners = new Map<string, string>();
-    registerCommonArt(makeArtKit(this, 'core', owners));
+    const core = makeArtKit(this, 'core', owners);
+    registerCommonArt(core);
+    if (this.cache.binary.exists(MENU_GIF_KEY)) {
+      // A broken GIF is logged and the menu falls back to a flat colour.
+      try {
+        addGif(core, this.anims, MENU_GIF_KEY, this.cache.binary.get(MENU_GIF_KEY));
+      } catch (e) {
+        console.warn(`Could not decode the menu background GIF: ${e instanceof Error ? e.message : e}`);
+      }
+    }
     for (const r of Object.values(runtimes)) r.registerArt?.(makeArtKit(this, r.id, owners));
 
     const errors = validateGame(episodes, descriptors, Object.keys(runtimes));

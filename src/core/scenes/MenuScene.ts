@@ -1,10 +1,11 @@
-// The menu, generated from the game definition (src/game/). With one episode
-// it opens straight on that episode: CONTINUE, its chapters, settings and
-// notes. With several it first lists the episodes.
+// The menu, generated from the game definition (src/game/). One screen lists
+// every episode: its heading with PLAY / CONTINUE, then its chapters. Settings
+// and FULL SCREEN are at the bottom.
 import Phaser from 'phaser';
 import type { EpisodeDef, SettingDef, SettingValue } from '../contracts';
-import { CSS, EXTRA_H, GAME_H, GAME_W } from '../config';
-import { CORE_SCENES, gmOf, type GameManager, type MenuData } from '../manager/GameManager';
+import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../config';
+import { MENU_GIF_KEY } from '../gfx/textures';
+import { CORE_SCENES, gmOf, type GameManager } from '../manager/GameManager';
 import { episodeProgress, loadSave, mechanicSetting, setMechanicSetting, updateSettings } from '../save';
 import { Button, ButtonSet, txt } from '../ui/widgets';
 
@@ -13,29 +14,19 @@ export class MenuScene extends Phaser.Scene {
   private buttons = new ButtonSet();
   private ground: Phaser.GameObjects.TileSprite | null = null;
   private gm!: GameManager;
-  private focus?: string;
 
   constructor() {
     super(CORE_SCENES.menu);
-  }
-
-  init(data: MenuData): void {
-    this.focus = data?.episode;
   }
 
   create(): void {
     this.gm = gmOf(this);
     // A fresh set each time: Phaser reuses this scene object when the menu reopens.
     this.buttons = new ButtonSet();
-    const bg = this.gm.parts.game.menuBackground;
-    this.ground = bg && this.textures.exists(bg) ? this.add.tileSprite(0, 0, GAME_W, GAME_H, bg).setOrigin(0) : null;
+    this.ground = this.addBackground();
     this.add.rectangle(0, 0, GAME_W, GAME_H, 0x0b0c0d, this.ground ? 0.55 : 1).setOrigin(0);
     this.g = this.add.graphics();
-
-    const episodes = this.gm.flow.episodes;
-    const ep = episodes.length === 1 ? episodes[0] : episodes.find((e) => e.id === this.focus);
-    if (ep) this.buildEpisode(ep, episodes.length > 1);
-    else this.buildEpisodeList(episodes);
+    this.buildMenu(this.gm.flow.episodes);
 
     // ButtonSet does its own hit-testing. The first tap also unlocks video
     // playback (phones only allow it after a tap).
@@ -46,75 +37,73 @@ export class MenuScene extends Phaser.Scene {
     });
   }
 
-  /** The list of episodes, shown when there is more than one. */
-  private buildEpisodeList(episodes: EpisodeDef[]): void {
-    const game = this.gm.parts.game;
-    const save = loadSave();
-    const oy = Math.round(EXTRA_H / 2);
-    txt(this, GAME_W / 2, oy + 48, game.title.toUpperCase(), 16, CSS.signal).setOrigin(0.5);
-    if (game.subtitle) txt(this, GAME_W / 2, oy + 72, game.subtitle, 8, CSS.dim).setOrigin(0.5);
-    let y = oy + 110;
-    episodes.forEach((e, i) => {
-      const open = this.gm.flow.isUnlocked(e.id, save);
-      const done = episodeProgress(save, e.id).finished ? '  [DONE]' : '';
-      const label = open ? `LEVEL ${e.number}: ${e.title.toUpperCase()}${done}` : `LEVEL ${e.number}: LOCKED`;
-      const go = () => open && this.scene.restart({ episode: e.id } satisfies MenuData);
-      this.buttons.add(new Button(this, 30, y, 300, 44, label, go, open));
-      txt(this, GAME_W / 2, y + 52, open ? `${e.date} - ${e.kind === 'playable' ? 'playable' : 'story'}` : '', 8, CSS.dim).setOrigin(0.5);
-      this.input.keyboard?.on(`keydown-${KEY_NAMES[i]}`, go);
-      y += 70;
-    });
-    this.buildSettings(Math.max(y + 10, oy + 420), []);
+  /** The game's menuBackground tiled over the screen (a GIF plays its animation), or null if there is none. */
+  private addBackground(): Phaser.GameObjects.TileSprite | null {
+    const bg = this.gm.parts.game.menuBackground;
+    const key = typeof bg === 'string' ? bg : bg ? MENU_GIF_KEY : null;
+    if (!key || !this.textures.exists(key)) return null;
+    const animated = this.anims.exists(key);
+    // A GIF usually has a transparent background: give it a tarmac-grey one.
+    if (animated) this.add.rectangle(0, 0, GAME_W, GAME_H, PAL.slate).setOrigin(0);
+    const ground = this.add.tileSprite(0, 0, GAME_W, GAME_H, key, animated ? 0 : undefined).setOrigin(0);
+    // Centre the columns, so the screen edges cut both outer columns equally.
+    ground.tilePositionX = -Math.round((GAME_W % ground.frame.width) / 2);
+    if (animated) ground.anims.play(key);
+    return ground;
   }
 
-  /** One episode: CONTINUE / PLAY, chapters, settings and notes. */
-  private buildEpisode(ep: EpisodeDef, withBack: boolean): void {
+  /** Title, then each episode with its chapters, then settings. Keys 1-9 start chapters on desktop. */
+  private buildMenu(episodes: EpisodeDef[]): void {
     const flow = this.gm.flow;
+    const game = this.gm.parts.game;
     const save = loadSave();
-    const p = episodeProgress(save, ep.id);
-    const oy = Math.round(EXTRA_H / 2);
     const cx = GAME_W / 2;
-    if (withBack) this.buttons.add(new Button(this, 6, 6, 64, 28, '< BACK', () => this.scene.restart({} satisfies MenuData)));
-    txt(this, cx, oy + 30, this.gm.parts.game.title.toUpperCase(), 16, CSS.signal).setOrigin(0.5);
-    txt(this, cx, oy + 56, `LEVEL ${ep.number}`, 8, CSS.dim).setOrigin(0.5);
-    txt(this, cx, oy + 72, ep.title.toUpperCase(), 16, CSS.white).setOrigin(0.5);
-    txt(this, cx, oy + 94, `${ep.date} - ${ep.place}`, 8, CSS.dim, GAME_W - 20).setOrigin(0.5);
+    const oy = Math.round(EXTRA_H / 2);
+    // Text drawn straight on the background gets a dark outline so it reads over the art.
+    const onBg = (x: number, y: number, s: string, size: number, color: string) => txt(this, x, y, s, size, color).setStroke('#0b0c0d', 4);
+    onBg(cx, oy + 24, game.title.toUpperCase(), 16, CSS.signal).setOrigin(0.5);
+    if (game.subtitle) onBg(cx, oy + 46, game.subtitle, 8, CSS.dim).setOrigin(0.5);
 
-    // CONTINUE where the player left off, else PLAY from the title card.
-    let y = oy + 112;
-    const resume = p.resume ? flow.resolve(`${ep.id}/${p.resume}`) : null;
-    const first = flow.firstRef(ep.id);
-    if (resume && resume.ref !== first) {
-      const label = `CONTINUE: ${flow.title(resume.step).toUpperCase()}`;
-      this.buttons.add(new Button(this, 30, y, 300, 40, label, () => this.gm.startEpisode(ep.id, 'resume'), true));
-      this.buttons.add(new Button(this, 30, y + 46, 300, 30, 'PLAY FROM THE START', () => this.gm.startEpisode(ep.id, 'start')));
-      y += 86;
-    } else {
-      this.buttons.add(new Button(this, 30, y, 300, 40, p.finished ? 'PLAY AGAIN' : 'PLAY', () => this.gm.startEpisode(ep.id, 'start'), true));
-      y += 52;
-    }
-    this.input.keyboard?.on('keydown-ENTER', () => this.gm.startEpisode(ep.id, resume ? 'resume' : 'start'));
+    let y = oy + 66;
+    let n = 0;
+    let enter: (() => void) | null = null;
+    for (const ep of episodes) {
+      const open = flow.isUnlocked(ep.id, save);
+      const p = episodeProgress(save, ep.id);
+      onBg(30, y + 4, `LEVEL ${ep.number}: ${ep.title.toUpperCase()}`, 8, CSS.signal);
+      onBg(30, y + 18, ep.date, 8, CSS.dim);
+      if (!open) {
+        onBg(330, y + 11, 'LOCKED', 8, CSS.dim).setOrigin(1, 0);
+        y += 44;
+        continue;
+      }
 
-    // Chapters: each starts the episode from that step. Keys 1-9 on desktop.
-    const chapters = flow.chapters(ep.id, save);
-    if (chapters.length) {
-      txt(this, cx, y + 4, 'CHAPTERS', 8, CSS.dim).setOrigin(0.5, 0);
-      y += 18;
-      chapters.forEach((c, i) => {
-        const label = `${i + 1}. ${c.title.toUpperCase()}${c.done ? '  [DONE]' : c.locked ? '  [LOCKED]' : ''}`;
+      // CONTINUE where the player left off, else PLAY from the start (title card and all).
+      const resume = p.resume ? flow.resolve(`${ep.id}/${p.resume}`) : null;
+      const from = resume && resume.ref !== flow.firstRef(ep.id) ? 'resume' : 'start';
+      const play = () => this.gm.startEpisode(ep.id, from);
+      const label = from === 'resume' ? 'CONTINUE' : p.finished ? 'REPLAY' : 'PLAY';
+      this.buttons.add(new Button(this, 240, y, 90, 28, label, play, true));
+      // ENTER plays the first episode that isn't finished.
+      if (!enter && !p.finished) enter = play;
+      y += 36;
+
+      // Chapters: each starts the episode from that step.
+      flow.chapters(ep.id, save).forEach((c) => {
+        const label = `${++n}. ${c.title.toUpperCase()}${c.done ? '  [DONE]' : c.locked ? '  [LOCKED]' : ''}`;
         const go = () => !c.locked && this.gm.playChapter(c.ref);
         this.buttons.add(new Button(this, 30, y, 300, 32, label, go));
-        if (i < KEY_NAMES.length) this.input.keyboard?.on(`keydown-${KEY_NAMES[i]}`, go);
+        if (n <= KEY_NAMES.length) this.input.keyboard?.on(`keydown-${KEY_NAMES[n - 1]}`, go);
         y += 38;
       });
+      y += 10;
     }
+    if (enter) this.input.keyboard?.on('keydown-ENTER', enter);
 
-    // Settings of the mechanics this episode uses (e.g. flight's GUNS).
-    const used = new Set(ep.steps.flatMap((s) => (s.kind === 'level' ? [s.mechanic] : [])));
+    // Settings of every mechanic the episodes use (e.g. flight's GUNS).
+    const used = new Set(episodes.flatMap((ep) => ep.steps.flatMap((s) => (s.kind === 'level' ? [s.mechanic] : []))));
     const defs = [...used].flatMap((id) => (this.gm.parts.descriptors[id]?.settings ?? []).map((d) => ({ owner: id, def: d })));
-    y = this.buildSettings(y + 8, defs);
-
-    if (ep.notes.length) txt(this, cx, y + 8, ep.notes.join('\n'), 8, CSS.dim, GAME_W - 20).setOrigin(0.5, 0).setAlign('center');
+    this.buildSettings(y, defs);
   }
 
   /** Setting toggles, two per row, then FULL SCREEN. Each tap saves at once. Returns the y below them. */
@@ -151,7 +140,8 @@ export class MenuScene extends Phaser.Scene {
   }
 
   update(_t: number, dms: number): void {
-    // Drift the ground down the screen at 30 px/s, as if flying north.
+    // Drift the background down the screen at 30 px/s: the walking pilots
+    // head south, and a ground texture looks like flying north.
     if (this.ground) this.ground.tilePositionY -= dms * 0.03;
     // Buttons are drawn into one Graphics, redrawn every frame to show presses.
     this.g.clear();
