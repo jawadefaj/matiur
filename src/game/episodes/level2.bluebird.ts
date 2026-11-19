@@ -15,7 +15,7 @@ export default defineEpisode({
   title: t('level2.title'),
   date: t('level2.date'),
   place: t('level2.place'),
-  unlock: { after: 'bridge' }, // After the bridge episode (which unlocks after Level 1)
+  unlock: 'always', // Dev: unlock all during development
   notes: [
     'ON FOOT',
     'Arrow keys / WASD or drag: walk',

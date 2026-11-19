@@ -7,11 +7,11 @@ import { t } from '../../core/i18n';
 export default defineEpisode({
   id: 'bridge',
   number: 1.5,
-  kind: 'cinematic',
+  kind: 'story',
   title: t('bridge.title'),
   date: t('bridge.date'),
   place: t('bridge.place'),
-  unlock: { after: 'ep2' }, // Unlocked after Level 1
+  unlock: 'always', // Dev: unlock all during development
   notes: ['A bridge between the wars.'],
   steps: [
     video('bridge-video', {
