@@ -1,0 +1,45 @@
+{
+ "file": "frame_007.png",
+ "sha256": "03aa3c581f3ae779f9ab90b8a90b15b79d74ef34a011ebc9bf3b22aa278690d0",
+ "key": "walk_matiur_sd",
+ "endpoint": "POST /characters/animations",
+ "request": {
+  "character_id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9",
+  "mode": "v3",
+  "template_action": "walking",
+  "animation_group_id": "6b9fe7e3-67dc-413c-b5c0-a6b82555b2ee",
+  "directions": [
+   "north",
+   "east",
+   "west"
+  ]
+ },
+ "seed": null,
+ "ids": {
+  "character_id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9",
+  "animation_group_id": "6b9fe7e3-67dc-413c-b5c0-a6b82555b2ee",
+  "background_job_ids": [
+   "2713dc91-b0f3-43f6-b2dd-b3c980fb6476",
+   "4500431e-f0df-43f5-ab8f-7962401dfa33",
+   "86ea9ecb-33b3-4ccd-87bf-b4729b6f17f8"
+  ]
+ },
+ "usage": [
+  {
+   "type": "generations",
+   "generations": 1.0
+  },
+  {
+   "type": "generations",
+   "generations": 1.0
+  },
+  {
+   "type": "generations",
+   "generations": 1.0
+  }
+ ],
+ "url": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/d4971053-6ffe-4d9d-bf64-741ca3cd9cec/north/7.png",
+ "animation_type": "v3:walking",
+ "created_at": "2026-11-20T01:54:26+00:00",
+ "recovered": false
+}

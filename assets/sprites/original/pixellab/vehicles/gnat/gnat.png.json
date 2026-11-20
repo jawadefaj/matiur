@@ -1,0 +1,43 @@
+{
+ "file": "gnat.png",
+ "sha256": "184126e5da4e0991f64db3e429193c8bdcf02ace29629b33ea24b39428edb357",
+ "key": "gnat",
+ "endpoint": "POST /create-image-pixflux",
+ "request": {
+  "description": "Folland Gnat small light jet fighter, nose pointing up, short swept wings, grey-green camouflage, small blue canopy, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+  "image_size": {
+   "width": 34,
+   "height": 32
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "direction": "north",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "init_image": {
+   "type": "base64",
+   "sha256": "0d0fd8823e38433ffe34ce6a630d32a7d8d56e16739eea49b02dbc9104dd0f16",
+   "path": "assets/sprites/templates/gnat.png",
+   "scale": 2,
+   "padTo": [
+    17,
+    16
+   ],
+   "size": [
+    34,
+    32
+   ]
+  },
+  "init_image_strength": 350,
+  "seed": 7
+ },
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "generations": 1.0,
+ "created_at": "2026-11-20T02:01:05+00:00",
+ "recovered": false
+}

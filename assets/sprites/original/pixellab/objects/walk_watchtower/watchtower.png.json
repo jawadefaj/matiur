@@ -1,0 +1,28 @@
+{
+ "file": "watchtower.png",
+ "sha256": "a56ae37ce555ab499c12cb4180e00771b3f223580169826d2506489d5bc8fc6b",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/watchtower.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "military perimeter watchtower, tall narrow white concrete tower with a red pointed roof, a blue window under the roof and a small green flag, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 64,
+   "height": 144
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

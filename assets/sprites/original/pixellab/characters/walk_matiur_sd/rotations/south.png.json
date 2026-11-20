@@ -1,0 +1,11 @@
+{
+ "file": "south.png",
+ "sha256": "238fb32436d8b5a32b76ab997820f443ef35c1bf48df1acf4cf80c753716f20c",
+ "endpoint": "GET /characters/7a74fa03-4535-43b9-a190-49e0cb02b8c9 rotation_urls",
+ "url": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/rotations/south.png",
+ "generations": 0,
+ "ids": {
+  "character_id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9"
+ },
+ "created_at": "2026-11-18T08:33:03.925175+00:00"
+}

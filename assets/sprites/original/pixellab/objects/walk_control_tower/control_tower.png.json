@@ -1,0 +1,28 @@
+{
+ "file": "control_tower.png",
+ "sha256": "792a4f2a35618481a986a94ebce9d1d0f10f2e9340ba66e023017cb61623b1b3",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/control_tower.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "airfield control tower, tall white column with a blue glass control cab and a red roof on top, small white base building with blue windows, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 128,
+   "height": 224
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

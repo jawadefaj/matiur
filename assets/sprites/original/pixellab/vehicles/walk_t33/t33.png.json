@@ -1,0 +1,28 @@
+{
+ "file": "t33.png",
+ "sha256": "33d6517fa401674165c986384a0756f2463eb7e74cd78d5573901bff7c4c2e69",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/t33.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "top-down view of a silver Lockheed T-33 jet trainer airplane, nose pointing up, straight wings with tip fuel tanks, yellow bands, green and white roundels, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 120,
+   "height": 120
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

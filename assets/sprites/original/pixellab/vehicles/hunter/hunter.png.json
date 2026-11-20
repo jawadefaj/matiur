@@ -1,0 +1,40 @@
+{
+ "file": "hunter.png",
+ "sha256": "c0cc9ed695e94276b9d69ba395245fb3ec6ced258377742732b83affa61587c2",
+ "key": "hunter",
+ "endpoint": "POST /create-image-pixflux",
+ "request": {
+  "description": "Hawker Hunter jet fighter, nose pointing up, swept-back wings, olive drab camouflage, small blue canopy, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+  "image_size": {
+   "width": 42,
+   "height": 46
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "direction": "north",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "init_image": {
+   "type": "base64",
+   "sha256": "d817b77719801de63b558f6a21906cda686ce0306221576d684f250bcb4c5e00",
+   "path": "assets/sprites/templates/hunter.png",
+   "scale": 2,
+   "padTo": null,
+   "size": [
+    42,
+    46
+   ]
+  },
+  "init_image_strength": 350,
+  "seed": 7
+ },
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "generations": 1.0,
+ "created_at": "2026-11-20T02:00:53+00:00",
+ "recovered": false
+}

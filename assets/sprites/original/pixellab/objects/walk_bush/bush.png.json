@@ -1,0 +1,28 @@
+{
+ "file": "bush.png",
+ "sha256": "8b53fde679da5caefb8602b287e59a4f81f0097defd80e195e2dee02b44aabac",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/bush.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "small round green desert shrub, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 40,
+   "height": 40
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

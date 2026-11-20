@@ -1,0 +1,74 @@
+{
+ "file": "tile_09.png",
+ "sha256": "218ba12eecea4486e981a0d39ac6a3e182a72f96dec45bc2aafb5e487b652a3c",
+ "key": "walk_tiles_ground",
+ "set": "sand_concrete",
+ "endpoint": "POST /create-tileset",
+ "request": {
+  "lower_description": "sun-baked tan desert sand with scattered small pebbles, featuring gentle wind ripples and uniform flat earthy tones without any shadows",
+  "upper_description": "light grey weathered concrete apron slabs with thin dark expansion joints, flat and even, no shadows",
+  "lower_base_tile_id": "c77d7b23-f8e7-48be-b1a4-5bcd2f803a7c",
+  "tile_size": {
+   "width": 16,
+   "height": 16
+  },
+  "view": "high top-down",
+  "mode": "standard",
+  "transition_size": 0.0,
+  "upper_walkable": true,
+  "seed": 7
+ },
+ "seed": 7,
+ "ids": {
+  "tileset_id": "edb94c7d-6f0d-4618-acdc-9941c8738378",
+  "background_job_id": "abe63a39-6ecd-4f81-a0ee-9b3cb50e4681"
+ },
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "created_at": "2026-11-20T01:58:50.919751+00:00",
+ "recovered": false,
+ "tile": {
+  "id": "3",
+  "name": "wang_3",
+  "corners": {
+   "NW": "lower",
+   "NE": "lower",
+   "SW": "upper",
+   "SE": "upper"
+  },
+  "pattern_4x4": {
+   "row_0": [
+    255,
+    255,
+    255,
+    255
+   ],
+   "row_1": [
+    255,
+    0,
+    0,
+    255
+   ],
+   "row_2": [
+    255,
+    1,
+    1,
+    255
+   ],
+   "row_3": [
+    255,
+    255,
+    255,
+    255
+   ]
+  },
+  "original_position": {
+   "row": 1,
+   "col": 2
+  },
+  "description": null,
+  "connections": null
+ }
+}

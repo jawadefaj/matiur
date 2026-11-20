@@ -1,0 +1,11 @@
+{
+ "file": "north.png",
+ "sha256": "2ea88b80531d9f2d737b1919a17eada42a9b3e9675d153c71d207750f0d25220",
+ "endpoint": "GET /characters/7a74fa03-4535-43b9-a190-49e0cb02b8c9 rotation_urls",
+ "url": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/rotations/north.png",
+ "generations": 0,
+ "ids": {
+  "character_id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9"
+ },
+ "created_at": "2026-11-18T08:33:03.925175+00:00"
+}

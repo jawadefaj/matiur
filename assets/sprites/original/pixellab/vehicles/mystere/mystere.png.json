@@ -1,0 +1,40 @@
+{
+ "file": "mystere.png",
+ "sha256": "37e3868288d53a4421f1ed74624aa2be3d5cc3ab8d9ebd9438eeab8822142f34",
+ "key": "mystere",
+ "endpoint": "POST /create-image-pixflux",
+ "request": {
+  "description": "Dassault Mystere IV jet fighter, nose pointing up, swept-back wings, grey-green camouflage, small blue canopy, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+  "image_size": {
+   "width": 34,
+   "height": 42
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "direction": "north",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "init_image": {
+   "type": "base64",
+   "sha256": "cb9fdc4c1cf62f97173ec831a0069e99d8301fb9de969a5a0df81a848814f9ee",
+   "path": "assets/sprites/templates/mystere.png",
+   "scale": 2,
+   "padTo": null,
+   "size": [
+    34,
+    42
+   ]
+  },
+  "init_image_strength": 350,
+  "seed": 7
+ },
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "generations": 1.0,
+ "created_at": "2026-11-20T02:00:39+00:00",
+ "recovered": false
+}

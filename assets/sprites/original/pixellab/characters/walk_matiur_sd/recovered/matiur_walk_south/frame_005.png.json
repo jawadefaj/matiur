@@ -1,0 +1,11 @@
+{
+ "file": "frame_005.png",
+ "sha256": "6cb93ef6ff26b5d7bf526779a83b752de2b2dc28538c6725d9f46e8ca848dd1b",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/matiur_walk_south/frame_005.png",
+ "endpoint": "POST /characters/animations (trial, v3 walking)",
+ "ids": {
+  "character_id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9",
+  "animation_group_id": "6b9fe7e3-67dc-413c-b5c0-a6b82555b2ee"
+ }
+}

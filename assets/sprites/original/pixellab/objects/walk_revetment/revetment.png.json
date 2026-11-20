@@ -1,0 +1,28 @@
+{
+ "file": "revetment.png",
+ "sha256": "7b0bb68f6ca587fc83478d75275885187d822b1455a6c98c2b7312d1890b3d46",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/revetment.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "empty square concrete aircraft parking bay seen from above, light concrete floor with low tan sandbag walls on the left, right and top sides, open at the bottom, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 128,
+   "height": 128
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

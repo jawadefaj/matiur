@@ -1,0 +1,39 @@
+{
+ "file": "cloud0.png",
+ "sha256": "d1513bb44395850c286f47a47d9697cb9baedfc9bb1d5f6954271620beefe193",
+ "key": "cloud0",
+ "endpoint": "POST /create-image-pixflux",
+ "request": {
+  "description": "one small soft white cumulus cloud seen from above, puffy round lobes, pale grey shaded underside, pixel art game asset",
+  "image_size": {
+   "width": 56,
+   "height": 32
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "lineless",
+  "shading": "basic shading",
+  "detail": "low detail",
+  "init_image": {
+   "type": "base64",
+   "sha256": "a6cd7ad4608fa356d572f30932f7bade2f7914fdec8373332cdc2c76e4940be9",
+   "path": "assets/sprites/templates/cloud0.png",
+   "scale": 1,
+   "padTo": null,
+   "size": [
+    56,
+    32
+   ]
+  },
+  "init_image_strength": 300,
+  "seed": 11
+ },
+ "seed": 11,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "generations": 1.0,
+ "created_at": "2026-11-20T02:03:02+00:00",
+ "recovered": false
+}

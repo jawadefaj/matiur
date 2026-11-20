@@ -1,0 +1,10 @@
+{
+ "file": "matiur_west.png",
+ "sha256": "2110e061a378296cc2e38a4a5894381b0eee6c389d96e3fabdbcd1421ceb63be",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/matiur_west.png",
+ "endpoint": "rotations from the extracted poses (trial)",
+ "ids": {
+  "character_id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9"
+ }
+}

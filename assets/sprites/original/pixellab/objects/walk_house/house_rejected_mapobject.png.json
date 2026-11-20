@@ -1,0 +1,15 @@
+{
+ "file": "house_rejected_mapobject.png",
+ "sha256": "89c87b5a34410b8ead43b97bebbafe32fe034285bc5f8412c28373189b4675e7",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/house_rejected_mapobject.png",
+ "endpoint": "POST /map-objects (trial, rejected)",
+ "ids": {
+  "background_job_id": "58370d80-3028-4325-9766-941f4d9baffc",
+  "object_id": "1ca79f21-9bb2-430e-aedf-2fcf83759fa9"
+ },
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ }
+}

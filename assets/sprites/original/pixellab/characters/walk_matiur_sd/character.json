@@ -1,0 +1,57 @@
+{
+ "id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9",
+ "name": "Matiur service dress",
+ "state_name": "Idle",
+ "prompt": "Flight Lieutenant in 1971 Pakistan Air Force navy-blue service dress, peaked cap with gold badge, aviator sunglasses, brown skin, chibi pixel art",
+ "size": {
+  "width": 64,
+  "height": 64
+ },
+ "directions": 4,
+ "created_at": "2026-11-18T08:33:03.925175+00:00",
+ "updated_at": "2026-11-18T08:33:09.316057+00:00",
+ "animation_count": 1,
+ "template_id": "mannequin",
+ "view": "low top-down",
+ "status": "completed",
+ "rotation_urls": {
+  "south": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/rotations/south.png?t=1794990789",
+  "west": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/rotations/west.png?t=1794990789",
+  "east": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/rotations/east.png?t=1794990789",
+  "north": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/rotations/north.png?t=1794990789",
+  "south-east": null,
+  "north-east": null,
+  "north-west": null,
+  "south-west": null
+ },
+ "style_settings": {
+  "generation_mode": "v3"
+ },
+ "guidance": null,
+ "ai_freedom": null,
+ "tags": [],
+ "group_id": "d0011385-d3b3-4409-a50c-3970910d8784",
+ "animations": [
+  {
+   "animation_type": "v3:walking",
+   "display_name": null,
+   "animation_group_id": "6b9fe7e3-67dc-413c-b5c0-a6b82555b2ee",
+   "directions": [
+    {
+     "direction": "south",
+     "frame_count": 8,
+     "frames": [
+      "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/a3b02ec0-804a-45e7-bd5e-84c86f7a644c/south/0.png?t=1794991176",
+      "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/a3b02ec0-804a-45e7-bd5e-84c86f7a644c/south/1.png?t=1794991176",
+      "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/a3b02ec0-804a-45e7-bd5e-84c86f7a644c/south/2.png?t=1794991176",
+      "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/a3b02ec0-804a-45e7-bd5e-84c86f7a644c/south/3.png?t=1794991176",
+      "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/a3b02ec0-804a-45e7-bd5e-84c86f7a644c/south/4.png?t=1794991176",
+      "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/a3b02ec0-804a-45e7-bd5e-84c86f7a644c/south/5.png?t=1794991176",
+      "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/a3b02ec0-804a-45e7-bd5e-84c86f7a644c/south/6.png?t=1794991176",
+      "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/7a74fa03-4535-43b9-a190-49e0cb02b8c9/animations/a3b02ec0-804a-45e7-bd5e-84c86f7a644c/south/7.png?t=1794991176"
+     ]
+    }
+   ]
+  }
+ ]
+}
