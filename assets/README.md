@@ -2,14 +2,17 @@
 
 All of the game's non-code files live here: the app icon, reference photos, reading material and the screenshots used in the main README.
 
-The game build uses only `public/`, `sprites/` and `video/`. In-game art comes from PNGs in `sprites/` where they exist. Everything else is placeholder pixel art drawn in code when the game starts (each mechanic's `art/pixelArt.ts` in `src/mechanics/`, and `src/core/gfx/commonArt.ts`). The game never loads anything from `reference/` or `screenshots/`.
+The game build uses only `public/`, `sprites/final/` (plus the menu GIF in `sprites/original/UI/`) and `video/`. In-game art comes from the PNGs in `sprites/final/` where they exist. Everything else is placeholder pixel art drawn in code when the game starts (each mechanic's `art/pixelArt.ts` in `src/mechanics/`, and `src/core/gfx/commonArt.ts`). The game never loads anything from `reference/` or `screenshots/`.
 
 ## Folders
 
 ```
 assets/
 ├── public/          App icon and web-app manifest. These ship with the game.
-├── sprites/         PNG game art. Each file replaces one placeholder (see sprites/README.md).
+├── sprites/         Game art (see sprites/README.md).
+│   ├── final/       The PNGs the game loads, one per texture key, in category folders.
+│   ├── manifest.json  Every key: size, source, post steps, map use. Made and checked by scripts/art/.
+│   ├── original/    Source pictures, and pixellab/: raw PixelLab output with sidecars and the ledger. Not loaded.
 │   └── templates/   The placeholders as PNGs, to paint over. Not used by the game.
 ├── video/           Video files for video steps (see video/README.md).
 ├── reference/       Research for art and writing. Never shipped.
@@ -23,7 +26,10 @@ assets/
 | Folder | In the game build? | How it is used |
 |---|---|---|
 | `public/` | Yes | Vite serves this folder at the site root and copies it unchanged into `dist/` (`publicDir` in [vite.config.ts](../vite.config.ts)). [index.html](../index.html) links to `icon.svg` and `manifest.webmanifest`. |
-| `sprites/` | Yes | Found by `src/core/gfx/pngArt.ts` when the game is built. Each PNG replaces the placeholder with the same name. Rules and key names are in [sprites/README.md](sprites/README.md). |
+| `sprites/final/` | Yes | Found by `src/core/gfx/pngArt.ts` when the game is built. Each PNG replaces the placeholder with the same name (the file name is the key, unique across the category folders). Rules, key names and the Masroor Tiled map are in [sprites/README.md](sprites/README.md). |
+| `sprites/manifest.json` | No | The list of every key, its size and where its pixels come from. Read by the art pipeline ([scripts/art/README.md](../scripts/art/README.md)) and checked by `npm test`. |
+| `sprites/original/` | Only the menu GIF | Source pictures for the art. `original/pixellab/` keeps the raw PixelLab output, a sidecar per file and `ledger.jsonl` (the generation budget). |
+| `sprites/templates/` | No | The code-drawn placeholders as PNGs, to paint over. |
 | `video/` | Yes | Found by `src/core/media/content.ts` when the game is built. A `video('intro', { src: 'ep2_intro' })` step plays `ep2_intro.mp4`. Size and format rules are in [video/README.md](video/README.md). |
 | `reference/` | No | Used by people only: artists, writers and fact-checkers. |
 | `screenshots/` | No | Shown in the [main README](../README.md). |

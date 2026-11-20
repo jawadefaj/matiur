@@ -22,6 +22,8 @@ export interface GuardDef {
   vision?: { angle?: number; range?: number };
   /** While standing, sweep `arc` degrees around `facing` once every `period` seconds. */
   scan?: { arc: number; period: number };
+  /** He stands up on something (a watchtower): drawn above the scenery around him. */
+  elevated?: boolean;
 }
 
 export type GuardState = 'calm' | 'suspicious' | 'caught';
@@ -65,7 +67,7 @@ export class Stealth {
   /** Spawn the guard as an actor in the world and give him a cone. */
   add(w: WalkWorld, d: GuardDef): Guard {
     const s = tuning.stealth;
-    w.addActor({ id: d.id, name: d.name, look: d.look, x: d.x, y: d.y, speed: s.guardSpeed });
+    w.addActor({ id: d.id, name: d.name, look: d.look, x: d.x, y: d.y, speed: s.guardSpeed, elevated: d.elevated });
     if (d.patrol && d.patrol.length > 0) w.setPatrol(d.id, d.patrol);
     const rest = (d.facing ?? 90) * DEG;
     const g: Guard = {

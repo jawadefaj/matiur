@@ -32,6 +32,8 @@ export interface Actor {
   talkable: boolean;
   /** Hidden actors aren't drawn and can't be talked to. */
   visible: boolean;
+  /** Stands up on something (a watchtower): WalkScene draws them above the scenery around them. */
+  elevated?: boolean;
   /** Loop between these points while idle (an NPC on rounds). Cleared by walkTo/stop. */
   patrol?: Point[];
   patrolIdx?: number;
@@ -56,6 +58,7 @@ export interface ActorOpts {
   facing?: Facing;
   speed?: number;
   talkable?: boolean;
+  elevated?: boolean;
 }
 
 export interface WalkMap {
@@ -114,6 +117,7 @@ export class WalkWorld {
       walkTime: 0,
       talkable: o.talkable ?? false,
       visible: true,
+      elevated: o.elevated ?? false,
     };
     this.actors.push(a);
     if (a.id === 'player') this.player = a;

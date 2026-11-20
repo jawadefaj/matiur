@@ -1,4 +1,4 @@
-// Turns art into Phaser textures. BootScene loads any PNGs from assets/sprites/
+// Turns art into Phaser textures. BootScene loads any PNGs from assets/sprites/final/
 // (pngArt.ts), then core and every mechanic register their textures once
 // through an ArtKit. Each key uses its PNG if there is one, else the
 // placeholder drawn in code.
@@ -24,7 +24,7 @@ export interface ArtKit {
   png(key: string): Source | undefined;
 }
 
-/** Queue every PNG in assets/sprites/ for loading. Called from BootScene.preload(). */
+/** Queue every PNG in assets/sprites/final/ for loading. Called from BootScene.preload(). */
 export function loadPngArt(scene: Phaser.Scene): void {
   for (const [key, url] of Object.entries(PNG_ART)) scene.load.image(pngKey(key), url);
 }

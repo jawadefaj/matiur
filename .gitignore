@@ -12,3 +12,9 @@ assets/videos/demo-30sec/frames/*
 assets/videos/demo-60sec/frames/*
 design/matiur.pdf
 design/_scratch/*
+# Local secrets (PixelLab API key for scripts/art). Never prefix with VITE_.
+.env
+.env.*
+# Python caches from scripts/art
+__pycache__/
+*.pyc

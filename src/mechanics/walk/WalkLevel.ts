@@ -43,10 +43,50 @@ export interface Prop {
   y: number;
 }
 
-/** One picture under the whole map, drawn at `scale` (pixel art, nearest-neighbour). */
-export interface Backdrop {
+/**
+ * A ground of tiles drawn from a Tiled map (.tmj, see src/core/tiled.ts).
+ * WalkScene hands the JSON to Phaser's tilemap loader.
+ */
+export interface LevelTilemap {
+  /** Key in Phaser's tilemap cache. */
+  cacheKey: string;
+  /** The .tmj file, parsed. */
+  json: unknown;
+  /** Tile layers to draw, bottom first. */
+  layers: string[];
+  /** Atlas tilesets the layers use. Each is named after its texture key. */
+  tilesets: string[];
+}
+
+/**
+ * A picture placed on a Tiled map (a house, a tree, a parked jet). Drawn only:
+ * its collision is in the level's blocks. Never scaled.
+ */
+export interface MapSprite {
+  /** Texture key. */
   key: string;
-  scale: number;
+  /** Left edge, world px. */
+  x: number;
+  /** BOTTOM edge, world px (Tiled anchors objects at their bottom-left corner). */
+  y: number;
+  w: number;
+  h: number;
+  /** Sorted with the characters by this y: whoever stands lower on the map draws in front. */
+  sortY: number;
+  /** Lies flat on the ground (pond, track): drawn under every character. */
+  flat: boolean;
+  /** Casts a ground shadow (texture '<key>_sh'). */
+  shadow: boolean;
+  /** Mirrored left-right. */
+  flipX: boolean;
+}
+
+/** A wall drawn by stamping a small picture along a line (the perimeter wall). */
+export interface WallLine {
+  /** Corners in world px; a closed wall repeats its first point at the end. */
+  points: Point[];
+  /** Texture key of the stamp. */
+  key: string;
 }
 
 /** A moving picture with a heading: Bluebird taxiing. The texture is drawn nose up. */
@@ -137,8 +177,12 @@ export abstract class WalkLevel {
   /** Background colour outside every block. */
   groundColor = 0x6b7a4a;
 
-  /** A picture under everything (the base map). Blocks still draw on top. */
-  backdrop: Backdrop | null = null;
+  /** Tiles under everything (Masroor's ground, from its Tiled map). Blocks still draw on top. */
+  tilemap: LevelTilemap | null = null;
+  /** Pictures from the Tiled map, y-sorted with the characters unless flat. */
+  sprites: MapSprite[] = [];
+  /** Walls drawn along lines (their collision is in the blocks). */
+  wallLines: WallLine[] = [];
   /** Night: the HUD says so and a small light follows the player. */
   night = false;
   /** Guards with vision cones (stealth levels only). */

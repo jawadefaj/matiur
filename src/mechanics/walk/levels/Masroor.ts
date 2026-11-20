@@ -4,13 +4,16 @@
 // written in master-map pixels and converted by m(), so they can be read
 // straight off assets/sprites/original/airport-level-map-clean.jpeg.
 //
-// The base map is one picture at full resolution, rebuilt from PixelLab art by
-// assets/art-wip/level-2/build_masroor_map.py, which also writes the colliders
-// (houses, trees, tanks, towers, jets, the perimeter wall) to masroorLayout.json.
-// Characters are single still images.
+// The map is the Tiled map masroor.tmj (open it in Tiled 1.10+ to move things):
+// a ground of 16 px tiles, the houses, trees, towers and parked jets as
+// pictures, the perimeter wall, and the no-go areas. Its colliders come from
+// the same file (src/core/tiled.ts), so what you see is what blocks. It was
+// first built by `python scripts/art/art.py build-map masroor`.
 import { t } from '../../../core/i18n';
-import { WalkLevel, type Block } from '../WalkLevel';
-import layout from './masroorLayout.json';
+import { collisionRects, parseTiledMap, prop, type TiledMap } from '../../../core/tiled';
+import { WalkLevel, type Block, type MapSprite } from '../WalkLevel';
+import { sceneryFromMap, type MapScenery } from '../mapScenery';
+import raw from './masroor.tmj?raw';
 import { Stealth, type GuardDef } from '../stealth';
 import { tuning } from '../tuning';
 import type { Point, WalkEvent, WalkMap, WalkWorld } from '../WalkWorld';
@@ -30,6 +33,8 @@ export const M_PER_PX = 1.41;
 
 const PLAYER = 'walk_matiur_sd';
 const GUARD = 'walk_guard';
+/** Bluebird, the T-33: also the picture of every parked jet on the map. */
+const T33 = 'walk_t33';
 
 /** Matiur's front door in Residential East. */
 export const HOME = m(1064, 788);
@@ -46,8 +51,11 @@ export const INTERCEPT = BLUEBIRD_ROUTE[BLUEBIRD_ROUTE.length - 1];
 /** A box of `size` world px centred on p. */
 const zoneAt = (id: string, p: Point, size = 40) => ({ id, x: p.x - size / 2, y: p.y - size / 2, w: size, h: size });
 
-/** The watchtower on the east wall, used at night in both night parts. */
-const WATCHTOWER: GuardDef = {
+/** Whether p is inside a map picture's bounds (its y is the BOTTOM edge). */
+const covers = (s: MapSprite, p: Point): boolean => s.x <= p.x && p.x <= s.x + s.w && s.y - s.h <= p.y && p.y <= s.y;
+
+/** The watchtower on the east wall, used at night in both night parts. He stands up in the tower. */
+export const WATCHTOWER: GuardDef = {
   id: 'tower',
   name: t('who.watchtower'),
   look: GUARD,
@@ -55,10 +63,11 @@ const WATCHTOWER: GuardDef = {
   facing: 180,
   vision: { angle: 30, range: 260 },
   scan: { arc: 60, period: 7 },
+  elevated: true,
 };
 
 /** Patrol on the north-south road by the ramp. */
-const RAMP_ROAD: GuardDef = {
+export const RAMP_ROAD: GuardDef = {
   id: 'road-ns',
   name: t('who.naikBashir'),
   look: GUARD,
@@ -66,8 +75,46 @@ const RAMP_ROAD: GuardDef = {
   patrol: [m(915, 700), m(915, 810)],
 };
 
-/** Every solid thing on the map, from the map builder. */
-const SOLIDS: Block[] = layout.solids.map((r) => ({ ...r, style: 'hidden', solid: true }));
+/** The map file read once, the first time a Masroor level (or its art) needs it. */
+let loaded: { map: TiledMap; scenery: MapScenery; solids: Block[] } | null = null;
+
+/** Masroor's Tiled map, parsed and checked. */
+export function masroorMap(): TiledMap {
+  return load().map;
+}
+
+/**
+ * Parses and checks Masroor's map (the .tmj's JSON). It must be made for the
+ * world the coordinates above are written for, and its tiles must cover it.
+ */
+export function readMasroorMap(json: unknown): TiledMap {
+  const map = parseTiledMap(json);
+  // The world's size is set by the map properties worldWidth and worldHeight.
+  const size = [prop(map.props, 'worldWidth', 0), prop(map.props, 'worldHeight', 0)];
+  if (size[0] !== W || size[1] !== H) throw new Error(`masroor.tmj: worldWidth x worldHeight is ${size[0]} x ${size[1]}, the level needs ${W} x ${H}.`);
+  // The tiles may reach a little past the world (it isn't a whole number of tiles), never fall short of it.
+  const tw = map.width * map.tilewidth;
+  const th = map.height * map.tileheight;
+  if (tw < W || th < H) {
+    throw new Error(
+      `masroor.tmj: its ${map.width} x ${map.height} tiles of ${map.tilewidth} x ${map.tileheight} px cover ${tw} x ${th} px, less than the ${W} x ${H} world. Make the map bigger in Tiled (Map > Resize Map).`,
+    );
+  }
+  return map;
+}
+
+function load(): NonNullable<typeof loaded> {
+  if (loaded) return loaded;
+  const json: unknown = JSON.parse(raw);
+  const map = readMasroorMap(json);
+  loaded = {
+    map,
+    scenery: sceneryFromMap('walk_masroor', json, map),
+    // Every solid thing on the map: object footprints, no-go areas, wall posts.
+    solids: collisionRects(map).map((r) => ({ ...r, style: 'hidden', solid: true })),
+  };
+  return loaded;
+}
 
 abstract class Masroor extends WalkLevel {
   readonly place = t('masroor.place');
@@ -77,10 +124,11 @@ abstract class Masroor extends WalkLevel {
   constructor(night: boolean) {
     super();
     this.night = night;
-    // The picture is already at world size (1 px = 1 world px).
-    this.backdrop = { key: night ? 'walk_masroor_night' : 'walk_masroor_day', scale: W / layout.width };
-    this.groundColor = night ? 0x1c2230 : 0x9a8458;
-    this.blocks = SOLIDS;
+    const { scenery, solids } = load();
+    this.tilemap = scenery.tilemap;
+    this.sprites = scenery.sprites;
+    this.wallLines = scenery.wallLines;
+    this.blocks = solids;
   }
 
   map(): WalkMap {
@@ -201,7 +249,11 @@ export class MasroorIntercept extends Masroor {
     this.routeLength = BLUEBIRD_ROUTE.slice(1).reduce((s, p, i) => s + Math.hypot(p.x - BLUEBIRD_ROUTE[i].x, p.y - BLUEBIRD_ROUTE[i].y), 0);
     const a = BLUEBIRD_ROUTE[0];
     const b = BLUEBIRD_ROUTE[1];
-    this.vehicles = [{ key: 'walk_t33', x: a.x, y: a.y, heading: Math.atan2(b.y - a.y, b.x - a.x) }];
+    this.vehicles = [{ key: T33, x: a.x, y: a.y, heading: Math.atan2(b.y - a.y, b.x - a.x) }];
+    // Bluebird is one of the jets parked on East Dispersal: it starts where that
+    // jet's picture stands, so the picture isn't drawn here. Its collider stays
+    // (the old map had it too), so this level blocks the same as the night ones.
+    this.sprites = this.sprites.filter((s) => !(s.key === T33 && covers(s, a)));
     this.rings = [{ ...INTERCEPT, r: 24, label: '1,150 m' }];
     this.doneText = t('intercept.done');
   }
