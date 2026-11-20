@@ -1,0 +1,74 @@
+{
+ "file": "tile_12.png",
+ "sha256": "98f391e38267757f8883dc46914c8659c134c73b55dfa1afa6eb6d1675e96b7e",
+ "key": "ground_farmland",
+ "set": null,
+ "endpoint": "POST /create-tileset",
+ "request": {
+  "lower_description": "green rice paddies and young crops in neat rectangular fields with thin raised earth bunds, Punjab farmland seen from high above",
+  "upper_description": "ochre and golden harvested wheat fields with brown furrows, seen from high above",
+  "tile_size": {
+   "width": 32,
+   "height": 32
+  },
+  "view": "high top-down",
+  "mode": "standard",
+  "transition_size": 0.0,
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "seed": 7
+ },
+ "seed": 7,
+ "ids": {
+  "tileset_id": "d8c5bdac-382c-4e98-8fca-11770dfa3f4c",
+  "background_job_id": "a066a935-b865-4eab-9e22-15efb4bc8904"
+ },
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "created_at": "2026-11-20T02:03:34.097853+00:00",
+ "recovered": false,
+ "tile": {
+  "id": "7ce46dc9-94d8-4c54-9ed3-9e2fd99cecb1",
+  "name": "wang_15",
+  "corners": {
+   "NW": "upper",
+   "NE": "upper",
+   "SW": "upper",
+   "SE": "upper"
+  },
+  "pattern_4x4": {
+   "row_0": [
+    255,
+    255,
+    255,
+    255
+   ],
+   "row_1": [
+    255,
+    1,
+    1,
+    255
+   ],
+   "row_2": [
+    255,
+    1,
+    1,
+    255
+   ],
+   "row_3": [
+    255,
+    255,
+    255,
+    255
+   ]
+  },
+  "original_position": {
+   "row": 2,
+   "col": 2
+  },
+  "description": null,
+  "connections": null
+ }
+}

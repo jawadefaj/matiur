@@ -1,0 +1,28 @@
+{
+ "file": "fuel_tank.png",
+ "sha256": "cc7827412c17ca1d5d58606def518068654fceb20e79c5f466a68579333c2207",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/fuel_tank.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "one large round white fuel storage tank seen from above, flat top with a dark square hatch, small red pipes at the base, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 128,
+   "height": 128
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

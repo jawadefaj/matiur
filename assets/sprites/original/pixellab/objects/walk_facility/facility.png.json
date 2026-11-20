@@ -1,0 +1,28 @@
+{
+ "file": "facility.png",
+ "sha256": "f10bcfcfcac34e4dc05546e4e017e4c38194248b8aaf76084d0ed09e1cc61d77",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/facility.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "small tall grey concrete signals building with a flat roof and a red stripe, one door, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 80,
+   "height": 128
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

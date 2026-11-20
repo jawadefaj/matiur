@@ -1,0 +1,28 @@
+{
+ "file": "tree.png",
+ "sha256": "3963d423989238a57e594e3452269e5cc5340db998b77b2d4ae25f2b7287283d",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/tree.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "round leafy green tree with short brown trunk, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 80,
+   "height": 96
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

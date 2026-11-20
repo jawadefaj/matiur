@@ -1,0 +1,74 @@
+{
+ "file": "tile_06.png",
+ "sha256": "ce02df298005be1d8ade100455753fef39dcf196a81811bfe25334a068bde29b",
+ "key": "walk_tiles_ground",
+ "set": "concrete_asphalt",
+ "endpoint": "POST /create-tileset",
+ "request": {
+  "lower_description": "light grey weathered concrete apron slabs with thin dark expansion joints, flat and even, no shadows",
+  "upper_description": "dark grey cracked asphalt road surface showing a fine aggregate texture, rendered in solid flat charcoal tones without gradients",
+  "lower_base_tile_id": "781a83d2-b6f0-449a-9769-724bad4ca2f7",
+  "upper_base_tile_id": "31b4f300-8675-4f86-901b-6090cf48cc93",
+  "tile_size": {
+   "width": 16,
+   "height": 16
+  },
+  "view": "high top-down",
+  "mode": "standard",
+  "transition_size": 0.0,
+  "seed": 7
+ },
+ "seed": 7,
+ "ids": {
+  "tileset_id": "20ffafd5-0b7b-4b4f-ac86-0a28ff2053a4",
+  "background_job_id": "568d2ef2-3436-4999-bda1-86ea5c421491"
+ },
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "created_at": "2026-11-20T01:59:35.670522+00:00",
+ "recovered": false,
+ "tile": {
+  "id": "781a83d2-b6f0-449a-9769-724bad4ca2f7",
+  "name": "wang_0",
+  "corners": {
+   "NW": "lower",
+   "NE": "lower",
+   "SW": "lower",
+   "SE": "lower"
+  },
+  "pattern_4x4": {
+   "row_0": [
+    255,
+    255,
+    255,
+    255
+   ],
+   "row_1": [
+    255,
+    0,
+    0,
+    255
+   ],
+   "row_2": [
+    255,
+    0,
+    0,
+    255
+   ],
+   "row_3": [
+    255,
+    255,
+    255,
+    255
+   ]
+  },
+  "original_position": {
+   "row": 6,
+   "col": 3
+  },
+  "description": null,
+  "connections": null
+ }
+}

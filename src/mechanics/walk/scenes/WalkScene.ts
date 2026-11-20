@@ -3,18 +3,21 @@
 // Tap the ground to walk there, tap a person to walk over and talk, or drag
 // to walk like a stick. Desktop: arrows/WASD walk, Space/E talks or reads on.
 // Stealth levels (Level 2) add guards' vision cones, a detection meter and a
-// RETRY card when the player is caught.
+// RETRY card when the player is caught. A level with a Tiled map (Masroor) is
+// drawn as Phaser tile layers plus one image per house, tree or jet, y-sorted
+// with the characters so they can walk behind things.
 import Phaser from 'phaser';
 import { t } from '../../../core/i18n';
 import { CSS, GAME_H, GAME_W, PAL } from '../../../core/config';
 import { tuning } from '../tuning';
 import { WALKER_COLS, WALKER_ROWS } from '../art/pixelArt';
 import { makeWalkLevel } from '../levels';
-import type { Block, BlockStyle, WalkLevel } from '../WalkLevel';
-import { WalkWorld } from '../WalkWorld';
+import type { Block, BlockStyle, LevelTilemap, MapSprite, WalkLevel, WallLine } from '../WalkLevel';
+import { WalkWorld, type Point } from '../WalkWorld';
 import type { Guard } from '../stealth';
 import { Button, ButtonSet, txt } from '../../../core/ui/widgets';
 import { clamp } from '../../../core/math';
+import { makeCanvas } from '../../../core/gfx/pixel';
 import type { StepHost } from '../../../core/contracts';
 import type { WalkParams } from '..';
 
@@ -24,14 +27,72 @@ export const WALK_SCENES = { walk: 'walk:Walk' } as const;
 /** Fixed simulation step (60 Hz), as in FlightScene. */
 const STEP = 1 / 60;
 
-/** Depths: ground and scenery, then y-sorted characters (DEPTH_ACTORS + y / 10000), then the HUD. */
+/**
+ * Depths, bottom to top: tile layers (just under DEPTH_GROUND), ground boxes,
+ * flat map pictures (pond, track, revetments), the shadows (so they fall
+ * across the flat pictures, as on the old baked map), the wall and solid
+ * boxes, then characters, vehicles and standing scenery y-sorted together
+ * (DEPTH_ACTORS + bottom y / 10000: whoever stands lower on the map is in
+ * front), then goal markers and torch cones over all of that so the stealth
+ * game stays readable, then names and the HUD.
+ */
 const DEPTH_GROUND = 0;
+const DEPTH_SHADOWS = 0.5;
+const DEPTH_FLAT = DEPTH_SHADOWS - 0.25;
 const DEPTH_SCENERY = 1;
-const DEPTH_MARKERS = 2;
-const DEPTH_CONES = 2.5;
 const DEPTH_ACTORS = 3;
+/** Added for a character standing up on something (the guard in the watchtower): above any y-sorted scenery. */
+const DEPTH_ELEVATED = 0.5;
+const DEPTH_MARKERS = 4;
+const DEPTH_CONES = 4.5;
 const DEPTH_LABELS = 5;
 const DEPTH_HUD = 10;
+
+/**
+ * Night on a tiled map, as one tint. The old baked night map was the day map
+ * darkened and pushed to blue. Fitted per channel as night = a * day, it gives
+ * this colour (rms error 1.6, 0.8 and 8.2 of 255 for R, G, B), and Phaser's
+ * plain MULTIPLY tint (its default) draws exactly colour * tint. It is linear,
+ * so tinting each picture and shadow gives the same result as tinting the
+ * finished map.
+ * Why not a closer fit: `python scripts/art/art.py verify --night-tint` fits
+ * night = a * day + b (rms 1.2, 0.6, 8.1), which needs the MULTIPLY_TWO tint
+ * mode. Phaser's shader picks the mode with an exact == after the mode goes
+ * through the GPU as a byte; drivers that convert that byte as c * (1/255)
+ * (SwiftShader, for one) miss modes 3, 6 and 7, and night came out in day
+ * colours. Mode 0 (MULTIPLY) always matches.
+ */
+const NIGHT_TINT = 0x616fa2; // a * 255 = 97, 111, 162
+
+/** Ground shadows: the picture's silhouette, moved down-right and see-through (the old baked map's look). */
+const SHADOW_DX = 6;
+const SHADOW_DY = 5;
+const SHADOW_ALPHA = 90 / 255;
+
+/** A wall stamp every this many px along the wall. 1 matches the old baked wall pixel for pixel; 2 leaves notches. */
+const WALL_STEP = 1;
+
+/** A standing picture in front of the player turns this see-through, so he never vanishes behind a house. */
+const SEE_THROUGH = 0.5;
+/** Cell size (px) of the grid that finds the pictures near the player. */
+const FADE_CELL = 128;
+
+/** A standing (y-sorted) map picture and its bounds, for the see-through check. */
+interface StandingPic {
+  img: Phaser.GameObjects.Image;
+  x0: number;
+  y0: number;
+  x1: number;
+  y1: number;
+  sortY: number;
+}
+
+/** Things that take a tint: images and tilemap layers. */
+interface Tintable {
+  setTint(color: number): unknown;
+}
+
+const cellKey = (cx: number, cy: number): number => cy * 1024 + cx;
 
 /** Fill and edge colours per block style. */
 const STYLE: Record<Exclude<BlockStyle, 'hidden'>, { fill: number; edge?: number }> = {
@@ -70,6 +131,10 @@ export class WalkScene extends Phaser.Scene {
   private phase: 'title' | 'play' | 'done' = 'title';
   private sprites = new Map<string, Phaser.GameObjects.Sprite>();
   private vehicleSprites: Phaser.GameObjects.Image[] = [];
+  /** Standing map pictures by FADE_CELL grid cell (see cellKey). */
+  private standing = new Map<number, StandingPic[]>();
+  /** The pictures made see-through last frame. */
+  private faded = new Set<Phaser.GameObjects.Image>();
   private coneG!: Phaser.GameObjects.Graphics;
   private markG!: Phaser.GameObjects.Graphics;
   private hudG!: Phaser.GameObjects.Graphics;
@@ -99,6 +164,8 @@ export class WalkScene extends Phaser.Scene {
     this.phase = 'title';
     this.sprites = new Map();
     this.vehicleSprites = [];
+    this.standing = new Map();
+    this.faded = new Set();
     this.cardTexts = [];
     this.drag = null;
     this.tapMark = { x: 0, y: 0, t: 0 };
@@ -266,10 +333,10 @@ export class WalkScene extends Phaser.Scene {
 
   private buildScenery(): void {
     const w = this.world;
-    const bd = this.level.backdrop;
-    if (bd) this.add.image(0, 0, bd.key).setOrigin(0).setScale(bd.scale).setDepth(DEPTH_GROUND - 0.5);
+    const tm = this.level.tilemap;
+    if (tm) this.buildTilemap(tm);
     const g = this.add.graphics().setDepth(DEPTH_GROUND);
-    if (!bd) {
+    if (!tm) {
       g.fillStyle(this.level.groundColor, 1);
       g.fillRect(0, 0, w.width, w.height);
     }
@@ -296,6 +363,125 @@ export class WalkScene extends Phaser.Scene {
     for (const b of this.level.blocks) if (!b.solid) draw(b);
     for (const b of this.level.blocks) if (b.solid) draw(b);
     for (const p of this.level.props) this.add.image(Math.round(p.x), Math.round(p.y), p.key).setDepth(DEPTH_SCENERY + 0.5);
+    for (const s of this.level.sprites) this.addMapSprite(s);
+    this.level.wallLines.forEach((line, i) => this.addWall(line, i));
+  }
+
+  /** The Tiled ground: one Phaser tilemap layer per tile layer, under everything else. */
+  private buildTilemap(tm: LevelTilemap): void {
+    if (!this.cache.tilemap.exists(tm.cacheKey)) {
+      this.cache.tilemap.add(tm.cacheKey, { format: Phaser.Tilemaps.Formats.TILED_JSON, data: tm.json });
+    }
+    // insertNull: an empty cell (most of 'paint') stays null instead of becoming
+    // a Tile object on every visit. Phaser's culling and setTint skip nulls.
+    const map = this.make.tilemap({ key: tm.cacheKey, insertNull: true });
+    // Only the atlas tilesets: the objects' image collection is drawn as single images (addMapSprite).
+    const sets = tm.tilesets.flatMap((name) => map.addTilesetImage(name, name) ?? []);
+    tm.layers.forEach((name, i) => {
+      const layer = map.createLayer(name, sets, 0, 0, false) as Phaser.Tilemaps.TilemapLayer | null;
+      if (!layer) throw new Error(`Tile layer "${name}" could not be made from ${tm.cacheKey}`);
+      layer.setDepth(DEPTH_GROUND - 0.5 + i * 0.1);
+      if (this.level.night) this.nightTint(layer);
+    });
+  }
+
+  /**
+   * A map picture, standing on its bottom edge, and its shadow. Flat things lie
+   * under every character and every shadow; the rest are y-sorted with the
+   * characters, by their bottom edge.
+   */
+  private addMapSprite(s: MapSprite): void {
+    const night = this.level.night;
+    if (s.shadow) {
+      const sh = this.add.image(s.x + SHADOW_DX, s.y + SHADOW_DY, `${s.key}_sh`).setOrigin(0, 1).setFlipX(s.flipX);
+      sh.setAlpha(SHADOW_ALPHA).setDepth(DEPTH_SHADOWS);
+      if (night) this.nightTint(sh);
+    }
+    const img = this.add.image(s.x, s.y, s.key).setOrigin(0, 1).setFlipX(s.flipX);
+    img.setDepth(s.flat ? DEPTH_FLAT : DEPTH_ACTORS + s.sortY / 10000);
+    if (night) this.nightTint(img);
+    if (s.flat) return;
+    // File it in every grid cell it covers, for the see-through check.
+    const pic: StandingPic = { img, x0: s.x, y0: s.y - s.h, x1: s.x + s.w, y1: s.y, sortY: s.sortY };
+    for (let cy = Math.max(0, Math.floor(pic.y0 / FADE_CELL)); cy <= Math.floor(pic.y1 / FADE_CELL); cy++) {
+      for (let cx = Math.max(0, Math.floor(pic.x0 / FADE_CELL)); cx <= Math.floor(pic.x1 / FADE_CELL); cx++) {
+        const k = cellKey(cx, cy);
+        const list = this.standing.get(k);
+        if (list) list.push(pic);
+        else this.standing.set(k, [pic]);
+      }
+    }
+  }
+
+  /**
+   * A wall: its stamp every WALL_STEP px along each segment, drawn once into a
+   * canvas and shown as one picture, so it costs nothing per frame. Each stamp
+   * is centred on the line and reaches 2 px below it, like the old baked wall.
+   * Lower stamps go first, so the dark top edge of one never lands on the face
+   * of the stamp above it. A canvas texture, not a render texture: Phaser
+   * uploads a canvas again after the WebGL context is lost (a phone suspending
+   * the tab, say), where a render texture comes back blank. The texture is
+   * kept, so a retry reuses it.
+   */
+  private addWall(line: WallLine, index: number): void {
+    const frame = this.textures.getFrame(line.key);
+    const sw = frame.width;
+    const sh = frame.height;
+    const spots: Point[] = [];
+    for (let k = 1; k < line.points.length; k++) {
+      const a = line.points[k - 1];
+      const b = line.points[k];
+      const n = Math.trunc(Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y)));
+      for (let i = 0; n > 0; i = Math.min(i + WALL_STEP, n)) {
+        // Top-left corner of the stamp at this point of the line.
+        spots.push({ x: Math.trunc(a.x + ((b.x - a.x) * i) / n) - Math.floor(sw / 2), y: Math.trunc(a.y + ((b.y - a.y) * i) / n) - (sh - 2) });
+        if (i === n) break;
+      }
+    }
+    if (spots.length === 0) return;
+    const x0 = Math.min(...spots.map((p) => p.x));
+    const y0 = Math.min(...spots.map((p) => p.y));
+    const x1 = Math.max(...spots.map((p) => p.x)) + sw;
+    const y1 = Math.max(...spots.map((p) => p.y)) + sh;
+    // A walk_ key, like every texture this mechanic makes.
+    const key = `walk_wall_layer_${this.level.id}_${index}`;
+    if (!this.textures.exists(key)) {
+      const [canvas, ctx] = makeCanvas(x1 - x0, y1 - y0);
+      const src = frame.source.image as CanvasImageSource;
+      spots.sort((p, q) => q.y - p.y);
+      for (const p of spots) ctx.drawImage(src, frame.cutX, frame.cutY, sw, sh, p.x - x0, p.y - y0, sw, sh);
+      this.textures.addCanvas(key, canvas);
+    }
+    const img = this.add.image(x0, y0, key).setOrigin(0).setDepth(DEPTH_SCENERY);
+    if (this.level.night) this.nightTint(img);
+  }
+
+  /** Night colours for a picture or tile layer (see NIGHT_TINT): MULTIPLY, the default tint mode. */
+  private nightTint(o: Tintable): void {
+    o.setTint(NIGHT_TINT);
+  }
+
+  /** Standing pictures that cover the player and stand in front of him go see-through. */
+  private seeThrough(): void {
+    const p = this.world.player;
+    const s = this.sprites.get(p.id);
+    const now = new Set<Phaser.GameObjects.Image>();
+    if (s && p.visible && this.standing.size > 0) {
+      const x0 = s.x - s.displayWidth * s.originX;
+      const y0 = s.y - s.displayHeight * s.originY;
+      const x1 = x0 + s.displayWidth;
+      const y1 = y0 + s.displayHeight;
+      for (let cy = Math.max(0, Math.floor(y0 / FADE_CELL)); cy <= Math.floor(y1 / FADE_CELL); cy++) {
+        for (let cx = Math.max(0, Math.floor(x0 / FADE_CELL)); cx <= Math.floor(x1 / FADE_CELL); cx++) {
+          for (const pic of this.standing.get(cellKey(cx, cy)) ?? []) {
+            if (pic.sortY > p.y && pic.x0 < x1 && pic.x1 > x0 && pic.y0 < y1 && pic.y1 > y0) now.add(pic.img);
+          }
+        }
+      }
+    }
+    for (const img of this.faded) if (!now.has(img)) img.setAlpha(1);
+    for (const img of now) img.setAlpha(SEE_THROUGH);
+    this.faded = now;
   }
 
   private syncVisuals(dt: number): void {
@@ -307,17 +493,23 @@ export class WalkScene extends Phaser.Scene {
       const s = this.sprites.get(a.id)!;
       s.setVisible(a.visible);
       s.setPosition(Math.round(a.x), Math.round(a.y));
-      s.setDepth(DEPTH_ACTORS + a.y / 10000);
+      s.setDepth(DEPTH_ACTORS + a.y / 10000 + (a.elevated ? DEPTH_ELEVATED : 0));
       const row = WALKER_ROWS.indexOf(a.facing);
       const col = a.moving ? cycle[Math.floor(a.walkTime * fps) % cycle.length] : 0;
       s.setFrame(row * WALKER_COLS + col);
     }
+    this.seeThrough();
     this.level.vehicles.forEach((v, i) => {
+      const img = this.vehicleSprites[i];
       // Drawn nose up, so a heading of -PI/2 (north) is no turn.
-      this.vehicleSprites[i]
+      const r = v.heading + Math.PI / 2;
+      // Sorted by the bottom of the turned picture, as map pictures sort by
+      // their bottom edge: half the height of its turned bounding box below the centre.
+      const half = 0.5 * (Math.abs(Math.sin(r)) * img.width + Math.abs(Math.cos(r)) * img.height);
+      img
         .setPosition(Math.round(v.x), Math.round(v.y))
-        .setRotation(v.heading + Math.PI / 2)
-        .setDepth(DEPTH_ACTORS + v.y / 10000);
+        .setRotation(r)
+        .setDepth(DEPTH_ACTORS + (v.y + half) / 10000);
     });
     this.drawCones();
     this.updateCamera(dt);

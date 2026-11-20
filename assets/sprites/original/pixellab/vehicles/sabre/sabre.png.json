@@ -1,0 +1,40 @@
+{
+ "file": "sabre.png",
+ "sha256": "81dc3e13428edcdc8505cf00f3927cfd83b029005c5ba7cd95623ba92ec02910",
+ "key": "sabre",
+ "endpoint": "POST /create-image-pixflux",
+ "request": {
+  "description": "North American F-86 Sabre jet fighter, nose pointing up, swept-back wings and tailplane, bare silver metal, small blue canopy near the nose, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+  "image_size": {
+   "width": 34,
+   "height": 42
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "direction": "north",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "init_image": {
+   "type": "base64",
+   "sha256": "1b64bdf75d0ec3ddd4d7a3cf671731560514758aaecb138c2a33160ca15e4832",
+   "path": "assets/sprites/templates/sabre.png",
+   "scale": 2,
+   "padTo": null,
+   "size": [
+    34,
+    42
+   ]
+  },
+  "init_image_strength": 350,
+  "seed": 7
+ },
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "generations": 1.0,
+ "created_at": "2026-11-20T02:00:27+00:00",
+ "recovered": false
+}

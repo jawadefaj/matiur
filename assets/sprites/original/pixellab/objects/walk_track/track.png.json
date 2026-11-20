@@ -1,0 +1,28 @@
+{
+ "file": "track.png",
+ "sha256": "d84a99517fec5c1b2087b0902ff3f79782ca5d9d41691da50657db35f02db1b3",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/track.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "small oval running track seen from above, red track lane around a green grass field, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 192,
+   "height": 128
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "file": "hill32.png",
+ "sha256": "2d075df0f140586b834b830791cf9ceb42b3500e4bac86c81669c47b05406fe3",
+ "key": "hill32",
+ "endpoint": "POST /create-image-pixflux",
+ "request": {
+  "description": "one low rounded rocky brown hill seen from directly above, lit from the top-left, dry scrub on the slopes, lighter summit, dark outline, pixel art game asset",
+  "image_size": {
+   "width": 68,
+   "height": 68
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color outline",
+  "shading": "medium shading",
+  "detail": "medium detail",
+  "init_image": {
+   "type": "base64",
+   "sha256": "5552ad0a58c08faa249f896bafbfef47ab37ca796cd718bea2194044c1c6e1da",
+   "path": "assets/sprites/templates/hill32.png",
+   "scale": 1,
+   "padTo": null,
+   "size": [
+    68,
+    68
+   ]
+  },
+  "init_image_strength": 250,
+  "color_image": {
+   "type": "base64",
+   "sha256": "86ba6a4ce603d451fc987d9aba39a79c5f0be6513e3bdc476fa3372828711be7",
+   "palette": "hills"
+  },
+  "seed": 39
+ },
+ "seed": 39,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "generations": 1.0,
+ "created_at": "2026-11-20T02:02:12+00:00",
+ "recovered": false
+}

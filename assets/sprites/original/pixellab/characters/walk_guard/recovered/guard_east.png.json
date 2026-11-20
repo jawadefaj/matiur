@@ -1,0 +1,10 @@
+{
+ "file": "guard_east.png",
+ "sha256": "afdf3cee5849d481b88c34a4403d49122fa2138675ff0076b13a988466edbd93",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/guard_east.png",
+ "endpoint": "POST /create-character-with-8-directions (trial)",
+ "ids": {
+  "character_id": "5ae82929-dfb5-45b7-8228-a22d85231035"
+ }
+}

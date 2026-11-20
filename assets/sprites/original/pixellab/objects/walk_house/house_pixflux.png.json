@@ -1,0 +1,29 @@
+{
+ "file": "house_pixflux.png",
+ "sha256": "85d4f5a5f32b4457b95957bf85a3fcd84230c39781a74325426cda07b2608cb8",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/house_pixflux.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "small single-storey house, rectangular flat terracotta red roof with dark outline, white front wall with brown door and two small windows, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 96,
+   "height": 80
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ },
+ "note": "same file as house.png"
+}

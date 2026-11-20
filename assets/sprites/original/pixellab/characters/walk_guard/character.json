@@ -1,0 +1,37 @@
+{
+ "id": "5ae82929-dfb5-45b7-8228-a22d85231035",
+ "name": "Masroor night guard",
+ "state_name": "Idle",
+ "prompt": "1971 Pakistan Air Force base security guard at night, khaki uniform and beret, holding a lit electric torch flashlight in one hand, rifle slung on his back, brown skin, chibi proportions with large head, single color black outline",
+ "size": {
+  "width": 64,
+  "height": 64
+ },
+ "directions": 8,
+ "created_at": "2026-11-18T08:33:14.073425+00:00",
+ "updated_at": "2026-11-18T08:35:18.178859+00:00",
+ "animation_count": 0,
+ "template_id": "mannequin",
+ "view": "low top-down",
+ "status": "completed",
+ "rotation_urls": {
+  "south": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/5ae82929-dfb5-45b7-8228-a22d85231035/rotations/south.png?t=1794990918",
+  "west": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/5ae82929-dfb5-45b7-8228-a22d85231035/rotations/west.png?t=1794990918",
+  "east": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/5ae82929-dfb5-45b7-8228-a22d85231035/rotations/east.png?t=1794990918",
+  "north": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/5ae82929-dfb5-45b7-8228-a22d85231035/rotations/north.png?t=1794990918",
+  "south-east": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/5ae82929-dfb5-45b7-8228-a22d85231035/rotations/south-east.png?t=1794990918",
+  "north-east": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/5ae82929-dfb5-45b7-8228-a22d85231035/rotations/north-east.png?t=1794990918",
+  "north-west": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/5ae82929-dfb5-45b7-8228-a22d85231035/rotations/north-west.png?t=1794990918",
+  "south-west": "https://backblaze.pixellab.ai/file/pixellab-characters/26085875-ce05-4048-9a31-102acf77d783/5ae82929-dfb5-45b7-8228-a22d85231035/rotations/south-west.png?t=1794990918"
+ },
+ "style_settings": {
+  "detail": "medium detail",
+  "outline": "single color black outline",
+  "generation_mode": "pixen_v3"
+ },
+ "guidance": null,
+ "ai_freedom": null,
+ "tags": [],
+ "group_id": "9992ef34-a891-4cdf-9df8-70d5dbcc27f6",
+ "animations": []
+}

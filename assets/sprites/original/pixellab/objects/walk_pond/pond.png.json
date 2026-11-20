@@ -1,0 +1,28 @@
+{
+ "file": "pond.png",
+ "sha256": "1360c7d3f53f07efeae20545d98e1dc3c7d60bed3f3fec06c415c84571e39a89",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/pond.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "small oval blue pond with light stone edge seen from above, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 160,
+   "height": 80
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

@@ -1,0 +1,45 @@
+{
+  "group_id": "d0011385-d3b3-4409-a50c-3970910d8784",
+  "states": [
+    {
+      "character": {
+        "id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9",
+        "name": "Idle",
+        "prompt": "Flight Lieutenant in 1971 Pakistan Air Force navy-blue service dress, peaked cap with gold badge, aviator sunglasses, brown skin, chibi pixel art",
+        "size": {
+          "width": 64,
+          "height": 64
+        },
+        "template_id": "mannequin",
+        "directions": 4,
+        "view": "low top-down",
+        "created_at": "2026-11-18T08:33:03.925175+00:00"
+      },
+      "folder": "Idle",
+      "frames": {
+        "rotations": {
+          "south": "Idle/rotations/south.png",
+          "west": "Idle/rotations/west.png",
+          "east": "Idle/rotations/east.png",
+          "north": "Idle/rotations/north.png"
+        },
+        "animations": {
+          "walking": {
+            "south": [
+              "Idle/animations/walking/south/frame_000.png",
+              "Idle/animations/walking/south/frame_001.png",
+              "Idle/animations/walking/south/frame_002.png",
+              "Idle/animations/walking/south/frame_003.png",
+              "Idle/animations/walking/south/frame_004.png",
+              "Idle/animations/walking/south/frame_005.png",
+              "Idle/animations/walking/south/frame_006.png",
+              "Idle/animations/walking/south/frame_007.png"
+            ]
+          }
+        }
+      }
+    }
+  ],
+  "export_version": "3.1",
+  "export_date": "2026-11-20T01:11:27.155007"
+}

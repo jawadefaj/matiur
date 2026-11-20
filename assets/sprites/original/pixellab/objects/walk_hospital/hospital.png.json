@@ -1,0 +1,28 @@
+{
+ "file": "hospital.png",
+ "sha256": "0409086013b6c89068f9ee0c301e5db8c7630fd91f134dbb158f999ff87060bd",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/objects/hospital.png",
+ "endpoint": "POST /create-image-pixflux (trial, gen_pixflux.py)",
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "description": "long single-storey white military hospital building, flat light grey roof with dark outline, white front wall with a row of blue windows and a brown double door in the middle, pixel art game asset, high top-down view, front facing, warm desert airbase palette",
+  "image_size": {
+   "width": 216,
+   "height": 128
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "color_image": {
+   "palette": "masroor (original map region quantized to 48 colours)"
+  },
+  "seed": 7
+ }
+}

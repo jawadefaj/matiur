@@ -1,0 +1,40 @@
+{
+ "file": "canberra.png",
+ "sha256": "7488c1e86225060857ca70857514c16a29ed6fcb6d505bdbce5ab362813844fc",
+ "key": "canberra",
+ "endpoint": "POST /create-image-pixflux",
+ "request": {
+  "description": "English Electric Canberra twin-engine jet bomber, nose pointing up, broad straight wings with one engine on each wing, olive camouflage, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+  "image_size": {
+   "width": 58,
+   "height": 46
+  },
+  "no_background": true,
+  "view": "high top-down",
+  "direction": "north",
+  "outline": "single color black outline",
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "init_image": {
+   "type": "base64",
+   "sha256": "5c3599204bba92235dfa04144c6c73072ac3b3a166458cd2a26b4254446d36a8",
+   "path": "assets/sprites/templates/canberra.png",
+   "scale": 2,
+   "padTo": null,
+   "size": [
+    58,
+    46
+   ]
+  },
+  "init_image_strength": 350,
+  "seed": 7
+ },
+ "seed": 7,
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "generations": 1.0,
+ "created_at": "2026-11-20T02:01:20+00:00",
+ "recovered": false
+}

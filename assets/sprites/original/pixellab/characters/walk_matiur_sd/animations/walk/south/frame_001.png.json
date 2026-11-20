@@ -1,0 +1,12 @@
+{
+ "file": "frame_001.png",
+ "sha256": "5b4082f8333b7a8c57b0113490d6b0db9238e2f28572e3f330c84b7a79b6e8cd",
+ "endpoint": "GET /characters/7a74fa03-4535-43b9-a190-49e0cb02b8c9/zip",
+ "zip_member": "Idle/animations/walking/south/frame_001.png",
+ "generations": 0,
+ "ids": {
+  "character_id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9",
+  "animation_group_id": "6b9fe7e3-67dc-413c-b5c0-a6b82555b2ee"
+ },
+ "animation_type": "v3:walking"
+}

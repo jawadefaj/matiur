@@ -1,0 +1,74 @@
+{
+ "file": "tile_04.png",
+ "sha256": "bdeac7ea26759888a1a00f93cd3856e94a4c68d24dc35873ced61586fbcf48d3",
+ "key": "ground_plains",
+ "set": null,
+ "endpoint": "POST /create-tileset",
+ "request": {
+  "lower_description": "dry khaki grassland plain with sparse low scrub, seen from high above",
+  "upper_description": "pale dusty bare earth with small stones and dry cracks, seen from high above",
+  "tile_size": {
+   "width": 32,
+   "height": 32
+  },
+  "view": "high top-down",
+  "mode": "standard",
+  "transition_size": 0.0,
+  "shading": "basic shading",
+  "detail": "medium detail",
+  "seed": 19
+ },
+ "seed": 19,
+ "ids": {
+  "tileset_id": "a1179c25-d8ee-4014-a4c1-611a7c9ea169",
+  "background_job_id": "9f7dd68b-f5aa-4865-af00-97db090d795c"
+ },
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "created_at": "2026-11-20T02:04:43.744209+00:00",
+ "recovered": false,
+ "tile": {
+  "id": "6",
+  "name": "wang_6",
+  "corners": {
+   "NW": "lower",
+   "NE": "upper",
+   "SW": "upper",
+   "SE": "lower"
+  },
+  "pattern_4x4": {
+   "row_0": [
+    255,
+    255,
+    255,
+    255
+   ],
+   "row_1": [
+    255,
+    0,
+    1,
+    255
+   ],
+   "row_2": [
+    255,
+    1,
+    0,
+    255
+   ],
+   "row_3": [
+    255,
+    255,
+    255,
+    255
+   ]
+  },
+  "original_position": {
+   "row": 5,
+   "col": 2
+  },
+  "description": null,
+  "connections": null
+ }
+}

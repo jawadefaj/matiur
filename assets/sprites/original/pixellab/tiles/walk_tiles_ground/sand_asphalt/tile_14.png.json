@@ -1,0 +1,28 @@
+{
+ "file": "tile_14.png",
+ "sha256": "471ff2c37c5293ce3d0413a362362bdc2fef37124ab9b47e6de035594daaa78b",
+ "recovered": true,
+ "from": "assets/art-wip/level-2/pixellab/tileset_sand_road/tile_14.png",
+ "endpoint": "POST /create-tileset (trial)",
+ "usage": {
+  "type": "generations",
+  "generations": 1.0
+ },
+ "request": {
+  "lower_description": "sun-baked tan desert sand with scattered small pebbles, featuring gentle wind ripples and uniform flat earthy tones without any shadows",
+  "upper_description": "dark grey cracked asphalt road surface showing a fine aggregate texture, rendered in solid flat charcoal tones without gradients",
+  "tile_size": {
+   "width": 16,
+   "height": 16
+  },
+  "view": "high top-down",
+  "transition_size": 0.0
+ },
+ "ids": {
+  "terrain_ids": {
+   "lower": "c77d7b23-f8e7-48be-b1a4-5bcd2f803a7c",
+   "upper": "31b4f300-8675-4f86-901b-6090cf48cc93"
+  }
+ },
+ "created_at": "2026-11-18T08:35:35.648343+00:00"
+}

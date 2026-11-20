@@ -1,0 +1,1851 @@
+{
+  "about": "Every game image: one PNG per key at assets/sprites/final/<category>/<key>.png (key = file name, unique). Edit by hand; art.py suggest-roofs fills houseRoofs and art.py process fills the atlas tables. See scripts/art/README.md.",
+  "budget": {"generations": 150, "rule": "always art.py generate --dry-run first; the ledger total may never pass this"},
+  "palettes": {
+    "masroor": {
+      "from": "assets/sprites/original/airport-level-map-clean.jpeg",
+      "crop": [600, 430, 1220, 900],
+      "colors": 48
+    },
+    "hills": {
+      "from": [
+        "assets/sprites/templates/hill24.png",
+        "assets/sprites/templates/hill32.png",
+        "assets/sprites/templates/hill40.png",
+        "assets/sprites/templates/hill48.png"
+      ],
+      "colors": 16
+    }
+  },
+  "houseRoofs": {"1": [103, 78, 65], "2": [183, 87, 72], "3": [80, 137, 147], "4": [194, 145, 37], "5": [212, 195, 162]},
+  "assets": [
+    {
+      "key": "walk_matiur_sd",
+      "category": "characters",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [72, 136],
+      "sizeRule": "max",
+      "source": {
+        "kind": "pixellab-character",
+        "characterId": "7a74fa03-4535-43b9-a190-49e0cb02b8c9",
+        "animation": {
+          "endpoint": "/characters/animations",
+          "zipName": "walking",
+          "request": {
+            "character_id": "7a74fa03-4535-43b9-a190-49e0cb02b8c9",
+            "mode": "v3",
+            "template_action": "walking",
+            "animation_group_id": "6b9fe7e3-67dc-413c-b5c0-a6b82555b2ee",
+            "directions": ["north", "east", "west"]
+          }
+        },
+        "have": {"south": "v3 walking, 8 frames, from the trial (animation group 6b9fe7e3)"}
+      },
+      "estGenerations": 3,
+      "pick": {
+        "folder": "animations/walk",
+        "rows": {"down": "south", "left": "west", "right": "east", "up": "north"},
+        "stand": "frame 0",
+        "steps": "the two frames with the feet furthest apart, half a cycle apart, measured on the bottom sixth of the figure: side views (east, west) the widest spread; front and back views (south, north) the left foot lowest, then the right foot lowest"
+      },
+      "post": [
+        {"op": "crop_union"},
+        {"op": "half"},
+        {"op": "walker_sheet", "cols": ["stand", "stepL", "stepR"], "rows": ["down", "left", "right", "up"]}
+      ],
+      "standIn": {
+        "keep": true,
+        "note": "the current sheet (one still pose per direction) stays until the walk is generated"
+      },
+      "note": "Matiur in service dress, the player. Adds north/east/west to the existing v3 walking group: an animation stays on the engine it was made with, so mode v3 + template_action walking (1 generation a direction).",
+      "processed": {
+        "sha256": "b64bcab061714bd57cdc7349a6b59ace4a49b60804634ac8da8c6cf390dd6227",
+        "inputs": {
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/south/frame_000.png": "afa6b0b345c115116561f6db985062e62bd882d9cf33d7dce47c318cd7fb4a61",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/south/frame_001.png": "5b4082f8333b7a8c57b0113490d6b0db9238e2f28572e3f330c84b7a79b6e8cd",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/south/frame_002.png": "a9d4a17bcf1d216c2f5843d2460d24347a518d0b043d2f89b8c45b9a307061f6",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/south/frame_003.png": "cb93af61710d5d1335138ca0e0715c62df147fd341676a37b1d18d5da4e151c0",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/south/frame_004.png": "91e625e77a3db8c5cb83eac0af59bb2760d7900f84dd8fbeb77adc8d03fe45f7",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/south/frame_005.png": "6cb93ef6ff26b5d7bf526779a83b752de2b2dc28538c6725d9f46e8ca848dd1b",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/south/frame_006.png": "c2f8e97783697db1991d21724712546aad4ddc82406fab76cdd0910b259f39bb",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/south/frame_007.png": "e190a6c032083f5200818602f03b17f59eb629df5a03499c973d0e9414e63017",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/west/frame_000.png": "03010346f9209cf3528143a5cc9aa4e3b72ebbf82475d5b532417c834591c775",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/west/frame_001.png": "a4931bad16c96e7d6440c2012350ff0f7a785d90ed91c2fec1a075011c2503ec",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/west/frame_002.png": "24e4af31564685c38b25565d212a3db631b3db7d6d2fe0678bb935842025bd89",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/west/frame_003.png": "3798e3dde1a380721bdc172d261564a94b54ce5c0fad000b4e3751d4bf160761",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/west/frame_004.png": "3d4a74fe4799ed461b4ebda608b8db940f30a324e5630131ec8f2b7180b064c1",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/west/frame_005.png": "b1621dca9fc3470c2d2c52e8aecf255bacad2ee4a4f86b04c9e4fe89126596c9",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/west/frame_006.png": "d4f8b835c602dc592021517cf5618699e48718ac79ac0e7a4d112cbb7b84bdd1",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/west/frame_007.png": "559e1d91ee0525651c6a7998302e731f2c4a782e888ce7380cdc74c156b5c97e",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/east/frame_000.png": "f21c4fe1c3550ec2b4063989e7df88f2a995e6ebbcf78833a19d024094f371aa",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/east/frame_001.png": "98f99d3e7db94390777ad0d7908f44366f87e854179045e78646c70e809a1027",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/east/frame_002.png": "be379b8adf1e9c97ad33596ae118bb0cea17ba5bba6ed6adfef3f65926976e25",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/east/frame_003.png": "b225637fc20d93ff1c6906e3bd86c22aa007594daf417c86dda5bc9c3a27a831",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/east/frame_004.png": "5629c0156b7fdb1e9069eee0d26bb11b9f9d4c5db8c9f52f0e40f93bb7e15c48",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/east/frame_005.png": "52949efd7032c96db26a46c514cf20dd41a061b2cbc4a48cf21f225b3a6d2a0a",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/east/frame_006.png": "ffe0f3daf3f01fb70c64e67f14c73d0c08004d2bbbdb0b86f8614f474d30d4da",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/east/frame_007.png": "33202eddc56169cdaf200734ff1fd70958e6716e102168f7643d0dee07abb765",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/north/frame_000.png": "7c86e4cd532b0010522adaac006152340099500f486f43036aa90573105b318c",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/north/frame_001.png": "5b8711497e91400450cbb88e45a937dcc2d84bfe83038c948d809e8c35c38bd2",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/north/frame_002.png": "a088b48d2e2044bf4e4a2c79843003b09902d8d4d6696ef1f3814c7f798bb6e5",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/north/frame_003.png": "69a02917f2c70f03ba0f14cb63f8c64e84e3daa95a92eeff2ff076616a37ccc9",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/north/frame_004.png": "b1cee90a7e368ac4ac0ef6951d73ed732e4dc0d09e48af4d63e981dbad4e9d6a",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/north/frame_005.png": "4382e742661dd8b8f417059f1d7690bd6e6c5ce8ad247d23c484584b93aaa096",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/north/frame_006.png": "d7241b62f6dd74e9f611cfb16382fea493a007ab7326cb72047542699176d0a9",
+          "assets/sprites/original/pixellab/characters/walk_matiur_sd/animations/walk/north/frame_007.png": "03aa3c581f3ae779f9ab90b8a90b15b79d74ef34a011ebc9bf3b22aa278690d0",
+          "assets/sprites/manifest.json#walk_matiur_sd": "44e7ba6c212183e4f948cf07035c78348a3de6497003c762a3d9402b92c480ab"
+        }
+      }
+    },
+    {
+      "key": "walk_guard",
+      "category": "characters",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [108, 144],
+      "sizeRule": "max",
+      "source": {
+        "kind": "pixellab-character",
+        "characterId": "5ae82929-dfb5-45b7-8228-a22d85231035",
+        "animation": {
+          "endpoint": "/characters/animations",
+          "zipName": "walking",
+          "request": {
+            "character_id": "5ae82929-dfb5-45b7-8228-a22d85231035",
+            "mode": "v3",
+            "template_action": "walking",
+            "directions": ["south", "north", "east", "west"]
+          }
+        },
+        "have": {}
+      },
+      "estGenerations": 4,
+      "pick": {
+        "folder": "animations/walk",
+        "rows": {"down": "south", "left": "west", "right": "east", "up": "north"},
+        "stand": "frame 0",
+        "steps": "the two frames with the feet furthest apart, half a cycle apart, measured on the bottom sixth of the figure: side views (east, west) the widest spread; front and back views (south, north) the left foot lowest, then the right foot lowest"
+      },
+      "post": [
+        {"op": "crop_union"},
+        {"op": "half"},
+        {"op": "walker_sheet", "cols": ["stand", "stepL", "stepR"], "rows": ["down", "left", "right", "up"]}
+      ],
+      "standIn": {
+        "keep": true,
+        "note": "the current sheet (one still pose per direction) stays until the walk is generated"
+      },
+      "note": "Masroor night guard with a torch. Same walk engine as Matiur so the two match (1 generation a direction).",
+      "processed": {
+        "sha256": "d006d50864140a6b500d75d1ad0ef922053f0105d08bb53b5d32b557a9390896",
+        "inputs": {
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/south/frame_000.png": "32fe6742068c72ed4268923885e4f664388f052945f6d5ce6d0c46d7ca10714e",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/south/frame_001.png": "482325d7aed8866d4cdeaaedc5ded4a5d963472230e4ab6db7df0883b9040304",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/south/frame_002.png": "c761201b2fb7150748d3783a489d04bde565ae43ce7c7f7d18f95ea8c8e35b78",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/south/frame_003.png": "e0a4237f7d7aed6898da65de0eacc321e76ac36f8352f351a2ce95a17e0482b3",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/south/frame_004.png": "76c21a4b75ab4cc89fc3af3527ac0a0c9554201cdd109cd4d085158e56d66784",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/south/frame_005.png": "bab4f168a080ab37dc8d1f000d0acbfc18a0ebb1a6b2eed56216a3d8af6c87ba",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/south/frame_006.png": "d27c9c02e4869d2232bfec59070ecc598d1f07d309d211de3f1cfba1331d9a63",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/south/frame_007.png": "f064538e24e5d804220ef56bb59b56f05d551e1efec6b89d2cb62cf1f2a25108",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/west/frame_000.png": "189188ed33df8c9793321dc4625f5ee705e11715cb2a0de6efdc1c08c8199184",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/west/frame_001.png": "32b97f8d651eba0d922677f3d6e3a552b52b336cf88bd7f82f63dc149b11738e",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/west/frame_002.png": "fec71b987842db42c54cf19c52dbcd928c77d42d995e168a3f9a1599ef20d7dc",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/west/frame_003.png": "c67c961dd0ba8c186ae8658f6bd728c876f7e05670821e431595b840ab61569e",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/west/frame_004.png": "d3a90fb463540ae3439f87d653d55d5eccebac79c5c32f2b48c50a11e5299a0c",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/west/frame_005.png": "63a5afa5922a79a98e0f31332d2130df75a1a96ce0ec66db502a20d45d5b75e6",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/west/frame_006.png": "55a1d73ca3cdef1c7d0c10d55379f4809f6286030c701af0bf4dbd8534b887d7",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/west/frame_007.png": "86dd092d71ca17f6c48c37894340b5588a974bd1e07210d99747d6f1ebe0c99a",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/east/frame_000.png": "2a7366c108166465c5c29c52f36b5157a7260037f3a705b744d00264050b66db",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/east/frame_001.png": "cc67ad543af8e88abbeb9932cf6b4437f9324c89b018fb286119ef6597dec331",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/east/frame_002.png": "80a31ae46b70ae8d90947d09da86552b6ca5dfa163844ca50a6f16fa8dabc4d1",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/east/frame_003.png": "4d3524b581f0ab703412413166b1fb5ee9f08626a58f2441cbc9a11f76295513",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/east/frame_004.png": "a8e42ae24f06caa657302e4d5bf7c6299679a261ba9948436443b329669a00b2",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/east/frame_005.png": "3afc8ecd74df418ab7f99e187a3dd0a1b508972df0224fd46c5b72345261d7a4",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/east/frame_006.png": "6512e6ccc59b53441b889d8ecaf9ab88aec92bc3ad4456e78dbdf7b47e8df6af",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/east/frame_007.png": "7c7b69f745a3c35cf8e94d3b817d755d4b331ae6493f0caf929590125d6cc3eb",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/north/frame_000.png": "1bb629d60dc688295b583e4e81215663dbe89207222654b63db8983ead3f246e",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/north/frame_001.png": "86de335039dee1032515d8ea4e20f9d050efc792719528ec5d498da9cb942392",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/north/frame_002.png": "71eeba18468df86cc7ce0590defbbfb2859f4c25e22dfd92b25f8c7b5bcff69e",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/north/frame_003.png": "acfd27fd265178cb043d58b73be1c3ba7c13453059375764d9b63f8d684dde4f",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/north/frame_004.png": "ecd22744d4d4c085f763c3415d3035f7101bb7375f4028ccbdc5bce85e2a6d5c",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/north/frame_005.png": "562e81c6c09e2050a2b05b888ede7cb77fd871c8bdccd7782ad5f6e0c41af526",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/north/frame_006.png": "97a75122aa37df2a6887a5c7a3e0a0f7a30381206a65f4127c19160e5139b6bd",
+          "assets/sprites/original/pixellab/characters/walk_guard/animations/walk/north/frame_007.png": "b9eb942df08d4f8509f603e854161a148c0692049ebffa48b28a9e14f9911c3b",
+          "assets/sprites/manifest.json#walk_guard": "8ba913a05854a9849ee72993137d38d5744497ef55abddb04872b6cecae25180"
+        }
+      }
+    },
+    {
+      "key": "walk_t33",
+      "category": "vehicles",
+      "owner": "walk",
+      "usedBy": ["walk:masroor (parked jets)", "walk:intercept (Bluebird taxiing)"],
+      "size": [80, 94],
+      "sizeRule": "exact",
+      "source": {"kind": "local", "rawKey": "walk_t33", "raw": "t33.png", "note": "trial pixflux image, recovered"},
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.38, 0.15, 0.62, 0.85]},
+      "note": "Bluebird, the T-33, from above, nose up.",
+      "processed": {
+        "sha256": "26683c521887811a69e8cc6fe348b6c42a26018d765ad41a7ea7967ba7907dc2",
+        "inputs": {
+          "assets/sprites/original/pixellab/vehicles/walk_t33/t33.png": "33d6517fa401674165c986384a0756f2463eb7e74cd78d5573901bff7c4c2e69",
+          "assets/sprites/manifest.json#walk_t33": "84f5423aefbba08c23a753d26ae1016aa74e2263476c47189a37f552bd9d6567"
+        }
+      }
+    },
+    {
+      "key": "walk_house_1",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [58, 58],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "derived",
+        "rawKey": "walk_house",
+        "raw": "house.png",
+        "note": "one trial pixflux house, roof recoloured"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}, {"op": "flatten_roof", "roof": "1", "split": 0.56}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.04, 0.2, 0.96, 1.0]},
+      "note": "House with roof colour houseRoofs[\"1\"]; each original house uses the nearest roof colour (masroor_layout.house_variants).",
+      "processed": {
+        "sha256": "cd04db4357e3aa3325664cfc34fde834af1887cd296f4c3bbff8c87ec0cafe23",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_house/house.png": "85d4f5a5f32b4457b95957bf85a3fcd84230c39781a74325426cda07b2608cb8",
+          "assets/sprites/manifest.json#walk_house_1": "991bb7a4ffe917046d4db98758c0fe147ee538c306387f45df06a3c9c0173218"
+        }
+      }
+    },
+    {
+      "key": "walk_house_2",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [58, 58],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "derived",
+        "rawKey": "walk_house",
+        "raw": "house.png",
+        "note": "one trial pixflux house, roof recoloured"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}, {"op": "flatten_roof", "roof": "2", "split": 0.56}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.04, 0.2, 0.96, 1.0]},
+      "note": "House with roof colour houseRoofs[\"2\"]; each original house uses the nearest roof colour (masroor_layout.house_variants).",
+      "processed": {
+        "sha256": "6101bca299a8a43490fcc49a962f3a2ac36d14eb56a55f2c616f8df1fa91c811",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_house/house.png": "85d4f5a5f32b4457b95957bf85a3fcd84230c39781a74325426cda07b2608cb8",
+          "assets/sprites/manifest.json#walk_house_2": "d3b0b41f9227d4dfe4fc98a543b57b4116f4c81dbb4aace84d95cf23f6269cc3"
+        }
+      }
+    },
+    {
+      "key": "walk_house_3",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [58, 58],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "derived",
+        "rawKey": "walk_house",
+        "raw": "house.png",
+        "note": "one trial pixflux house, roof recoloured"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}, {"op": "flatten_roof", "roof": "3", "split": 0.56}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.04, 0.2, 0.96, 1.0]},
+      "note": "House with roof colour houseRoofs[\"3\"]; each original house uses the nearest roof colour (masroor_layout.house_variants).",
+      "processed": {
+        "sha256": "507fdbdb9b2aa8cc50a483ca9282d9b629e637f911cc9e6db0c699091ee639fd",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_house/house.png": "85d4f5a5f32b4457b95957bf85a3fcd84230c39781a74325426cda07b2608cb8",
+          "assets/sprites/manifest.json#walk_house_3": "3dadad3cf8ec37fd60bd40e743c352e3b78e656ea67d406efb06d91a4fcc087e"
+        }
+      }
+    },
+    {
+      "key": "walk_house_4",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [58, 58],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "derived",
+        "rawKey": "walk_house",
+        "raw": "house.png",
+        "note": "one trial pixflux house, roof recoloured"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}, {"op": "flatten_roof", "roof": "4", "split": 0.56}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.04, 0.2, 0.96, 1.0]},
+      "note": "House with roof colour houseRoofs[\"4\"]; each original house uses the nearest roof colour (masroor_layout.house_variants).",
+      "processed": {
+        "sha256": "8d2f39b865c131ae9c508729caa4858929d39afdeebcc51ed2166cf0f09a6165",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_house/house.png": "85d4f5a5f32b4457b95957bf85a3fcd84230c39781a74325426cda07b2608cb8",
+          "assets/sprites/manifest.json#walk_house_4": "31950843c16846637e44749510df976a68a42adf8f7f8ada828b07efc5c43e08"
+        }
+      }
+    },
+    {
+      "key": "walk_house_5",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [58, 58],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "derived",
+        "rawKey": "walk_house",
+        "raw": "house.png",
+        "note": "one trial pixflux house, roof recoloured"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}, {"op": "flatten_roof", "roof": "5", "split": 0.56}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.04, 0.2, 0.96, 1.0]},
+      "note": "House with roof colour houseRoofs[\"5\"]; each original house uses the nearest roof colour (masroor_layout.house_variants).",
+      "processed": {
+        "sha256": "1f3de87c28ce3c30d8a68d13cdc9f3667beb77976f1982bb6fee8c6f973b5fa6",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_house/house.png": "85d4f5a5f32b4457b95957bf85a3fcd84230c39781a74325426cda07b2608cb8",
+          "assets/sprites/manifest.json#walk_house_5": "769d62aed720667d927ac25fe6596e638840fd062b3cdab1baccf81849122977"
+        }
+      }
+    },
+    {
+      "key": "walk_hospital",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [174, 87],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "local",
+        "rawKey": "walk_hospital",
+        "raw": "hospital.png",
+        "note": "trial pixflux image, recovered"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.02, 0.2, 0.98, 1.0]},
+      "processed": {
+        "sha256": "e5610cba73131feb2d1f4fa65a84fb270b57bf88c17baf29339f4a99b6f77fe7",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_hospital/hospital.png": "0409086013b6c89068f9ee0c301e5db8c7630fd91f134dbb158f999ff87060bd",
+          "assets/sprites/manifest.json#walk_hospital": "31e53779deef81232f1a40d9ba81faa81486c6034d73a155202a333e05aea2f8"
+        }
+      }
+    },
+    {
+      "key": "walk_control_tower",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [73, 176],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "local",
+        "rawKey": "walk_control_tower",
+        "raw": "control_tower.png",
+        "note": "trial pixflux image, recovered"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.15, 0.55, 0.85, 1.0]},
+      "processed": {
+        "sha256": "82af3dad0633cf7c696260fd70c3e3065fc8e8295f0fda115392bd3c7fcbde01",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_control_tower/control_tower.png": "792a4f2a35618481a986a94ebce9d1d0f10f2e9340ba66e023017cb61623b1b3",
+          "assets/sprites/manifest.json#walk_control_tower": "78e11fe9d702cc9b2dce7be5c043237217fda90b0c33a1811010fccc0e1670f1"
+        }
+      }
+    },
+    {
+      "key": "walk_fuel_tank",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [112, 133],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "local",
+        "rawKey": "walk_fuel_tank",
+        "raw": "fuel_tank.png",
+        "note": "trial pixflux image, recovered"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}, {"op": "resize", "k": [112, 75]}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.05, 0.15, 0.95, 1.0]},
+      "note": "Cropped to 75 x 89, then scaled 112/75 (nearest) to fit the original footprint, like the legacy map.",
+      "processed": {
+        "sha256": "bdd0d0ba0f83df22f66db4d62b18b6da7d64f4f2f1425bc5adfe6fa8d15ad9ff",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_fuel_tank/fuel_tank.png": "cc7827412c17ca1d5d58606def518068654fceb20e79c5f466a68579333c2207",
+          "assets/sprites/manifest.json#walk_fuel_tank": "cd29d244f3821c06d93a8476973e283cd2ac33ba78a78e56c8f92db40b58f007"
+        }
+      }
+    },
+    {
+      "key": "walk_watchtower",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [60, 144],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "local",
+        "rawKey": "walk_watchtower",
+        "raw": "watchtower.png",
+        "note": "trial pixflux image, recovered"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.2, 0.55, 0.8, 1.0]},
+      "processed": {
+        "sha256": "6769393b2b32b9711d40be25e5dd7a26d7bb58b9d4aea82c4fd78719daa512bb",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_watchtower/watchtower.png": "a56ae37ce555ab499c12cb4180e00771b3f223580169826d2506489d5bc8fc6b",
+          "assets/sprites/manifest.json#walk_watchtower": "ff31819e941854ae16a5b6c737857252fffb5afc7c411d2c01185cc401c4284f"
+        }
+      }
+    },
+    {
+      "key": "walk_facility",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [66, 109],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "local",
+        "rawKey": "walk_facility",
+        "raw": "facility.png",
+        "note": "trial pixflux image, recovered"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.05, 0.3, 0.95, 1.0]},
+      "note": "Signals building.",
+      "processed": {
+        "sha256": "629af782658fb664b7c0692a469d33906a85954fe578555a07b8e4f2dabbf386",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_facility/facility.png": "f10bcfcfcac34e4dc05546e4e017e4c38194248b8aaf76084d0ed09e1cc61d77",
+          "assets/sprites/manifest.json#walk_facility": "3696e14bf211affa84ec2b01fdfa644253c51cab57b039201caefef193d581da"
+        }
+      }
+    },
+    {
+      "key": "walk_pond",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [148, 84],
+      "sizeRule": "exact",
+      "source": {"kind": "local", "rawKey": "walk_pond", "raw": "pond.png", "note": "trial pixflux image, recovered"},
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}, {"op": "resize", "k": 1.48}],
+      "map": {"sort": "flat", "shadow": false, "footprint": [0.05, 0.1, 0.95, 0.9]},
+      "note": "Scaled 1.48 (nearest) to fit the original footprint, like the legacy map.",
+      "processed": {
+        "sha256": "1d060ce82c2dde18e3be74066967e70f49400d5927f9b0206fcb13c09fab2c2f",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_pond/pond.png": "1360c7d3f53f07efeae20545d98e1dc3c7d60bed3f3fec06c415c84571e39a89",
+          "assets/sprites/manifest.json#walk_pond": "14fd5a0e760430c5769d20ca4776bac0d5beb878270c0c3619dfe64a0cc65a11"
+        }
+      }
+    },
+    {
+      "key": "walk_track",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [168, 98],
+      "sizeRule": "exact",
+      "source": {"kind": "local", "rawKey": "walk_track", "raw": "track.png", "note": "trial pixflux image, recovered"},
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "flat", "shadow": false, "footprint": null},
+      "note": "Running track: walkable, no collider.",
+      "processed": {
+        "sha256": "bdfd051adb5de65c35c00a020c5ad19a9e6535c6e0a67c581c338567a8a190db",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_track/track.png": "d84a99517fec5c1b2087b0902ff3f79782ca5d9d41691da50657db35f02db1b3",
+          "assets/sprites/manifest.json#walk_track": "f6aa3b52521d08943d3f89732ad0191176a6bf53e6066b15a5222f4c2264f693"
+        }
+      }
+    },
+    {
+      "key": "walk_revetment",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [106, 103],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "local",
+        "rawKey": "walk_revetment",
+        "raw": "revetment.png",
+        "note": "trial pixflux image, recovered"
+      },
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "flat", "shadow": false, "footprint": null},
+      "note": "Aircraft revetment bay: walkable floor, no collider.",
+      "processed": {
+        "sha256": "fda0864d195053fd65effb2e03af0c10518ba4f3c75ea5485eeaf420ef266c1b",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_revetment/revetment.png": "7b0bb68f6ca587fc83478d75275885187d822b1455a6c98c2b7312d1890b3d46",
+          "assets/sprites/manifest.json#walk_revetment": "80289764cd7bc28aafeed7818dc45a14b457ba33f9739dcd52b0e04913bafab9"
+        }
+      }
+    },
+    {
+      "key": "walk_tree",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [60, 82],
+      "sizeRule": "exact",
+      "source": {"kind": "local", "rawKey": "walk_tree", "raw": "tree.png", "note": "trial pixflux image, recovered"},
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": [0.4, 0.78, 0.6, 1.0]},
+      "note": "Collider on the trunk only.",
+      "processed": {
+        "sha256": "4249ef1c443f553f48e8b6ef1d1bb97e465efd0b5486385f1b8cc3264ac50b1f",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_tree/tree.png": "3963d423989238a57e594e3452269e5cc5340db998b77b2d4ae25f2b7287283d",
+          "assets/sprites/manifest.json#walk_tree": "c2795e149fc63bc47b097cc9f3621fbe6089a1656e2922ddd43939d877d57a9b"
+        }
+      }
+    },
+    {
+      "key": "walk_bush",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [34, 29],
+      "sizeRule": "exact",
+      "source": {"kind": "local", "rawKey": "walk_bush", "raw": "bush.png", "note": "trial pixflux image, recovered"},
+      "estGenerations": 0,
+      "post": [{"op": "crop_alpha"}],
+      "map": {"sort": "ysort", "shadow": true, "footprint": null},
+      "note": "No collider: the player walks through bushes.",
+      "processed": {
+        "sha256": "11f2e149913278772c420d840a874ca1668cacbd99598466f2c0d3575f133751",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/walk_bush/bush.png": "8b53fde679da5caefb8602b287e59a4f81f0097defd80e195e2dee02b44aabac",
+          "assets/sprites/manifest.json#walk_bush": "a9383bd476c69b89f0c1d77ca6aea9615aa7bac3a1e329c38b59c2b25d95ba42"
+        }
+      }
+    },
+    {
+      "key": "walk_shelter",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [22, 16],
+      "sizeRule": "exact",
+      "source": {"kind": "procedural", "recipe": "shelter"},
+      "estGenerations": 0,
+      "post": [],
+      "map": {"sort": "ysort", "shadow": true, "footprint": null},
+      "note": "Small concrete blast shelter on the apron (legacy drawing). No collider.",
+      "processed": {
+        "sha256": "cac0fe0a2f89834bf1e79d4d4c048d7de56570edb0f30d7dc2759bc1a352fe72",
+        "inputs": {
+          "assets/sprites/manifest.json#walk_shelter": "e770e2eced641d85a83929e45dabe75390f6cf32af4ac3de62ceb85c825f59ac"
+        }
+      }
+    },
+    {
+      "key": "walk_wall",
+      "category": "objects",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [6, 8],
+      "sizeRule": "exact",
+      "source": {"kind": "procedural", "recipe": "wall"},
+      "estGenerations": 0,
+      "post": [],
+      "map": {"sort": "ysort", "shadow": false, "footprint": null},
+      "note": "One piece of the east perimeter wall, stamped along masroor_layout.WALL (the legacy stamp: 6 x 8, bottom 2 px below the line). Its collider is the wall polyline in the collision layer.",
+      "processed": {
+        "sha256": "e54dbca5ae55494bcc18ec8e1df808072ab4eaf8ab98425046ff595a4bdda797",
+        "inputs": {
+          "assets/sprites/manifest.json#walk_wall": "c44feeac6adca8b13f9ed233a4f95e1407aa2a929047baa5c88b1d9271637b39"
+        }
+      }
+    },
+    {
+      "key": "walk_tiles_ground",
+      "category": "tiles",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [144, 108],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "tileset",
+        "standInFrom": "sand_asphalt",
+        "concrete": {"gray": 0.55, "add": [108, 104, 96], "joint": 0.88},
+        "sets": [
+          {
+            "name": "sand_asphalt",
+            "base": 0,
+            "lower": "sand",
+            "upper": "asphalt",
+            "raw": "sand_asphalt",
+            "have": "trial tileset, recovered (16 tiles)"
+          },
+          {
+            "name": "sand_concrete",
+            "base": 16,
+            "lower": "sand",
+            "upper": "concrete",
+            "raw": "sand_concrete",
+            "endpoint": "/create-tileset",
+            "request": {
+              "lower_description": "sun-baked tan desert sand with scattered small pebbles, featuring gentle wind ripples and uniform flat earthy tones without any shadows",
+              "upper_description": "light grey weathered concrete apron slabs with thin dark expansion joints, flat and even, no shadows",
+              "lower_base_tile_id": "c77d7b23-f8e7-48be-b1a4-5bcd2f803a7c",
+              "tile_size": {"width": 16, "height": 16},
+              "view": "high top-down",
+              "mode": "standard",
+              "transition_size": 0.0,
+              "lower_walkable": true,
+              "upper_walkable": true,
+              "seed": 7
+            }
+          },
+          {
+            "name": "concrete_asphalt",
+            "base": 32,
+            "lower": "concrete",
+            "upper": "asphalt",
+            "raw": "concrete_asphalt",
+            "endpoint": "/create-tileset",
+            "request": {
+              "lower_description": "light grey weathered concrete apron slabs with thin dark expansion joints, flat and even, no shadows",
+              "upper_description": "dark grey cracked asphalt road surface showing a fine aggregate texture, rendered in solid flat charcoal tones without gradients",
+              "lower_base_tile_id": {"$ref": "sand_concrete.upper"},
+              "upper_base_tile_id": "31b4f300-8675-4f86-901b-6090cf48cc93",
+              "tile_size": {"width": 16, "height": 16},
+              "view": "high top-down",
+              "mode": "standard",
+              "transition_size": 0.0,
+              "lower_walkable": true,
+              "upper_walkable": true,
+              "seed": 7
+            }
+          }
+        ]
+      },
+      "estGenerations": 2,
+      "post": [
+        {"op": "tint_terrain", "terrain": "asphalt", "mean": [104, 106, 132], "contrast": 0.6},
+        {"op": "atlas", "extrude": 1}
+      ],
+      "standIn": {
+        "sets": ["sand_concrete", "concrete_asphalt"],
+        "note": "procedural: the sand/asphalt shapes with concrete (greyed sand with slab joints) composited in"
+      },
+      "tile": {
+        "size": 16,
+        "margin": 1,
+        "spacing": 2,
+        "columns": 8,
+        "rows": 6,
+        "terrains": ["sand", "asphalt", "concrete"],
+        "walkable": {"sand": true, "asphalt": true, "concrete": true},
+        "wang": "local tile id = set base + NW*8 + NE*4 + SW*2 + SE*1, where a corner is 1 when it is the set's upper terrain; corners below are [NW, NE, SW, SE]",
+        "sets": [
+          {"name": "sand_asphalt", "base": 0, "lower": "sand", "upper": "asphalt"},
+          {"name": "sand_concrete", "base": 16, "lower": "sand", "upper": "concrete"},
+          {"name": "concrete_asphalt", "base": 32, "lower": "concrete", "upper": "asphalt"}
+        ],
+        "tiles": [
+          {"id": 0, "set": "sand_asphalt", "wang": 0, "corners": ["sand", "sand", "sand", "sand"]},
+          {"id": 1, "set": "sand_asphalt", "wang": 1, "corners": ["sand", "sand", "sand", "asphalt"]},
+          {"id": 2, "set": "sand_asphalt", "wang": 2, "corners": ["sand", "sand", "asphalt", "sand"]},
+          {"id": 3, "set": "sand_asphalt", "wang": 3, "corners": ["sand", "sand", "asphalt", "asphalt"]},
+          {"id": 4, "set": "sand_asphalt", "wang": 4, "corners": ["sand", "asphalt", "sand", "sand"]},
+          {"id": 5, "set": "sand_asphalt", "wang": 5, "corners": ["sand", "asphalt", "sand", "asphalt"]},
+          {"id": 6, "set": "sand_asphalt", "wang": 6, "corners": ["sand", "asphalt", "asphalt", "sand"]},
+          {"id": 7, "set": "sand_asphalt", "wang": 7, "corners": ["sand", "asphalt", "asphalt", "asphalt"]},
+          {"id": 8, "set": "sand_asphalt", "wang": 8, "corners": ["asphalt", "sand", "sand", "sand"]},
+          {"id": 9, "set": "sand_asphalt", "wang": 9, "corners": ["asphalt", "sand", "sand", "asphalt"]},
+          {"id": 10, "set": "sand_asphalt", "wang": 10, "corners": ["asphalt", "sand", "asphalt", "sand"]},
+          {"id": 11, "set": "sand_asphalt", "wang": 11, "corners": ["asphalt", "sand", "asphalt", "asphalt"]},
+          {"id": 12, "set": "sand_asphalt", "wang": 12, "corners": ["asphalt", "asphalt", "sand", "sand"]},
+          {"id": 13, "set": "sand_asphalt", "wang": 13, "corners": ["asphalt", "asphalt", "sand", "asphalt"]},
+          {"id": 14, "set": "sand_asphalt", "wang": 14, "corners": ["asphalt", "asphalt", "asphalt", "sand"]},
+          {
+            "id": 15,
+            "set": "sand_asphalt",
+            "wang": 15,
+            "corners": ["asphalt", "asphalt", "asphalt", "asphalt"]
+          },
+          {"id": 16, "set": "sand_concrete", "wang": 0, "corners": ["sand", "sand", "sand", "sand"]},
+          {"id": 17, "set": "sand_concrete", "wang": 1, "corners": ["sand", "sand", "sand", "concrete"]},
+          {"id": 18, "set": "sand_concrete", "wang": 2, "corners": ["sand", "sand", "concrete", "sand"]},
+          {"id": 19, "set": "sand_concrete", "wang": 3, "corners": ["sand", "sand", "concrete", "concrete"]},
+          {"id": 20, "set": "sand_concrete", "wang": 4, "corners": ["sand", "concrete", "sand", "sand"]},
+          {"id": 21, "set": "sand_concrete", "wang": 5, "corners": ["sand", "concrete", "sand", "concrete"]},
+          {"id": 22, "set": "sand_concrete", "wang": 6, "corners": ["sand", "concrete", "concrete", "sand"]},
+          {
+            "id": 23,
+            "set": "sand_concrete",
+            "wang": 7,
+            "corners": ["sand", "concrete", "concrete", "concrete"]
+          },
+          {"id": 24, "set": "sand_concrete", "wang": 8, "corners": ["concrete", "sand", "sand", "sand"]},
+          {"id": 25, "set": "sand_concrete", "wang": 9, "corners": ["concrete", "sand", "sand", "concrete"]},
+          {"id": 26, "set": "sand_concrete", "wang": 10, "corners": ["concrete", "sand", "concrete", "sand"]},
+          {
+            "id": 27,
+            "set": "sand_concrete",
+            "wang": 11,
+            "corners": ["concrete", "sand", "concrete", "concrete"]
+          },
+          {"id": 28, "set": "sand_concrete", "wang": 12, "corners": ["concrete", "concrete", "sand", "sand"]},
+          {
+            "id": 29,
+            "set": "sand_concrete",
+            "wang": 13,
+            "corners": ["concrete", "concrete", "sand", "concrete"]
+          },
+          {
+            "id": 30,
+            "set": "sand_concrete",
+            "wang": 14,
+            "corners": ["concrete", "concrete", "concrete", "sand"]
+          },
+          {
+            "id": 31,
+            "set": "sand_concrete",
+            "wang": 15,
+            "corners": ["concrete", "concrete", "concrete", "concrete"]
+          },
+          {
+            "id": 32,
+            "set": "concrete_asphalt",
+            "wang": 0,
+            "corners": ["concrete", "concrete", "concrete", "concrete"]
+          },
+          {
+            "id": 33,
+            "set": "concrete_asphalt",
+            "wang": 1,
+            "corners": ["concrete", "concrete", "concrete", "asphalt"]
+          },
+          {
+            "id": 34,
+            "set": "concrete_asphalt",
+            "wang": 2,
+            "corners": ["concrete", "concrete", "asphalt", "concrete"]
+          },
+          {
+            "id": 35,
+            "set": "concrete_asphalt",
+            "wang": 3,
+            "corners": ["concrete", "concrete", "asphalt", "asphalt"]
+          },
+          {
+            "id": 36,
+            "set": "concrete_asphalt",
+            "wang": 4,
+            "corners": ["concrete", "asphalt", "concrete", "concrete"]
+          },
+          {
+            "id": 37,
+            "set": "concrete_asphalt",
+            "wang": 5,
+            "corners": ["concrete", "asphalt", "concrete", "asphalt"]
+          },
+          {
+            "id": 38,
+            "set": "concrete_asphalt",
+            "wang": 6,
+            "corners": ["concrete", "asphalt", "asphalt", "concrete"]
+          },
+          {
+            "id": 39,
+            "set": "concrete_asphalt",
+            "wang": 7,
+            "corners": ["concrete", "asphalt", "asphalt", "asphalt"]
+          },
+          {
+            "id": 40,
+            "set": "concrete_asphalt",
+            "wang": 8,
+            "corners": ["asphalt", "concrete", "concrete", "concrete"]
+          },
+          {
+            "id": 41,
+            "set": "concrete_asphalt",
+            "wang": 9,
+            "corners": ["asphalt", "concrete", "concrete", "asphalt"]
+          },
+          {
+            "id": 42,
+            "set": "concrete_asphalt",
+            "wang": 10,
+            "corners": ["asphalt", "concrete", "asphalt", "concrete"]
+          },
+          {
+            "id": 43,
+            "set": "concrete_asphalt",
+            "wang": 11,
+            "corners": ["asphalt", "concrete", "asphalt", "asphalt"]
+          },
+          {
+            "id": 44,
+            "set": "concrete_asphalt",
+            "wang": 12,
+            "corners": ["asphalt", "asphalt", "concrete", "concrete"]
+          },
+          {
+            "id": 45,
+            "set": "concrete_asphalt",
+            "wang": 13,
+            "corners": ["asphalt", "asphalt", "concrete", "asphalt"]
+          },
+          {
+            "id": 46,
+            "set": "concrete_asphalt",
+            "wang": 14,
+            "corners": ["asphalt", "asphalt", "asphalt", "concrete"]
+          },
+          {
+            "id": 47,
+            "set": "concrete_asphalt",
+            "wang": 15,
+            "corners": ["asphalt", "asphalt", "asphalt", "asphalt"]
+          }
+        ]
+      },
+      "note": "Ground atlas for the Masroor Tiled map: 8 x 6 tiles of 16 px, margin 1, spacing 2, edges extruded. Asphalt recoloured to the original map's blue-grey (legacy look).",
+      "processed": {
+        "sha256": "a6cbca05f8ecbb480f8be64255f5b66934a36bbc7e342ea9339cda427e0b228d",
+        "inputs": {
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/metadata.json": "7bdc23fd8814cc46b1f1ea85d20bbe0be6556617cfb921f39dba1556389e5266",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_00.png": "9c3f59ff21e431ea5207d69ffc8064fdd35a41f327719429a285a8d73c045697",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_01.png": "4fb15f3409b236d38dabafd3aa34faa595b35cd9f80f917fc35bf1b7f3a19251",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_02.png": "9e897d0687269bc4b0be37ef5cdd853f2b49738d05995e26a32a023e5d5090cf",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_03.png": "33d2b2d589e524a1d82eb2a5233d69da10f774dd0bf483268dd9fac7424afa65",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_04.png": "102ddcda336a873cb7faa3ed221f720f6d0b8ed724452066310f140cec266b26",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_05.png": "71610c68982bc1eed25b8fae7b4afc5fe9496f32dc7957d968b3056d59607359",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_06.png": "2f351b2acada08180f69178b0c6b3a02144de6ffce9a408c2766a3780295ee77",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_07.png": "7c16be1737f9b511d738051058af44751f40d52cf6eefd595aed61d64dbb0cbc",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_08.png": "b3b084fedb0e7e199bcd31982034d03df0ee1f8655d3b8df6a1dfb43a52d6f5b",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_09.png": "4e7f1febb4dbabf791f0b390445a2c5b137d6b2c21483d4dba439b7454f8dd97",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_10.png": "d5f8981305574f3a4ba0afe7d39f113ce4bd14638adabec7ac1df0e8de6bf620",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_11.png": "e522e17309088e5bd2b2d9354ff2b9fa6b0873450df2a9b698676456c4e9d44b",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_12.png": "4deefc550f06e2b2f91409a34b54be08aa450adb9c48eb2afd68bcd926fa5b5b",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_13.png": "5057f25f0c38f5e1a7bf09d8739a8f38efbf624cddfd595aa63914afeebec865",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_14.png": "471ff2c37c5293ce3d0413a362362bdc2fef37124ab9b47e6de035594daaa78b",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_asphalt/tile_15.png": "0c4e825487fc61fa3999ba557398dff40b16396f47e149cfeee08630d1a57c12",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/metadata.json": "5eb837972acc2f392cb327327b2a15f75a70d21b8c5e25e5e41e221ee3e9c71c",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_00.png": "8ded787356f6e981397f53ccdc77404e8a3fc196653c3d510ab5ad6e18a83960",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_01.png": "e37411660666ab3fd1ba8967ba344bcd244f2cbaac1996e463e66b939a87fc33",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_02.png": "fa91a9e46f7de46a4a53ee550a8f2357aab75dad2a13ea45ba0e4973f99ad484",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_03.png": "9bb4f6e94f0fe2d4552eb3cbd42f56644506791228eb67b55003ae34790c1a7e",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_04.png": "ed43b41bf405daa66b6d0ad21a6dfd79b1d7efba86e138f322be4d152a65c921",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_05.png": "9db3931a75c0bd7f8bb3acc09fbc468585e1a2073ded7b26ce3a147c68485740",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_06.png": "09a67ec86b7264f179225be945e2a91de09e6288f269c7f78e6322ecaf8932da",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_07.png": "13d073699ebeb33a77b5bc9e848b00fa9d351f46f856edbff8de0cd60063ab8d",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_08.png": "5378b49a646f87a2281eb1624828cab32c3d8a3307dab15a79ddd7c2c66d66e1",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_09.png": "218ba12eecea4486e981a0d39ac6a3e182a72f96dec45bc2aafb5e487b652a3c",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_10.png": "4048d75c295e0c43a2f99b079efa703a9130c97228a6c484d776b7575db16ffe",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_11.png": "1c84c06fd797ee4a176ba161e5d48b31abcb1581843b532b14c0b626e81ff50f",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_12.png": "9193d1eedb3b4b62b5078fb2e76747116f3f5e4d32ba3844324a9facedff902b",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_13.png": "e6b95c92d0e1d5975d87fd11fb209d613ba56a89f6477bf9d1c13f5e06c3c647",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_14.png": "447b8c1619015d4c27deabcdca5ee5be4cce4431329735ab9249a14056ca2a96",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/sand_concrete/tile_15.png": "8a3ccffca2a353c2132686016dc60ff6194306198ed04adcaf601b40597cc9dc",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/metadata.json": "92edf8c59d7b03a306b35d7e95edd4b2cb0d1a18ce7f004c3952a115f1e13e3e",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_00.png": "7c368b278aa6c9394a69e4c960eda1b7ba0c2f00da92296fecdad34e90a44df3",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_01.png": "c56ed5866b085effbbc08d9bbec87f25a4d73259ca59663e300ac4c7cf35559f",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_02.png": "801349a56104e6d01327d92eb2a4b6025f18a553d73861671372d0f8a3166949",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_03.png": "779ca89ba63c6d4c7dda63fc599f1e77b623a39ed90fa3c577c2d41e6cbfb22e",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_04.png": "c6a672537b8b328108561cf7a81b5fcdf93e2abdc8255dd951a9d29fa6bbc905",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_05.png": "b5d27918bcfa6f9708a3aba323a907794be1728bd7a50de4a48005df8991c376",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_06.png": "ce02df298005be1d8ade100455753fef39dcf196a81811bfe25334a068bde29b",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_07.png": "dfde9cc17ab956a0a861faaf967b91784ce4b2c587aac5fd70e002fd32bca9df",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_08.png": "1bb8ed2e8ebbc1065691060dc35321c4a7fa067032e7dad4ac49e6ab3b2984a9",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_09.png": "b12fb7987c3623f25f838d3f0b9379ab57734468754880755673d32431072bf6",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_10.png": "6254b9fa5884a58f22573e76eae02018c46c15715c62ff2e4f0fc1bd10ed560d",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_11.png": "b2f25852646a1d7acdb7fd04c2032b23574f8952135f73906ad6efbd3943c162",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_12.png": "0636b74cc860cc3df9bae5d86c3c6f4e531355b52e298fe359a575db43eff2ec",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_13.png": "36dc79e5f0d5057a3ec84b9e10950479e80bc2261ebd368a249d907524efc6a0",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_14.png": "c09f9b7ee239c6fb4814d2b67930ce161f76dd04d68c7d7956565e98652ba678",
+          "assets/sprites/original/pixellab/tiles/walk_tiles_ground/concrete_asphalt/tile_15.png": "69f5bd56fcf2f33421d466328321ebdc83610ab3e3309c5958e4d4d5617d3a95",
+          "assets/sprites/manifest.json#walk_tiles_ground": "f85722627b56746e5fc66d80d9676d1dea259a7c01207704bf5554bb237f61e5"
+        }
+      }
+    },
+    {
+      "key": "walk_tiles_paint",
+      "category": "tiles",
+      "owner": "walk",
+      "usedBy": ["walk:masroor"],
+      "size": [144, 468],
+      "sizeRule": "exact",
+      "source": {"kind": "procedural", "recipe": "paint", "colors": {"W": [232, 232, 226], "Y": [232, 196, 70]}},
+      "estGenerations": 0,
+      "post": [],
+      "tile": {
+        "size": 16,
+        "margin": 1,
+        "spacing": 2,
+        "columns": 8,
+        "rows": 26,
+        "cell": 4,
+        "walkable": true,
+        "encoding": "patterns[i] is local tile id i: 16 characters, 4 rows of 4 cells (4 x 4 px each), \".\" none, \"W\" white paint, \"Y\" yellow paint. Only tiles with asphalt at all four ground corners carry paint (masroor_ground.paint_grid).",
+        "patterns": [
+          "...............W",
+          "...............Y",
+          "..............W.",
+          "..............WW",
+          "..............Y.",
+          ".............W..",
+          ".............WWW",
+          "............W...",
+          "............WW..",
+          "............WWW.",
+          "............WWWW",
+          "...........W....",
+          "...........W...W",
+          "...........W..WW",
+          "...........W.WWW",
+          "...........WW...",
+          "...........Y...Y",
+          "...........Y..Y.",
+          "...........Y..YY",
+          "..........W.W...",
+          "..........WW....",
+          "..........WW..WW",
+          "..........WW.WWW",
+          "..........WWWWW.",
+          "..........WY..WY",
+          "..........YY..Y.",
+          ".........W.....W",
+          ".........W...Y..",
+          ".........WW.....",
+          ".........WW..WW.",
+          ".........WWW....",
+          ".........WWW.WWW",
+          ".........WWWWWWW",
+          ".........WY....Y",
+          ".........Y....Y.",
+          ".........YW.....",
+          "........W.......",
+          "........W.....W.",
+          "........W....YW.",
+          "........W...W...",
+          "........W...WW..",
+          "........WW......",
+          "........WW..WW..",
+          "........WWWW.WWW",
+          "........WWWWWWWW",
+          "........WWYY....",
+          "........Y...Y...",
+          "........YW......",
+          ".......W........",
+          ".......W...W....",
+          ".......W...W...W",
+          ".......W...W..WW",
+          ".......W..WW..WW",
+          ".......W..WW.WW.",
+          ".......W..WW.WWW",
+          ".......W.WWW.WWW",
+          "......W.........",
+          "......WW..WW....",
+          "......WW..WWWWW.",
+          "......WY........",
+          "......Y..YY.....",
+          "......Y.W.......",
+          ".....W..........",
+          ".....W...W...Y..",
+          ".....WW.........",
+          ".....WWW........",
+          ".....WWW.WWW....",
+          ".....WYY..WW.WWW",
+          ".....Y....YY...Y",
+          ".....Y...WW...W.",
+          "....W...........",
+          "....W.....W.....",
+          "....W...W.......",
+          "....W...W...W...",
+          "....W...WW...WWW",
+          "....WW..........",
+          "....WW...W...W..",
+          "....WW..W.......",
+          "....WW..WW......",
+          "....WW..WW..W...",
+          "....WWW.........",
+          "....WWW.WW..W...",
+          "....WWW.WWW.....",
+          "....WWWW........",
+          "....WWWW.......W",
+          "....WWWW......WW",
+          "....WWWW.WWW.WWW",
+          "....WWWWW...W...",
+          "....WWWWWWWW....",
+          "....WWWWWWWW.WW.",
+          "....WWWWWWWWWWWW",
+          "....Y...........",
+          "....YY..Y.......",
+          "....YYYY........",
+          "...W............",
+          "...W...W........",
+          "...W...W...W....",
+          "...W...W...W...W",
+          "...W...W..WW.WWW",
+          "...W...W.WWW.WW.",
+          "...W..W..WW.WW..",
+          "...W..WW..WWWWW.",
+          "...W..WW.WW.WW..",
+          "...W..WW.WW.WWW.",
+          "...W..WW.WWW.WW.",
+          "...W..WW.WWWWW..",
+          "...W..WW.WWWWW.W",
+          "...W..WW.WWWWWW.",
+          "...WWWWW........",
+          "...WWWWW..WW....",
+          "...WWWWW.WWWWWW.",
+          "...WWWWWWWW.W...",
+          "...Y............",
+          "...Y...W........",
+          "...Y..Y...W.....",
+          "...Y..Y...Y...W.",
+          "...Y..Y..Y......",
+          "...Y..Y..YY.Y...",
+          "..W.............",
+          "..W..........Y..",
+          "..W...Y....Y...W",
+          "..W.WY..........",
+          "..WW...W........",
+          "..WW..WW..W..WW.",
+          "..WW..WW.WW.WW..",
+          "..WW..WW.WW.WWW.",
+          "..WW..WWWWW.WW..",
+          "..WW.WW.WW..W...",
+          "..WW.WW.WW..WW..",
+          "..WW.WWW.WW..W..",
+          "..WW.WWW.WW.WW..",
+          "..WW.WWWWWW..W..",
+          "..WW.WWWWWW.WW..",
+          "..WW.WWWWWW.WWW.",
+          "..WW.WWWWWWWWWW.",
+          "..WWW...........",
+          "..WWWWWWWW..W...",
+          "..WY............",
+          "..Y.......W..Y..",
+          "..Y....Y........",
+          "..Y...Y.........",
+          ".W..............",
+          ".W...W....Y...Y.",
+          ".W..W...........",
+          ".W..WW..........",
+          ".W..WWW.WW..W...",
+          ".W..WWW.WW.WW..W",
+          ".WW.............",
+          ".WW..W..WW..W...",
+          ".WW..WW.........",
+          ".WW..WW...W...W.",
+          ".WW..WW..WW..WW.",
+          ".WW..Y..YY..Y...",
+          ".WW.WW..W.......",
+          ".WW.WW..W...W...",
+          ".WW.WW..WW..W...",
+          ".WW.WWW.WW..W...",
+          ".WWW............",
+          ".WWW.WW.WWW.WW..",
+          ".WWW.WWW........",
+          ".WWW.WWW.WWW.WWW",
+          ".WWW.WWWWWW.WW..",
+          ".WWWWWW..W......",
+          ".WWWWWW.WW......",
+          ".WWWWWW.WW..W...",
+          ".WWWWWWWWWW.WW..",
+          ".Y.....W...W....",
+          ".Y...Y..W.......",
+          ".Y...Y..Y.......",
+          ".YW.............",
+          "W...............",
+          "W...W...........",
+          "W...W...WW...W..",
+          "W...WW..WWW..WWW",
+          "W...WWWW........",
+          "W...Y...Y.......",
+          "WW..............",
+          "WW..........W...",
+          "WW...WWW..WW....",
+          "WW..W...........",
+          "WW..W...W.......",
+          "WW..WW..........",
+          "WW..WW....WW..WW",
+          "WW..WW..W.......",
+          "WW..WWW.........",
+          "WWW.WW..W.......",
+          "WWWW............",
+          "WWWW.WWW........",
+          "WWWWW...........",
+          "WWWWWWW.........",
+          "WWWWWWW.WWW....W",
+          "WWWWWWWW........",
+          "WWWWWWWWWWWWW...",
+          "WWWWWWWWWWWWWWWW",
+          "WYYY............",
+          "Y...............",
+          "Y.....W.........",
+          "Y....W..........",
+          "Y...W...........",
+          "Y...Y...........",
+          "YW..............",
+          "YY..Y...Y.......",
+          "YYW.............",
+          "YYY.YYY.W.......",
+          "YYYW............"
+        ]
+      },
+      "note": "Runway and taxiway paint read from the original map (4 px cells, like the legacy map). One tile per distinct pattern the map uses, sorted; build-map rebuilds it with the map (8 columns, 1 px extruded).",
+      "processed": {
+        "sha256": "c41948821f98fc770c52e2dae1f24583dd5f3ab9aaaa1ef36aafad40494fe5b0",
+        "inputs": {
+          "assets/sprites/original/airport-level-map-clean.jpeg": "e870f1c8f21aae0469b612ecf6a93662373e2918349ed275815227f20fc0fb61",
+          "assets/sprites/manifest.json#walk_tiles_paint": "9733279977ba24dc79c5eaf5f419ae6872a3038421f19ffa1048bfa4cff21c2f"
+        }
+      }
+    },
+    {
+      "key": "sabre",
+      "category": "vehicles",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [17, 21],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "North American F-86 Sabre jet fighter, nose pointing up, swept-back wings and tailplane, bare silver metal, small blue canopy near the nose, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+          "image_size": {"width": 34, "height": 42},
+          "no_background": true,
+          "view": "high top-down",
+          "direction": "north",
+          "outline": "single color black outline",
+          "shading": "basic shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/sabre.png", "scale": 2},
+          "init_image_strength": 350,
+          "seed": 7
+        }
+      },
+      "estGenerations": 1,
+      "post": [{"op": "half"}, {"op": "fit"}],
+      "standIn": {"from": "assets/sprites/templates/sabre.png"},
+      "note": "Nose up. Drawn at 2x from the template, then halved keeping outlines. Hit radius is fixed in the sim.",
+      "processed": {
+        "sha256": "703c4b6f904b70e2cdcc55cce3b7f21d51f2a76514f2ed8eba1db81c6ea28a8c",
+        "inputs": {
+          "assets/sprites/original/pixellab/vehicles/sabre/sabre.png": "81dc3e13428edcdc8505cf00f3927cfd83b029005c5ba7cd95623ba92ec02910",
+          "assets/sprites/manifest.json#sabre": "8f024c509818aeff9e4b5bb28140a3a5245942ebb940ad169d9df00bb6a09eaf"
+        }
+      }
+    },
+    {
+      "key": "mystere",
+      "category": "vehicles",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [17, 21],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "Dassault Mystere IV jet fighter, nose pointing up, swept-back wings, grey-green camouflage, small blue canopy, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+          "image_size": {"width": 34, "height": 42},
+          "no_background": true,
+          "view": "high top-down",
+          "direction": "north",
+          "outline": "single color black outline",
+          "shading": "basic shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/mystere.png", "scale": 2},
+          "init_image_strength": 350,
+          "seed": 7
+        }
+      },
+      "estGenerations": 1,
+      "post": [{"op": "half"}, {"op": "fit"}],
+      "standIn": {"from": "assets/sprites/templates/mystere.png"},
+      "note": "Nose up. Drawn at 2x from the template, then halved keeping outlines. Hit radius is fixed in the sim.",
+      "processed": {
+        "sha256": "77c55930d2fd773ba6264975a935832cadcb82bd72830b0b318577c34af33c6b",
+        "inputs": {
+          "assets/sprites/original/pixellab/vehicles/mystere/mystere.png": "37e3868288d53a4421f1ed74624aa2be3d5cc3ab8d9ebd9438eeab8822142f34",
+          "assets/sprites/manifest.json#mystere": "8f024c509818aeff9e4b5bb28140a3a5245942ebb940ad169d9df00bb6a09eaf"
+        }
+      }
+    },
+    {
+      "key": "hunter",
+      "category": "vehicles",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [21, 23],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "Hawker Hunter jet fighter, nose pointing up, swept-back wings, olive drab camouflage, small blue canopy, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+          "image_size": {"width": 42, "height": 46},
+          "no_background": true,
+          "view": "high top-down",
+          "direction": "north",
+          "outline": "single color black outline",
+          "shading": "basic shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/hunter.png", "scale": 2},
+          "init_image_strength": 350,
+          "seed": 7
+        }
+      },
+      "estGenerations": 1,
+      "post": [{"op": "half"}, {"op": "fit"}],
+      "standIn": {"from": "assets/sprites/templates/hunter.png"},
+      "note": "Nose up. Drawn at 2x from the template, then halved keeping outlines. Hit radius is fixed in the sim.",
+      "processed": {
+        "sha256": "0e1c0d1bc0f9470f5f74e0aae1eb29dc25590700ec0a08ccacfd718a783eb925",
+        "inputs": {
+          "assets/sprites/original/pixellab/vehicles/hunter/hunter.png": "c0cc9ed695e94276b9d69ba395245fb3ec6ced258377742732b83affa61587c2",
+          "assets/sprites/manifest.json#hunter": "61d3e617480d03c1de2b4d26aef8dc98aa4d25f650734801721ba6c87033a622"
+        }
+      }
+    },
+    {
+      "key": "gnat",
+      "category": "vehicles",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [17, 15],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "Folland Gnat small light jet fighter, nose pointing up, short swept wings, grey-green camouflage, small blue canopy, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+          "image_size": {"width": 34, "height": 32},
+          "no_background": true,
+          "view": "high top-down",
+          "direction": "north",
+          "outline": "single color black outline",
+          "shading": "basic shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/gnat.png", "scale": 2, "padTo": [17, 16]},
+          "init_image_strength": 350,
+          "seed": 7
+        }
+      },
+      "estGenerations": 1,
+      "post": [{"op": "half"}, {"op": "fit"}],
+      "standIn": {"from": "assets/sprites/templates/gnat.png"},
+      "note": "Nose up. Drawn at 2x from the template, then halved keeping outlines. Hit radius is fixed in the sim.",
+      "processed": {
+        "sha256": "2c24c0d83c1f00e4c267bd020b3b30e962442dc715f0b2b21b19f5f258ed925a",
+        "inputs": {
+          "assets/sprites/original/pixellab/vehicles/gnat/gnat.png": "184126e5da4e0991f64db3e429193c8bdcf02ace29629b33ea24b39428edb357",
+          "assets/sprites/manifest.json#gnat": "c4cb80602708c36c579933a32fe5aaec79f4e499a0838140654e2ace408225f5"
+        }
+      }
+    },
+    {
+      "key": "canberra",
+      "category": "vehicles",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [29, 23],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "English Electric Canberra twin-engine jet bomber, nose pointing up, broad straight wings with one engine on each wing, olive camouflage, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+          "image_size": {"width": 58, "height": 46},
+          "no_background": true,
+          "view": "high top-down",
+          "direction": "north",
+          "outline": "single color black outline",
+          "shading": "basic shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/canberra.png", "scale": 2},
+          "init_image_strength": 350,
+          "seed": 7
+        }
+      },
+      "estGenerations": 1,
+      "post": [{"op": "half"}, {"op": "fit"}],
+      "standIn": {"from": "assets/sprites/templates/canberra.png"},
+      "note": "Nose up. Drawn at 2x from the template, then halved keeping outlines. Hit radius is fixed in the sim.",
+      "processed": {
+        "sha256": "ba7a18b5a0cd405e0a0fc5a9b7cdcb32b1e00ad4d46f8df04bd1b4a5fa4761d5",
+        "inputs": {
+          "assets/sprites/original/pixellab/vehicles/canberra/canberra.png": "7488c1e86225060857ca70857514c16a29ed6fcb6d505bdbce5ab362813844fc",
+          "assets/sprites/manifest.json#canberra": "d6d5ae2a2c81b6efc333048485dc8d9027920fc2e976d0d49c3c2818afe9fd3d"
+        }
+      }
+    },
+    {
+      "key": "b57",
+      "category": "vehicles",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [29, 23],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "Martin B-57 twin-engine jet bomber, nose pointing up, broad straight wings with one engine on each wing, light grey, Pakistan Air Force, pixel art game sprite, seen from directly above, 1971 air war, sharp single color black outline",
+          "image_size": {"width": 58, "height": 46},
+          "no_background": true,
+          "view": "high top-down",
+          "direction": "north",
+          "outline": "single color black outline",
+          "shading": "basic shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/b57.png", "scale": 2},
+          "init_image_strength": 350,
+          "seed": 7
+        }
+      },
+      "estGenerations": 1,
+      "post": [{"op": "half"}, {"op": "fit"}],
+      "standIn": {"from": "assets/sprites/templates/b57.png"},
+      "note": "Nose up. Drawn at 2x from the template, then halved keeping outlines. Hit radius is fixed in the sim.",
+      "processed": {
+        "sha256": "f6a332bfc6666324dddc27c49eeccc971acf7ee34375b10b9bf645402aa425ab",
+        "inputs": {
+          "assets/sprites/original/pixellab/vehicles/b57/b57.png": "78988600d4e7a9ecab41bd6d0f806c876233435f296d10c7c02b895e91e11a3e",
+          "assets/sprites/manifest.json#b57": "d6d5ae2a2c81b6efc333048485dc8d9027920fc2e976d0d49c3c2818afe9fd3d"
+        }
+      }
+    },
+    {
+      "key": "hill24",
+      "category": "objects",
+      "owner": "flight",
+      "usedBy": ["flight:low-level route"],
+      "size": [52, 52],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "one low rounded rocky brown hill seen from directly above, lit from the top-left, dry scrub on the slopes, lighter summit, dark outline, pixel art game asset",
+          "image_size": {"width": 52, "height": 52},
+          "no_background": true,
+          "view": "high top-down",
+          "outline": "single color outline",
+          "shading": "medium shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/hill24.png"},
+          "init_image_strength": 250,
+          "color_image": {"$palette": "hills"},
+          "seed": 31
+        }
+      },
+      "estGenerations": 1,
+      "post": [],
+      "standIn": {"from": "assets/sprites/templates/hill24.png"},
+      "note": "Collision radius is fixed at 24 px: keep the hill filling about the template circle.",
+      "processed": {
+        "sha256": "4cdb9181ff8fcad06088df345ed5bff31806ac0da313c4bf5237f3b0ede714a6",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/hill24/hill24.png": "ad784319a4b0b25b85f65aefe785b4dd21c512b1bfc97d2d236bfa26d7307dc0",
+          "assets/sprites/manifest.json#hill24": "9ce0853eb10d01c044a592646139ec3d5378460c38739a258d8acf2eb546829c"
+        }
+      }
+    },
+    {
+      "key": "hill32",
+      "category": "objects",
+      "owner": "flight",
+      "usedBy": ["flight:low-level route"],
+      "size": [68, 68],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "one low rounded rocky brown hill seen from directly above, lit from the top-left, dry scrub on the slopes, lighter summit, dark outline, pixel art game asset",
+          "image_size": {"width": 68, "height": 68},
+          "no_background": true,
+          "view": "high top-down",
+          "outline": "single color outline",
+          "shading": "medium shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/hill32.png"},
+          "init_image_strength": 250,
+          "color_image": {"$palette": "hills"},
+          "seed": 39
+        }
+      },
+      "estGenerations": 1,
+      "post": [],
+      "standIn": {"from": "assets/sprites/templates/hill32.png"},
+      "note": "Collision radius is fixed at 32 px: keep the hill filling about the template circle.",
+      "processed": {
+        "sha256": "d6ff252b944b40ecb3958eb83fba75eda895e5abaee79092b347b9c508a59feb",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/hill32/hill32.png": "2d075df0f140586b834b830791cf9ceb42b3500e4bac86c81669c47b05406fe3",
+          "assets/sprites/manifest.json#hill32": "c230586d9a1f62a1986a0cc386c18001e1ac23d45ca0cdfd91ee219af7ea26f4"
+        }
+      }
+    },
+    {
+      "key": "hill40",
+      "category": "objects",
+      "owner": "flight",
+      "usedBy": ["flight:low-level route"],
+      "size": [84, 84],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "one low rounded rocky brown hill seen from directly above, lit from the top-left, dry scrub on the slopes, lighter summit, dark outline, pixel art game asset",
+          "image_size": {"width": 84, "height": 84},
+          "no_background": true,
+          "view": "high top-down",
+          "outline": "single color outline",
+          "shading": "medium shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/hill40.png"},
+          "init_image_strength": 250,
+          "color_image": {"$palette": "hills"},
+          "seed": 47
+        }
+      },
+      "estGenerations": 1,
+      "post": [],
+      "standIn": {"from": "assets/sprites/templates/hill40.png"},
+      "note": "Collision radius is fixed at 40 px: keep the hill filling about the template circle.",
+      "processed": {
+        "sha256": "5383e6df360b03b2d72978100db6cdd2623466d161a4085c446296c63ab9f795",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/hill40/hill40.png": "bef69beaeebaa90977c6d1eb66aae7261a41d18b9fe50061f365b1a457f880db",
+          "assets/sprites/manifest.json#hill40": "229ce094e2d3c16abc00805640f3821c090c48c5609b13dc5da2b8727b8cbb0a"
+        }
+      }
+    },
+    {
+      "key": "hill48",
+      "category": "objects",
+      "owner": "flight",
+      "usedBy": ["flight:low-level route"],
+      "size": [100, 100],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "one low rounded rocky brown hill seen from directly above, lit from the top-left, dry scrub on the slopes, lighter summit, dark outline, pixel art game asset",
+          "image_size": {"width": 100, "height": 100},
+          "no_background": true,
+          "view": "high top-down",
+          "outline": "single color outline",
+          "shading": "medium shading",
+          "detail": "medium detail",
+          "init_image": {"$image": "assets/sprites/templates/hill48.png"},
+          "init_image_strength": 250,
+          "color_image": {"$palette": "hills"},
+          "seed": 55
+        }
+      },
+      "estGenerations": 1,
+      "post": [],
+      "standIn": {"from": "assets/sprites/templates/hill48.png"},
+      "note": "Collision radius is fixed at 48 px: keep the hill filling about the template circle.",
+      "processed": {
+        "sha256": "b3e5718716338c3e5ae5ba9395b97c95f22564526d7a6c445a05565845e499fc",
+        "inputs": {
+          "assets/sprites/original/pixellab/objects/hill48/hill48.png": "62e0920287fdb8a9064ef24ec01e3121efab7f19f42e4ad04dddfdc54bbd99e3",
+          "assets/sprites/manifest.json#hill48": "d7b8bd2cfd9e1d35e5c04d6a14dc6d92b672b51f4f58254faa23d820f74952ce"
+        }
+      }
+    },
+    {
+      "key": "cloud0",
+      "category": "effects",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [56, 32],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "one small soft white cumulus cloud seen from above, puffy round lobes, pale grey shaded underside, pixel art game asset",
+          "image_size": {"width": 56, "height": 32},
+          "no_background": true,
+          "view": "high top-down",
+          "outline": "lineless",
+          "shading": "basic shading",
+          "detail": "low detail",
+          "init_image": {"$image": "assets/sprites/templates/cloud0.png"},
+          "init_image_strength": 300,
+          "seed": 11
+        }
+      },
+      "estGenerations": 1,
+      "post": [],
+      "standIn": {"from": "assets/sprites/templates/cloud0.png"},
+      "note": "The ground shadow is made from the cloud (cloudsh<n>.png overrides it).",
+      "processed": {
+        "sha256": "1633b123a73c0e4c2a9bff49108a13c4fe81490bc03c09e0e902306744147c78",
+        "inputs": {
+          "assets/sprites/original/pixellab/effects/cloud0/cloud0.png": "d1513bb44395850c286f47a47d9697cb9baedfc9bb1d5f6954271620beefe193",
+          "assets/sprites/manifest.json#cloud0": "42a41316ddb82d75b565df43cbbcec92843b9d6e31642110e1b1419f52ca3228"
+        }
+      }
+    },
+    {
+      "key": "cloud1",
+      "category": "effects",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [56, 32],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "one small soft white cumulus cloud seen from above, puffy round lobes, pale grey shaded underside, pixel art game asset",
+          "image_size": {"width": 56, "height": 32},
+          "no_background": true,
+          "view": "high top-down",
+          "outline": "lineless",
+          "shading": "basic shading",
+          "detail": "low detail",
+          "init_image": {"$image": "assets/sprites/templates/cloud1.png"},
+          "init_image_strength": 300,
+          "seed": 12
+        }
+      },
+      "estGenerations": 1,
+      "post": [],
+      "standIn": {"from": "assets/sprites/templates/cloud1.png"},
+      "note": "The ground shadow is made from the cloud (cloudsh<n>.png overrides it).",
+      "processed": {
+        "sha256": "4eb3968165d87a0b63e473271f6ce0ee576f927ba873073761dd49d2182e6c01",
+        "inputs": {
+          "assets/sprites/original/pixellab/effects/cloud1/cloud1.png": "2bc59bc3105df0ab06ca7bb2787beb3b042f5488c24c43d9fa7a66fbea93af1c",
+          "assets/sprites/manifest.json#cloud1": "42a41316ddb82d75b565df43cbbcec92843b9d6e31642110e1b1419f52ca3228"
+        }
+      }
+    },
+    {
+      "key": "cloud2",
+      "category": "effects",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [56, 32],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "pixflux",
+        "endpoint": "/create-image-pixflux",
+        "request": {
+          "description": "one small soft white cumulus cloud seen from above, puffy round lobes, pale grey shaded underside, pixel art game asset",
+          "image_size": {"width": 56, "height": 32},
+          "no_background": true,
+          "view": "high top-down",
+          "outline": "lineless",
+          "shading": "basic shading",
+          "detail": "low detail",
+          "init_image": {"$image": "assets/sprites/templates/cloud2.png"},
+          "init_image_strength": 300,
+          "seed": 13
+        }
+      },
+      "estGenerations": 1,
+      "post": [],
+      "standIn": {"from": "assets/sprites/templates/cloud2.png"},
+      "note": "The ground shadow is made from the cloud (cloudsh<n>.png overrides it).",
+      "processed": {
+        "sha256": "86bb5b0fbb5bd0583c79f321847bd1c7aded66f21a750c1ba110302c9908de76",
+        "inputs": {
+          "assets/sprites/original/pixellab/effects/cloud2/cloud2.png": "3b63e017ee12515f9244e67d29a46a3e89ae08897699226e1ed3db6b548d2694",
+          "assets/sprites/manifest.json#cloud2": "42a41316ddb82d75b565df43cbbcec92843b9d6e31642110e1b1419f52ca3228"
+        }
+      }
+    },
+    {
+      "key": "ground_farmland",
+      "category": "tiles",
+      "owner": "core",
+      "usedBy": ["menu", "flight"],
+      "size": [128, 128],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "tileset",
+        "endpoint": "/create-tileset",
+        "request": {
+          "lower_description": "green rice paddies and young crops in neat rectangular fields with thin raised earth bunds, Punjab farmland seen from high above",
+          "upper_description": "ochre and golden harvested wheat fields with brown furrows, seen from high above",
+          "tile_size": {"width": 32, "height": 32},
+          "view": "high top-down",
+          "mode": "standard",
+          "transition_size": 0.0,
+          "shading": "basic shading",
+          "detail": "medium detail",
+          "seed": 7
+        }
+      },
+      "estGenerations": 1,
+      "post": [{"op": "wang_texture", "grid": [4, 4], "seed": 7, "upperShare": 0.4}],
+      "standIn": {"from": "assets/sprites/templates/ground_farmland.png"},
+      "tile": {"seamless": true},
+      "note": "Must tile seamlessly: 4 x 4 Wang tiles of 32 px on a corner grid that wraps around.",
+      "processed": {
+        "sha256": "4120e80f40493dea69e9dae9b2916b580c3e229f855fcc87ebb915edb1bc82f1",
+        "inputs": {
+          "assets/sprites/original/pixellab/tiles/ground_farmland/metadata.json": "36cc5166133f90788a5f07a05836ca276a6be98519d833c18f20d36979c1f6b4",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_00.png": "433a2944c2cdb32d24522df3b8d6ec585675eac8ef73a51d81ac805b436c25b4",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_01.png": "f4a278ff69ff0d578df6fd3440c581d26f7bc19828d03dc2153bd3ca7723d06d",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_02.png": "49891f982694999c94e146a18236beaed09b3c129463dc4fbb0900cd5c1059f1",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_03.png": "8dec917d8ef62c89159bbddf1b97eb4f19897378b0cc2d8b42e7081ed367b0f6",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_04.png": "0af86e7de40ef8163613dcd1374f90ad17ad8dc5b9eee9025336a83a54962a99",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_05.png": "839c5efd8ccb52cdb26a2abe0e3e042e85cac7a3f0af0552c769fc5b511b8680",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_06.png": "9f29e5dbdc6105b62607dee39ebe3104892a4d26cfd14e38e8c30ac58a00fd02",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_07.png": "05001d9de83007b2623fd18c499cfb1c50bb0d9c041bfdc7a8e747475101a2c8",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_08.png": "310919825ab9ada3c37e6ad3ea12268c5bc10e7be36c318fc62f6466fb277018",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_09.png": "af93a0ff05da1c20bbc8010e8c4e587ba5b0f64519fdb1ecff2cc667f11d9c5b",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_10.png": "6d0cb52dacc688594bf192451307245d10e7aa3d0d5fab51d5ccc04474102f8f",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_11.png": "ff3b28215259c7368ae2a8c3e631991952fec474c0fec1c331a0ca06e18f766a",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_12.png": "98f391e38267757f8883dc46914c8659c134c73b55dfa1afa6eb6d1675e96b7e",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_13.png": "8360fd36a1615ae2d72e23f0a2de3f4529c17a62c26c2dcc7e06c7e7592039b3",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_14.png": "e2faea98ea8bd81e210f1db95078787354f15727782de275d1b9fd11bdc5a396",
+          "assets/sprites/original/pixellab/tiles/ground_farmland/tile_15.png": "6eae2a0368486850a3320b64de14652baa0ad2234ba40fc89fb37f245c375675",
+          "assets/sprites/manifest.json#ground_farmland": "5782c7fff469476043c9a0854a4c170bb31c689b03ad172e0402461a90974a47"
+        }
+      }
+    },
+    {
+      "key": "ground_plains",
+      "category": "tiles",
+      "owner": "core",
+      "usedBy": ["menu", "flight"],
+      "size": [128, 128],
+      "sizeRule": "exact",
+      "source": {
+        "kind": "tileset",
+        "endpoint": "/create-tileset",
+        "request": {
+          "lower_description": "dry khaki grassland plain with sparse low scrub, seen from high above",
+          "upper_description": "pale dusty bare earth with small stones and dry cracks, seen from high above",
+          "tile_size": {"width": 32, "height": 32},
+          "view": "high top-down",
+          "mode": "standard",
+          "transition_size": 0.0,
+          "shading": "basic shading",
+          "detail": "medium detail",
+          "seed": 19
+        }
+      },
+      "estGenerations": 1,
+      "post": [{"op": "wang_texture", "grid": [4, 4], "seed": 19, "upperShare": 0.4}],
+      "standIn": {"from": "assets/sprites/templates/ground_plains.png"},
+      "tile": {"seamless": true},
+      "note": "Must tile seamlessly: 4 x 4 Wang tiles of 32 px on a corner grid that wraps around.",
+      "processed": {
+        "sha256": "b1d8ace19c1ac8b55a6ed2f5acda06d5aff43ba6b81c4ed3fdd5ae3f74b5a01c",
+        "inputs": {
+          "assets/sprites/original/pixellab/tiles/ground_plains/metadata.json": "3d7c5b7cd24fe71a33e1b098efed240753c4460e36995c45c6b03af13d4e3005",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_00.png": "72880e7830fa2ea48a8f695988907ebfdc4cd6cad0cdaaff8989098bef60c648",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_01.png": "7649ef745462fc7fc3a16d458cd243a013cc362d9fecd6d387494f0e5f1978a4",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_02.png": "e125d1afe45dc25e01bc64a6e0258c3f4d9ad12011a63f7a5806cc18b906bce1",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_03.png": "55af7d511f67631d9abdc46aaf2edd863dabdf749c42339b85c764cbc34a72a6",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_04.png": "bdeac7ea26759888a1a00f93cd3856e94a4c68d24dc35873ced61586fbcf48d3",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_05.png": "dda883b5762897985f8098977d84c6886da12292835ec6a633444a38339c0e05",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_06.png": "740dee2b8574763850f8e083e75fc7a1e42643a3259dfd4608ec36c26df517c2",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_07.png": "221fe9f89feb01ea5d2e1baa370d7ec589cb323d4316e94eb144c951d0a7e672",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_08.png": "836ab36628a672a6d0e798bebd1a31b477673eea7b388c9450fbc81559e86747",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_09.png": "e629ea7fa70798358388ab2864697a9b667055d3e2ec7070d00cd8f0e93f9316",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_10.png": "9021c79e363960a415db6a29b7fd204f5f6ea0fdf31dfbbeaf263f6d40d2831f",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_11.png": "5f0348b92d933d42c72659b93e25e7a286c4e79dd9b8d1290644c77530c6ef8f",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_12.png": "7feb0080772e84d30b55ba9addf9e7edf99da0c3217431e36ecfc49a2fbbe9de",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_13.png": "72d538341c95ead27304f9700c0d8292d128d4f0bac9e65ffca0a6bb34bd6e6f",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_14.png": "3f3ded4437318c8c71f72ab410df5b42a391ccaa6b481b3f9f5d3a94a400e316",
+          "assets/sprites/original/pixellab/tiles/ground_plains/tile_15.png": "79d5075a381da86f2dee57d062a5266e818d1df20568d5d65085fb534f8be82e",
+          "assets/sprites/manifest.json#ground_plains": "43fb7cfcbb8309111b7ca25d5377c0e5c36f947db48f68cb17f56b5f2e810d17"
+        }
+      }
+    },
+    {
+      "key": "tree",
+      "category": "objects",
+      "owner": "core",
+      "usedBy": ["flight", "walk:flightline"],
+      "size": [8, 8],
+      "sizeRule": "exact",
+      "source": {"kind": "template", "template": "tree"},
+      "estGenerations": 0,
+      "post": [],
+      "note": "Template copy: final (too small to be worth a generation).",
+      "processed": {
+        "sha256": "f1ff0bb357e4e6566d920b211555cf97ae3ab430c4f9f24766fdb5cd0ae11bdd",
+        "inputs": {
+          "assets/sprites/templates/tree.png": "4110f2244e5732c3885882eba972e05583326164ed263cb4964519fcde9987ea",
+          "assets/sprites/manifest.json#tree": "532c860e55b780692912f5410ef8acd1a8b0457a693aa770da298b0b270cf042"
+        }
+      }
+    },
+    {
+      "key": "hut",
+      "category": "objects",
+      "owner": "flight",
+      "usedBy": ["flight"],
+      "size": [7, 7],
+      "sizeRule": "exact",
+      "source": {"kind": "template", "template": "hut"},
+      "estGenerations": 0,
+      "post": [],
+      "note": "Template copy: final (too small to be worth a generation).",
+      "processed": {
+        "sha256": "7444ab8da1d552ee9511d8a92600cd96059dae667fe674a89c475cccea1108b1",
+        "inputs": {
+          "assets/sprites/templates/hut.png": "ef935cac997679ce43b0cceb980a64f8ea6f47984b96ffcbc20cccc85daf0a9d",
+          "assets/sprites/manifest.json#hut": "22472fde75405915f93c1b64bc5554c4b85e199d1072aa2da46255e17a0ea6cf"
+        }
+      }
+    },
+    {
+      "key": "pylon",
+      "category": "objects",
+      "owner": "flight",
+      "usedBy": ["flight:sortie 3"],
+      "size": [5, 5],
+      "sizeRule": "exact",
+      "source": {"kind": "template", "template": "pylon"},
+      "estGenerations": 0,
+      "post": [],
+      "note": "Template copy: final (too small to be worth a generation).",
+      "processed": {
+        "sha256": "51174ba11f88e8ab8ed92d8b994bae621a0c3fab1583d497e13473c07fea2036",
+        "inputs": {
+          "assets/sprites/templates/pylon.png": "52c0c1079980fa38249a6473d43b73ae830602c5060ff7e6a12b8f4acc648b84",
+          "assets/sprites/manifest.json#pylon": "3abb43664b6f60417aaa55747b2fbb43ef1568fe0c99064801895034eb404150"
+        }
+      }
+    },
+    {
+      "key": "puff_light",
+      "category": "effects",
+      "owner": "flight",
+      "usedBy": ["flight: smoke trail"],
+      "size": [6, 6],
+      "sizeRule": "exact",
+      "source": {"kind": "template", "template": "puff_light"},
+      "estGenerations": 0,
+      "post": [],
+      "note": "Template copy: final (too small to be worth a generation).",
+      "processed": {
+        "sha256": "7958cce4861c5623f9f64eff8ac0b7326be99c8c83fe42c1c30a2a4f12f798db",
+        "inputs": {
+          "assets/sprites/templates/puff_light.png": "96374f22d7fa55a2f1f4a4c4f519a6af9efd41c688d667ee0e778bc8ba601fa6",
+          "assets/sprites/manifest.json#puff_light": "0bb61c21bc0d4dc149bbceea2e7e5c092ca6026c28f1582f4ec4472f8d186d91"
+        }
+      }
+    },
+    {
+      "key": "puff_dark",
+      "category": "effects",
+      "owner": "flight",
+      "usedBy": ["flight: smoke trail, badly hit"],
+      "size": [6, 6],
+      "sizeRule": "exact",
+      "source": {"kind": "template", "template": "puff_dark"},
+      "estGenerations": 0,
+      "post": [],
+      "note": "Template copy: final (too small to be worth a generation).",
+      "processed": {
+        "sha256": "c115dbcd86318d5cb6a890cc28f5dd404332410794e9712630b1f9eefcf5d90c",
+        "inputs": {
+          "assets/sprites/templates/puff_dark.png": "30eb32959e6cea02dda8346fdd3189420ecc7abab72e55a21f73b594a69598ef",
+          "assets/sprites/manifest.json#puff_dark": "fa8ee8c6a98ad4471889a0d8da88554db94237344bbf50e045ea6695db1c80b1"
+        }
+      }
+    },
+    {
+      "key": "puff_fuel",
+      "category": "effects",
+      "owner": "flight",
+      "usedBy": ["flight: fuel vapour"],
+      "size": [4, 4],
+      "sizeRule": "exact",
+      "source": {"kind": "template", "template": "puff_fuel"},
+      "estGenerations": 0,
+      "post": [],
+      "note": "Template copy: final (too small to be worth a generation).",
+      "processed": {
+        "sha256": "3c4d44af196328eaf442759fd7f72efc9d257a3315af623a3f4ff5847592042c",
+        "inputs": {
+          "assets/sprites/templates/puff_fuel.png": "b12450d468ca1b27af25ff0eac46629c3119e7e9e4c41d70991c7f02f0cb3a53",
+          "assets/sprites/manifest.json#puff_fuel": "b934e18ea674204e3d5d29d34df857a31b259cadfdd997c3e157a8f434f2ee8e"
+        }
+      }
+    },
+    {
+      "key": "spark",
+      "category": "effects",
+      "owner": "flight",
+      "usedBy": ["flight: hit spark"],
+      "size": [4, 4],
+      "sizeRule": "exact",
+      "source": {"kind": "template", "template": "spark"},
+      "estGenerations": 0,
+      "post": [],
+      "note": "Template copy: final (too small to be worth a generation).",
+      "processed": {
+        "sha256": "1eef28faaf2207060220c3150ef113c6d9d7e19c3ddc8be1793eb8ee5319136b",
+        "inputs": {
+          "assets/sprites/templates/spark.png": "0f32c30d6cd5a1a923c6d95d7c0c6ddc438cf6d060a3b344da036f0bb3149342",
+          "assets/sprites/manifest.json#spark": "11c5e81cc856ce7bfc12f9ceae75336d0036db77bb4ee48342cfa117323614f4"
+        }
+      }
+    },
+    {
+      "key": "dust",
+      "category": "effects",
+      "owner": "flight",
+      "usedBy": ["flight: smoke over a bombed base"],
+      "size": [10, 10],
+      "sizeRule": "exact",
+      "source": {"kind": "template", "template": "dust"},
+      "estGenerations": 0,
+      "post": [],
+      "note": "Template copy: final (too small to be worth a generation).",
+      "processed": {
+        "sha256": "d8cf48aaea737d3da32f1e0066541690653606d45a0d94e3fb727da6abe233e2",
+        "inputs": {
+          "assets/sprites/templates/dust.png": "95a7017e71c5a9f175c203a57427db5a43829ff1560063581e9ae925cd0971a8",
+          "assets/sprites/manifest.json#dust": "911c348920be234412994afdebb841bd1d68a1efca3fa922c7ca2bc56ae84e04"
+        }
+      }
+    }
+  ]
+}
