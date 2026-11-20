@@ -1,4 +1,4 @@
-"""Where everything stands on the Level 2 Masroor walk map.
+"""Where everything stands on the Masroor walk map.
 
 Ported from assets/art-wip/level-2/build_masroor_map.py. The walk map is the
 master map's region x 600-1220, y 430-900 (assets/sprites/original/
@@ -63,7 +63,7 @@ BUSHES = [(415, 280), (583, 318), (595, 445), (342, 437), (152, 282), (125, 330)
 SHELTERS = [(182, 293), (195, 290), (207, 287), (218, 283), (230, 279), (242, 275), (254, 271), (266, 267), (277, 263)]
 # The perimeter wall on the east side, as a polyline.
 WALL = [(620, 306), (600, 325), (588, 345), (578, 370), (572, 395), (566, 428), (530, 435), (500, 440), (478, 450), (470, 470)]
-# The solar panels on the original are an anachronism (GDD §6.10): plain sand there.
+# The solar panels on the original are an anachronism for 1971: plain sand there.
 SOLAR = (115, 365, 159, 399)  # x0, y0, x1, y1
 
 

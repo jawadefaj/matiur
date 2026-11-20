@@ -1,6 +1,5 @@
 // Sortie 3 — Low and Home. Damaged and short of fuel, fly home under 100 ft
-// through a valley and across the plains, then land. Teaches the low-level
-// flying that Episode 4 depends on.
+// through a valley and across the plains, then land.
 import { t } from '../../../core/i18n';
 import { tuning } from '../tuning';
 import { DEG, angleDiff, clamp } from '../../../core/math';

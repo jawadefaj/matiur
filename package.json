@@ -9,12 +9,15 @@
     "preview": "vite preview --host",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "test:browser": "playwright test",
+    "test:browser:ui": "playwright test --ui",
     "build:single": "vite build --config vite.single.config.ts"
   },
   "dependencies": {
     "phaser": "^4.2.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.48.0",
     "typescript": "^7.0.2",
     "vite": "^8.3.6",
     "vitest": "^5.1.0"

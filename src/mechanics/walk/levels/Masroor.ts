@@ -1,5 +1,5 @@
-// Level 2 on foot: PAF Base Masroor, the east side, August 1971.
-// One walk map for all three parts (design/Level 2 - Bluebird.md §1): the
+// Masroor on foot: PAF Base Masroor, the east side, August 1971.
+// One walk map for all three Masroor levels (schedule, hospital, intercept): the
 // master map's region x 600-1220, y 430-900, drawn at 4x. Coordinates below are
 // written in master-map pixels and converted by m(), so they can be read
 // straight off assets/sprites/original/airport-level-map-clean.jpeg.
@@ -28,7 +28,7 @@ const H = (900 - Y0) * SCALE;
 /** Master-map px to world px. */
 export const m = (x: number, y: number): Point => ({ x: (x - X0) * SCALE, y: (y - Y0) * SCALE });
 
-/** Metres per world px (design doc §1). */
+/** Metres per world px. */
 export const M_PER_PX = 1.41;
 
 const PLAYER = 'walk_matiur_sd';
@@ -142,7 +142,7 @@ abstract class Masroor extends WalkLevel {
   }
 }
 
-/** 2.2 The Schedule: night, home to the flight-line office on East Ramp. */
+/** Flight schedule (chapter 7): night, home to the flight-line office on East Ramp. */
 export class MasroorSchedule extends Masroor {
   readonly id = 'masroor-schedule';
   readonly title = t('schedule.title');
@@ -186,7 +186,7 @@ export class MasroorSchedule extends Masroor {
   }
 }
 
-/** 2.3 The Dispensary: night, home to the hospital. */
+/** Chloroform (chapter 9): night, home to the hospital. */
 export class MasroorHospital extends Masroor {
   readonly id = 'masroor-hospital';
   readonly title = t('hospital.title');
@@ -226,7 +226,7 @@ export class MasroorHospital extends Masroor {
   }
 }
 
-/** 2.5 Intercept: daylight, East Ramp to the end of the taxiway before Bluebird gets there. */
+/** Stopping the T-33 (chapter 10): daylight, East Ramp to the end of the taxiway before Bluebird gets there. */
 export class MasroorIntercept extends Masroor {
   readonly id = 'masroor-intercept';
   readonly title = t('intercept.title');

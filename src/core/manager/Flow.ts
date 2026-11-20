@@ -3,7 +3,7 @@
 import type { EpisodeDef, EpisodeMeta, GameDef, Step, StepOutcome } from '../contracts';
 import { episodeProgress, type SaveData } from '../save';
 
-/** A step found by its ref ('ep2/sortie-1'). */
+/** A step found by its ref ('ch04/play'). */
 export interface ResolvedStep {
   ref: string;
   episode: EpisodeDef;

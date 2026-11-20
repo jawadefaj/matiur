@@ -1,4 +1,4 @@
-// Base class for an Episode 2 sortie: objectives, markers, terrain and
+// Base class for a sortie: objectives, markers, terrain and
 // the shared failure rules (airframe lost, blackout, flameout).
 import { t } from '../../../core/i18n';
 import { tuning } from '../tuning';

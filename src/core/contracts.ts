@@ -19,7 +19,7 @@ export type ChapterMode = 'cinematic' | 'stealth' | 'flight' | 'interaction';
 
 /** An episode's heading, shown on its title card and in the menu. */
 export interface EpisodeMeta {
-  /** 'ep1' .. 'ep5'. Used in save data and deep links, so don't rename it once released. */
+  /** 'ch01' .. 'ch12'. Used in save data and deep links, so don't rename it once released. */
   id: string;
   number: number;
   title: string;
@@ -38,7 +38,7 @@ export interface EpisodeMeta {
 export interface StepHost<P = unknown> {
   /** A level's params (e.g. { sortie: 2 }), or the step itself for videos, cutscenes and cards. */
   readonly params: Readonly<P>;
-  /** 'ep2/sortie-1', or null for an ad-hoc ?play= run (nothing is saved). */
+  /** 'ch04/play', or null for an ad-hoc ?play= run (nothing is saved). */
   readonly ref: string | null;
   readonly episode: EpisodeMeta | null;
   /** 1 on the first try, +1 per retry(). */
@@ -114,10 +114,10 @@ export interface LevelStep<P = unknown> extends StepBase {
   params: P;
 }
 
-/** Play a video file from assets/video/. */
+/** Play a video file from assets/videos/. */
 export interface VideoStep extends StepBase {
   kind: 'video';
-  /** File name in assets/video/ without the extension, e.g. 'ep2_intro' for ep2_intro.mp4. */
+  /** File name in assets/videos/ without the extension, e.g. 'ch02_maltas_intro' for ch02_maltas_intro.mp4. */
   src: string;
   /** 'contain' letterboxes, 'cover' fills the screen and crops. */
   fit: 'contain' | 'cover';
@@ -131,7 +131,7 @@ export interface DialogueLine {
   text: string;
 }
 
-/** Play an in-engine cutscene from src/data/cutscenes/<script>.json (GDD §6.9). */
+/** Play an in-engine cutscene from src/data/cutscenes/<script>.json. */
 export interface CutsceneStep extends StepBase {
   kind: 'cutscene';
   script: string;
@@ -139,12 +139,12 @@ export interface CutsceneStep extends StepBase {
   placeholder?: DialogueLine[];
 }
 
-/** The episode title card (GDD §6.7). Added automatically as the first step. */
+/** The episode title card. Added automatically as the first step. */
 export interface TitleCard {
   type: 'title';
 }
 
-/** The archive card that closes an episode (GDD §0 rule 4). */
+/** The archive card that closes an episode. */
 export interface ArchiveCard {
   type: 'archive';
   /** Saved in the archive collection when the card is reached. */

@@ -1,5 +1,5 @@
 // Low-level flight: altitude band, radar and terrain collision.
-// Used by Episode 2 sortie 3 and, later, Episode 4 Phase 3.
+// Used by sortie 3 (the stand-in for chapter 11's low flight).
 import { tuning } from '../../tuning';
 import { pointSegmentDist } from '../../../../core/math';
 import { pxPerSec, type FlightState } from './FlightModel';

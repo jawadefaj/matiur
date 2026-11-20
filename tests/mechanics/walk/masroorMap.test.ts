@@ -1,4 +1,4 @@
-// Level 2's Tiled map (src/mechanics/walk/levels/masroor.tmj): its colliders,
+// The Masroor Tiled map (src/mechanics/walk/levels/masroor.tmj): its colliders,
 // its pictures and its markers, as the game reads them.
 import { describe, expect, it } from 'vitest';
 import { collisionRects, prop, spriteFootprints, tileOf } from '../../../src/core/tiled';

@@ -21,6 +21,52 @@ To paint a PNG by hand instead, copy its template from `templates/` into `final/
 
 After you add or rename a PNG, restart `npm run dev` so it finds the new file. Edits to a file that's already there show up on reload.
 
+## How the art looks
+
+The whole game is 2D top-down pixel art, seen from above ([design/design.md](../../design/design.md)). People are walker sheets (see "Walking characters" below); planes are drawn from straight above, nose up.
+
+**The game draws these itself, so they need no art:** vision cones (see-through triangles on the ground: white, then yellow, then red), the noise ring around a running character, Matiur fading or darkening while hidden, every plane's ground shadow (it moves away and shrinks as the plane climbs), the plane growing slightly when high, and the HUD (colours, not numbers).
+
+### People
+
+| Who | How they look | Key |
+|---|---|---|
+| Matiur, PAF officer (Masroor, 1971) | Dark blue-grey service dress and peaked cap | `walk_matiur_sd` |
+| Matiur, schoolboy (Sargodha) | Not drawn yet | none yet |
+| Matiur crouching | Not drawn yet. Crouching is slower and silent. | none yet |
+| Matiur's friends (Sargodha) | Not drawn yet. One of them is caught at the end of the orchard level. | none yet |
+| Orchard watchmen (Sargodha, night) | Not drawn yet | none yet |
+| Base guards (Masroor) | Olive uniform and beret, rifle, torch at night | `walk_guard` |
+| Nurses and orderlies (Air Force hospital) | Not drawn yet. They walk set routes. | none yet |
+
+### Cover, and things to pick up or read
+
+| Thing | How it looks | What it does |
+|---|---|---|
+| Crate, cupboard | Not drawn yet | Hides Matiur fully |
+| Bush | A low shrub | Cover (`walk_bush`) |
+| Parked jeep | Not drawn yet | Cover |
+| Building and hangar shadows | Dark patches on the ground | Hide Matiur only while he crouches |
+| Maltas | Not drawn yet | Picked up in the orchard |
+| The flight schedule | A document in the operations office. Not drawn yet. | Read |
+| The runway and taxiway layout | A map in the map or control room. Not drawn yet. | Read |
+| Chloroform | A bottle in the hospital pharmacy. Not drawn yet. | Picked up |
+
+### Planes and the ground below
+
+| What | How it looks | Key |
+|---|---|---|
+| Matiur's plane | From above, nose up. The design doesn't name the type for Risalpur or 1967; the Sabre stands in. | `sabre` |
+| The friend's plane (1967 dogfight) | Not drawn yet | none yet |
+| The T-33 (20 August) | Silver with yellow bands and tip tanks | `walk_t33` on the ground; none yet in flight |
+| Clouds | Pass under the plane at high altitude | `cloud0` … `cloud2` |
+| Engine smoke | Dark puffs when the engine fails | `puff_dark` |
+| Parachute | Not drawn yet | none yet |
+| Runway lights and practice rings (Risalpur) | Not drawn yet | none yet |
+| Ground | Fields, then hills, then desert and dunes; villages | `ground_farmland`, `ground_plains`, `hill24` … `hill48`, `hut`, `tree`, `pylon` |
+
+**Art the design doesn't use.** These keys come from levels of the earlier design that stand in for some chapters for now: the 1965 aircraft (`mystere`, `hunter`, `gnat`, `canberra`, `b57`), the flight-line walkers (`walker_pilot`, `walker_wingman`, `walker_crew`) and `sabre_parked`. They need no new art unless the design brings them back.
+
 ## Rules
 
 - **Transparent background:** use a PNG with alpha (RGBA).
@@ -33,7 +79,7 @@ After you add or rename a PNG, restart `npm run dev` so it finds the new file. E
 |---|---|---|---|
 | **Shared** | *made in src/core/gfx/* | | |
 | `tiles/ground_farmland.png` | Farmland ground (menu and flight) | 128 × 128 | Must tile seamlessly: it repeats in every direction |
-| `tiles/ground_plains.png` | Plains ground (sortie 3) | 128 × 128 | Must tile seamlessly |
+| `tiles/ground_plains.png` | Plains ground (flight) | 128 × 128 | Must tile seamlessly |
 | `objects/tree.png` | Tree (flight and walk) | 8 × 8 | |
 | **Flight** | *made in src/mechanics/flight/art/* | | |
 | `vehicles/sabre.png` | Player's F-86 Sabre and Sherdil Two | 17 × 21 | Aircraft: see below |
@@ -55,9 +101,9 @@ After you add or rename a PNG, restart `npm run dev` so it finds the new file. E
 | `walker_wingman.png` | Sherdil Two on foot | 48 × 104 | Walker sheet. No PNG yet |
 | `walker_crew.png` | Crew chief | 48 × 104 | Walker sheet. No PNG yet |
 | `sabre_parked.png` | Parked Sabre at walking scale, nose up | 100 × 104 | Keep the size: the walk collision boxes in `src/mechanics/walk/levels/FlightLine.ts` follow it. No PNG yet |
-| `characters/walk_matiur_sd.png` | Matiur in service dress (Level 2) | at most 72 × 136 | Walker sheet |
-| `characters/walk_guard.png` | Masroor guard with a torch (Level 2) | at most 108 × 144 | Walker sheet |
-| `vehicles/walk_t33.png` | Bluebird, the T-33, from above, nose up | 80 × 94 | Taxis in Intercept; also the parked jets on the Masroor map (in Intercept, the parked jet where Bluebird starts isn't drawn: Bluebird is that jet) |
+| `characters/walk_matiur_sd.png` | Matiur in service dress (Masroor) | at most 72 × 136 | Walker sheet |
+| `characters/walk_guard.png` | Masroor guard with a torch | at most 108 × 144 | Walker sheet |
+| `vehicles/walk_t33.png` | The T-33 from above, nose up | 80 × 94 | Taxis in the `masroor-intercept` level; also every parked jet on the Masroor map (in that level, the parked jet where the T-33 starts isn't drawn: the moving T-33 is that jet) |
 | `tiles/walk_tiles_ground.png` | Masroor ground atlas: sand, asphalt, concrete | 144 × 108 | 8 × 6 tiles of 16 px, margin 1, spacing 2. Tile ids are in the manifest |
 | `tiles/walk_tiles_paint.png` | Masroor runway and taxiway paint | 144 × 468 | Rebuilt by `build-map` with the map |
 | `objects/walk_house_1.png` … `walk_house_5.png`, `walk_hospital`, `walk_control_tower`, `walk_fuel_tank`, `walk_watchtower`, `walk_facility`, `walk_pond`, `walk_track`, `walk_revetment`, `walk_tree`, `walk_bush`, `walk_shelter` | The pictures placed on the Masroor map | see the manifest | One picture per kind of thing. Never scaled on the map: see "The Masroor map" |
@@ -76,9 +122,9 @@ Draw the aircraft **from above, nose pointing up (north)**. The game turns it in
 
 The game spots a strip by its shape (width = 16 × height). Any other shape is treated as one picture to rotate.
 
-## The Masroor map (Level 2)
+## The Masroor map
 
-Level 2's walk map is the Tiled map [src/mechanics/walk/levels/masroor.tmj](../../src/mechanics/walk/levels/masroor.tmj), 155 × 118 tiles of 16 px (2480 × 1888 px); the world is the top 2480 × 1880, set by the map properties `worldWidth`/`worldHeight`. The game refuses a map made for another world size, or whose tiles don't cover the world. Phaser draws it, bottom to top: the tile layers, the flat pictures (pond, track, revetments), the shadows, the wall, then one image per standing object, sorted with the characters and Bluebird by their bottom edge so Matiur can walk behind a house or a tree. Its colliders are read from the same file (`src/core/tiled.ts`), so what you see is what blocks. Night is the day map with one tint, no second picture.
+The Masroor walk map is the Tiled map [src/mechanics/walk/levels/masroor.tmj](../../src/mechanics/walk/levels/masroor.tmj), 155 × 118 tiles of 16 px (2480 × 1888 px); the world is the top 2480 × 1880, set by the map properties `worldWidth`/`worldHeight`. The game refuses a map made for another world size, or whose tiles don't cover the world. Phaser draws it, bottom to top: the tile layers, the flat pictures (pond, track, revetments), the shadows, the wall, then one image per standing object, sorted with the characters and Bluebird by their bottom edge so Matiur can walk behind a house or a tree. Its colliders are read from the same file (`src/core/tiled.ts`), so what you see is what blocks. Night is the day map with one tint, no second picture.
 
 It was built by `python scripts/art/art.py build-map masroor`. To change it by hand, open it in [Tiled](https://www.mapeditor.org/) 1.10 or newer:
 

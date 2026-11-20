@@ -41,11 +41,11 @@ export const GAME = defineGame({
     // A full-screen ad at every step change, retry, episode start and quit,
     // at most one per 45 s, none in the first 30 s.
     interstitial: { on: ['start', 'next', 'retry', 'quit'], firstAfterSec: 30, minGapSec: 45, everyNth: 1 },
-    // After one failed sortie, offer WATCH AD: SKIP SORTIE.
+    // After one failed level, offer WATCH AD: SKIP.
     rewarded: { skipLevel: true, skipAfterFails: 1 },
     // A banner on every screen, gameplay included (the game shrinks to make room, so it never covers controls).
     banner: { on: ['menu', 'card', 'video', 'cutscene', 'level', 'results'] },
-    // Episode ids that never show ads, e.g. ['ep4', 'ep5'].
+    // Chapter ids that never show ads, e.g. ['ch11', 'ch12'].
     noAdsIn: [],
   },
 });

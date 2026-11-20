@@ -1,7 +1,7 @@
 // Placeholder cutscene player: shows the 'line' shots of a script from
 // src/data/cutscenes/<script>.json in a dialogue box, or the step's
 // placeholder lines until that file exists. Tap for the next line, hold to
-// skip. The full GDD §6.9 player (camera moves, portraits, sound) will be a
+// skip. The full player (camera moves, portraits, sound) will be a
 // mechanic in src/mechanics/cutscene/ and replace this scene automatically.
 import Phaser from 'phaser';
 import type { CutsceneStep, DialogueLine, StepHost } from '../contracts';

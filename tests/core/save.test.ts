@@ -13,7 +13,7 @@ describe('save', () => {
     expect(source).toBe('v1');
     expect(save.version).toBe(2);
     expect(save.unlockedEpisodes).toEqual(['ep2']);
-    // These ids must match the step ids in src/game/episodes/ep2.sabre-skies.ts.
+    // The old Episode 2's sortie step ids (see migrateV1).
     expect(save.episodes.ep2.completed).toEqual(['sortie-1', 'sortie-3']);
     expect(save.settings).toEqual({ lang: 'bn', haptics: false });
     expect(save.mechanics).toEqual({ flight: { gunsMode: 'hold' } });

@@ -77,7 +77,7 @@ def ground_masks(A=None):
     concrete = _close(concrete) & ~objmask
     white &= ~objmask
     yellow &= ~objmask
-    # The old solar panels (an anachronism, GDD §6.10) become plain sand.
+    # The old solar panels (an anachronism for 1971) become plain sand.
     x0, y0, x1, y1 = L.SOLAR
     asphalt[y0:y1, x0:x1] = False
     concrete[y0:y1, x0:x1] = False

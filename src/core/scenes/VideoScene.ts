@@ -30,7 +30,7 @@ export class VideoScene extends Phaser.Scene {
     this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => gm.video.stop());
     const url = VIDEOS[v.src];
     if (!url) {
-      console.warn(`No video "${v.src}" in assets/video/ (looked for ${v.src}.mp4 and ${v.src}.webm)`);
+      console.warn(`No video "${v.src}" in assets/videos/ (looked for ${v.src}.mp4 and ${v.src}.webm)`);
       this.showFallback();
       return;
     }

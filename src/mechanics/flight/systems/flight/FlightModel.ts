@@ -1,4 +1,4 @@
-// Top-down flight model shared by Episode 2 and (later) Episode 4 Phase 3.
+// Top-down flight model for every flight level.
 // Pure logic: no Phaser imports, so it can be unit-tested.
 import { tuning } from '../../tuning';
 import { DEG, angleDiff, approach, clamp, wrapAngle } from '../../../../core/math';

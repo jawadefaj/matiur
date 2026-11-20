@@ -1,6 +1,6 @@
-// The flight mechanic's descriptor: top-down jet flying (Episode 2's sorties;
-// later Episode 4 phase 3). Phaser-free, so the game definition and tests can
-// import it. The scenes are in runtime.ts.
+// The flight mechanic's descriptor: top-down jet flying (the 1965 sorties,
+// which stand in for the flight chapters (4, 5, 11) until their own levels exist).
+// Phaser-free, so the game definition and tests can import it. The scenes are in runtime.ts.
 import { defineMechanic } from '../../core/define';
 import { t } from '../../core/i18n';
 import { SORTIE_LIST, type SortieNum } from './sortie';

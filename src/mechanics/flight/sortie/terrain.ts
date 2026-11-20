@@ -1,4 +1,4 @@
-// Seeded terrain for Episode 2. Placeholder layout, built for gameplay.
+// Seeded terrain for the sorties. Placeholder layout, built for gameplay.
 import { mulberry32 } from '../../../core/math';
 import type { Obstacle } from '../systems/flight/LowLevel';
 import { emptyTerrain, type Airfield, type Line, type Point, type TerrainSpec } from './Sortie';

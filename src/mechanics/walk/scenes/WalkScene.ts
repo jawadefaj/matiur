@@ -2,7 +2,7 @@
 // The GameManager starts it with a StepHost whose params say which level.
 // Tap the ground to walk there, tap a person to walk over and talk, or drag
 // to walk like a stick. Desktop: arrows/WASD walk, Space/E talks or reads on.
-// Stealth levels (Level 2) add guards' vision cones, a detection meter and a
+// Stealth levels add guards' vision cones, a detection meter and a
 // RETRY card when the player is caught. A level with a Tiled map (Masroor) is
 // drawn as Phaser tile layers plus one image per house, tree or jet, y-sorted
 // with the characters so they can walk behind things.

@@ -14,6 +14,7 @@ export default defineEpisode({
   place: t('ch10.place'),
   unlock: 'always', // all chapters are open for now; use { after: 'ch09' } to unlock in order
   steps: [
+    // TODO: the drive to the taxiway and the one-tap signal do not exist yet; the walk to the taxiway stands in.
     walk.level('play', { map: 'masroor-intercept' }, { title: t('ch10.title') }),
     video('film', { src: clip('ch10_stop_t33', 30), fallback: [t('ch10.blurb')] }, { title: t('ch10.title') }),
   ],

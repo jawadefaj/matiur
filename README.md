@@ -1,6 +1,8 @@
 # Wings of Freedom
 
-A Phaser 4 game built with TypeScript, Vite, and Vitest. The game is structured around a **game manager** that plays episodes as lists of steps (levels, videos, cutscenes). Each gameplay mechanic is modular and self-contained.
+A 2D top-down mobile game about Flt Lt Matiur Rahman, Bir Sreshtho, told in 12 chapters. Two kinds of chapter are playable, **stealth** and **flight**; the rest are cinematics. **[design/design.md](design/design.md) is the source of truth** for the chapters, mechanics and controls. When the code, a comment or another doc disagrees with it, the design wins.
+
+Built with Phaser 4, TypeScript, Vite and Vitest. A **game manager** plays each chapter as a list of steps (levels, videos, cutscenes). Each gameplay mechanic is modular and self-contained.
 
 ## Build & Run
 
@@ -19,6 +21,8 @@ npm run build:single      # Single self-contained HTML file: dist-single/index.h
 
 # Test
 npm test                  # Unit tests, bot pilots, game and architecture checks
+npm run test:browser      # Cross-browser tests (Chrome, Firefox, Safari)
+npm run test:browser:ui   # Interactive browser test UI
 npm run typecheck         # TypeScript check only
 npm run preview           # Preview the built game locally
 ```
@@ -44,11 +48,11 @@ matiur/
 ├── vite.config.ts        Dev server and build settings
 ├── package.json          npm scripts and dependencies (Phaser, TypeScript, Vite, Vitest)
 ├── tsconfig.json         TypeScript settings
-├── assets/               Every non-code file (sprites, video, reference, screenshots)
-├── design/               Design documentation and specs
+├── assets/               Every non-code file (sprites, videos, reference, screenshots)
+├── design/design.md      The game design: the source of truth
 ├── src/
 │   ├── main.ts           Entry point
-│   ├── game/             Game script definition and episodes
+│   ├── game/             Game settings and the 12 chapters (episodes/ch01 … ch12)
 │   ├── core/             Shared infrastructure (manager, scenes, media, rendering, UI)
 │   ├── mechanics/        Modular game mechanics (each with index.ts and runtime.ts)
 │   └── data/             Game data (cutscenes, etc.)
@@ -85,6 +89,22 @@ Guidelines:
 
 ## Design
 
-- [Game Design Document](<design/Game Design Document - Wings of Freedom.md>): rev 3.1, the source of truth for story, structure, tone and history.
-- [Build spec](design/init_design.md): tech, systems, tuning and code layout.
-- [Assets guide](assets/README.md): what's in `assets/`, where each reference file came from, and which ones to review.
+[design/design.md](design/design.md) is the only design document. Change the design there first, then the code.
+
+In the code, each chapter is one file in `src/game/episodes/` (`ch01` … `ch12`, called *episodes* in the code). Some playable chapters still borrow a level from an earlier design until their own is built. Each one is marked `TODO` in its chapter file:
+
+| Chapter | Plays for now |
+|---|---|
+| 2. Sargodha: stealing maltas | The Masroor flight-schedule level |
+| 4. Risalpur: first flight | Flight sortie 1 (take off and join up) |
+| 5. 1967: dogfight, crash, parachute | Flight sortie 2 (an intercept) |
+| 8. Masroor base: runway layout | The Masroor flight-schedule level |
+| 10. 20 August: stopping the T-33 | A walk to the taxiway, then SIGNAL (no drive yet) |
+| 11. 20 August: the last flight | Flight sortie 3 (low level and home) |
+
+Both mechanics are also behind the design:
+
+- **Stealth** (`src/mechanics/walk/`) has guards, vision cones and getting caught, but not yet crouch, auto-hide, noise or the action button.
+- **Flight** (`src/mechanics/flight/`) still has the earlier controls: throttle on the right, a PULL button, guns and a HUD with numbers. Climb/Dive buttons, the altitude shadow and eject are not built yet.
+
+The [assets guide](assets/README.md) covers what's in `assets/` and how the art should look.

@@ -77,7 +77,7 @@ export function defineMechanic<P>(
   };
 }
 
-/** Play assets/video/<src>.mp4 (or .webm). */
+/** Play assets/videos/<src>.mp4 (or .webm). */
 export function video(
   id: string,
   v: { src: string; fit?: VideoStep['fit']; muted?: boolean; fallback?: string[] },

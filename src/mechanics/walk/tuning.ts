@@ -10,7 +10,7 @@ export type WalkTuning = typeof raw;
  *   character's collision radius (px); talkRange is how close to stand to talk, tapRadius how near a
  *   tap must land on a character (px); animFps for the walk cycle; cameraFollow per s; stickDeadZone
  *   and stickMax are drag distances (px) for walking by dragging.
- * - stealth: guards' vision cones (Level 2). angle is the cone's width (degrees) and range its reach
+ * - stealth: guards' vision cones. angle is the cone's width (degrees) and range its reach
  *   (world px); turnRate how fast a guard's look turns (degrees/s); fill and drain are detection per
  *   second while seen and unseen; nearBoost the extra fill at point-blank range; suspicious the
  *   detection level where a guard turns to look; nightRange multiplies every range in a night level;

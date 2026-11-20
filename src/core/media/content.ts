@@ -17,7 +17,7 @@ for (const [path, url] of Object.entries(VIDEO_FILES).sort(([a], [b]) => (a.ends
   VIDEOS[path.slice(path.lastIndexOf('/') + 1, path.lastIndexOf('.'))] = url;
 }
 
-/** A shot in a cutscene script (GDD §6.9). Only 'line' shots are played so far. */
+/** A shot in a cutscene script. Only 'line' shots are played so far. */
 export interface Shot {
   type: string;
   speaker?: string;

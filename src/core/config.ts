@@ -30,8 +30,7 @@ export const EXTRA_H = GAME_H - 640;
 export { FONT } from './i18n';
 
 /**
- * Colours as Phaser numbers (0xRRGGBB). Only ochre, deepGreen, slate and
- * signal are seed colours of the master palette (design/init_design.md §4.1).
+ * Colours as Phaser numbers (0xRRGGBB).
  */
 export const PAL = {
   ochre: 0xd9a441,

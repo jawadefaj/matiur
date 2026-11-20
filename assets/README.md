@@ -1,8 +1,8 @@
 # Assets
 
-All of the game's non-code files live here: the app icon, reference photos, reading material and the screenshots used in the main README.
+All of the game's non-code files live here: the app icon, the game art, the cinematic videos, reference photos, reading material and old screenshots. How each character and thing should look is in [sprites/README.md](sprites/README.md#how-the-art-looks).
 
-The game build uses only `public/`, `sprites/final/` (plus the menu GIF in `sprites/original/UI/`) and `video/`. In-game art comes from the PNGs in `sprites/final/` where they exist. Everything else is placeholder pixel art drawn in code when the game starts (each mechanic's `art/pixelArt.ts` in `src/mechanics/`, and `src/core/gfx/commonArt.ts`). The game never loads anything from `reference/` or `screenshots/`.
+The game build uses only `public/`, `sprites/final/` (plus the menu GIF in `sprites/original/UI/`) and `videos/`. In-game art comes from the PNGs in `sprites/final/` where they exist. Everything else is placeholder pixel art drawn in code when the game starts (each mechanic's `art/pixelArt.ts` in `src/mechanics/`, and `src/core/gfx/commonArt.ts`). The game never loads anything from `reference/` or `screenshots/`.
 
 ## Folders
 
@@ -14,13 +14,13 @@ assets/
 │   ├── manifest.json  Every key: size, source, post steps, map use. Made and checked by scripts/art/.
 │   ├── original/    Source pictures, and pixellab/: raw PixelLab output with sidecars and the ledger. Not loaded.
 │   └── templates/   The placeholders as PNGs, to paint over. Not used by the game.
-├── video/           Video files for video steps (see video/README.md).
+├── videos/          Clips for the cinematics, and the demo clips that stand in for missing ones.
 ├── reference/       Research for art and writing. Never shipped.
 │   ├── people/      Photos of Matiur Rahman
 │   ├── places/      Places from his life
 │   ├── aircraft/    F-86 Sabre and T-33 references
 │   └── reading/     Articles and other reading
-└── screenshots/     Phone screenshots of the current build, shown in the main README
+└── screenshots/     Phone screenshots of an earlier build
 ```
 
 | Folder | In the game build? | How it is used |
@@ -30,11 +30,17 @@ assets/
 | `sprites/manifest.json` | No | The list of every key, its size and where its pixels come from. Read by the art pipeline ([scripts/art/README.md](../scripts/art/README.md)) and checked by `npm test`. |
 | `sprites/original/` | Only the menu GIF | Source pictures for the art. `original/pixellab/` keeps the raw PixelLab output, a sidecar per file and `ledger.jsonl` (the generation budget). |
 | `sprites/templates/` | No | The code-drawn placeholders as PNGs, to paint over. |
-| `video/` | Yes | Found by `src/core/media/content.ts` when the game is built. A `video('intro', { src: 'ep2_intro' })` step plays `ep2_intro.mp4`. Size and format rules are in [video/README.md](video/README.md). |
+| `videos/` | Yes | Found by `src/core/media/content.ts` when the game is built. See "Videos" below. |
 | `reference/` | No | Used by people only: artists, writers and fact-checkers. |
-| `screenshots/` | No | Shown in the [main README](../README.md). |
+| `screenshots/` | No | Not used. They show the build before the 12-chapter design. |
 
-**Planned folders.** The [build spec](../design/init_design.md) (§10) plans these for when real art replaces the placeholders: `palette/` (the master palette file), `tilesets/`, `portraits/`, `ui/`, `audio/`, `fonts/`, and `archive/` for the real photos shown on archive cards. Create each folder when its first file arrives.
+**New folders.** Create a folder (for example `audio/` or `fonts/`) when its first file arrives, and add it to the tree and table above.
+
+## Videos
+
+- **Name** each clip after its scene, as the chapter file asks for it: `clip('ch02_maltas_intro', 15)` in `src/game/episodes/ch02.maltas.ts` plays `videos/ch02_maltas_intro.mp4`. MP4 or WebM; if both exist, MP4 wins.
+- **Until a clip exists,** the demo clip of the nearest length plays instead (`demo-15sec`, `demo-30sec` or `demo-60sec`; see `src/game/clips.ts`), and its fallback text from `src/data/strings.xml` shows if no video can play.
+- **Keep each clip at 20 MB or less** so it loads on a phone. Test it on a real phone.
 
 ## Rules
 
@@ -63,7 +69,7 @@ All four carry the Bangladesh Air Force crest, so they probably came from a BAF 
 
 | File | Shows | Was |
 |---|---|---|
-| `family-home-memorial-plaque.jpg` | A memorial plaque in Bangla at his family home. It gives his birth as 29-10-1941 and his death as 20-08-1971. That birth date bears on the open birth-date question in GDD §9. | `Residence_of_Bir_Sreshtho_Flight_Lieutenant_Matiur_Rahman_and_his_forefathers_02.jpg` (looks like a Wikimedia Commons file name) |
+| `family-home-memorial-plaque.jpg` | A memorial plaque in Bangla at his family home. It gives his birth as 29-10-1941 and his death as 20-08-1971. | `Residence_of_Bir_Sreshtho_Flight_Lieutenant_Matiur_Rahman_and_his_forefathers_02.jpg` (looks like a Wikimedia Commons file name) |
 
 ### Aircraft: `reference/aircraft/`
 

@@ -1,8 +1,7 @@
 // The walking simulation: characters on a top-down map, moved either by the
 // player (tap to walk, or a direction from keys/stick) or by a script (walk
-// this character along these points). Used for the on-foot parts of the game:
-// the flight line between sorties, Episode 3's camp and Episode 4's tarmac.
-// Engine-independent so it can run in tests and be drawn by WalkScene.
+// this character along these points). Used for the stealth levels and other
+// on-foot scenes. Engine-independent so it can run in tests and be drawn by WalkScene.
 import { tuning } from './tuning';
 import { NavGrid, type Point, type Rect } from './nav';
 

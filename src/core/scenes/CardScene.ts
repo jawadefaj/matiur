@@ -1,5 +1,5 @@
 // Full-screen cards: the episode title card that opens every episode and the
-// archive card that closes it (GDD §6.7, §0 rule 4). Tap to continue.
+// archive card that closes it. Tap to continue.
 import Phaser from 'phaser';
 import type { CardStep, StepHost } from '../contracts';
 import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../config';

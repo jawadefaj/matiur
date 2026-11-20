@@ -157,7 +157,7 @@ export class GameManager {
     let step: Step | null = null;
     if (what === 'video') {
       const src = q.get('src');
-      if (src) step = { kind: 'video', id: 'play', src, fit: 'contain', muted: false, fallback: [`(no video "${src}" in assets/video/)`], opts: {} };
+      if (src) step = { kind: 'video', id: 'play', src, fit: 'contain', muted: false, fallback: [`(no video "${src}" in assets/videos/)`], opts: {} };
     } else if (what === 'cutscene') {
       const script = q.get('script');
       if (script) step = { kind: 'cutscene', id: 'play', script, opts: {} };

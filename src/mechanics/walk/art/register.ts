@@ -1,5 +1,5 @@
 // The walk mechanic's textures: walking characters, the parked jet, and the
-// Level 2 art (Masroor's tiles and map pictures, Matiur in service dress,
+// Masroor art (Masroor's tiles and map pictures, Matiur in service dress,
 // guards, Bluebird). Each key uses its PNG from assets/sprites/final/ if there is one.
 import type { ArtKit } from '../../../core/gfx/textures';
 import { makeCanvas } from '../../../core/gfx/pixel';
@@ -45,7 +45,7 @@ export function registerWalkArt(kit: ArtKit): void {
   }
   kit.addCanvas('sabre_parked', kit.art('sabre_parked', bakeParkedSabre));
 
-  // Level 2: everything Masroor's Tiled map draws: the tile atlases, each
+  // Everything Masroor's Tiled map draws: the tile atlases, each
   // object picture (plus '<key>_sh', its shadow, if it casts one) and the wall
   // stamp. The sizes come from the map; a pink box shows if a PNG goes missing.
   const done = new Set<string>();

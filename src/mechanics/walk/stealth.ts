@@ -1,4 +1,4 @@
-// Guards and their vision cones for the stealth parts of Level 2. A guard is
+// Guards and their vision cones for the stealth levels. A guard is
 // an ordinary walking actor plus a look direction, a cone and a detection
 // meter. Being inside a cone with nothing in the way fills the meter; out of
 // sight it drains. Full means caught. Phaser-free, so it runs in tests.

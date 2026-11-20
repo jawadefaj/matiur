@@ -1,6 +1,5 @@
 // The walk mechanic's descriptor: on-foot scenes where the player walks and
-// talks (Episode 2's flight line; later Episode 4 phase 1). Phaser-free, so the
-// game definition and tests can import it. The scene is in runtime.ts.
+// talks. Phaser-free, so the game definition and tests can import it. The scene is in runtime.ts.
 import { defineMechanic } from '../../core/define';
 import { t } from '../../core/i18n';
 import { WALK_LIST, type WalkLevelId } from './levels';

@@ -1,4 +1,4 @@
-// Stealth (Level 2): vision cones, line of sight, detection, and the three
+// Stealth: vision cones, line of sight, detection, and the three
 // Masroor levels' win and lose conditions.
 import { t } from '../../../src/core/i18n';
 import { describe, expect, it } from 'vitest';

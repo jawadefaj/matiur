@@ -1,13 +1,13 @@
 // Reads the page URL's query string into what the game should open. Pure, so
 // every form is unit-tested (tests/core/deeplink.test.ts).
 //
-//   ?episode=ep2                     Episode 2 from its title card
-//   ?level=ep2/sortie-2              that step, then carry on through the episode
-//   ?level=ep2/sortie-2&only=1       just that step, then back to the menu
+//   ?episode=ch04                    Chapter 4 from its title card
+//   ?level=ch04/play                 that step, then carry on through the episode
+//   ?level=ch04/play&only=1          just that step, then back to the menu
 //   ?play=flight&sortie=2            a mechanic on its own: no episode, nothing saved
 //   ?play=walk&map=flightline
-//   ?play=video&src=ep2_intro        preview a video or a cutscene
-//   ?play=cutscene&script=ep2_beat_1
+//   ?play=video&src=ch02_maltas_intro        preview a video or a cutscene
+//   ?play=cutscene&script=ch03_...
 //   ?unlock=all                      dev builds only: open every episode and chapter
 //   ?sortie=N, ?walk=flightline      old links, kept for now; same as ?play=...
 

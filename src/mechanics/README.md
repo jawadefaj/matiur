@@ -1,8 +1,8 @@
 # Mechanics
 
-A mechanic is a kind of gameplay: `flight/` (top-down jet flying) and `walk/`
-(on foot) so far. Each one is a folder here. The game manager finds it
-automatically, and episode files (`src/game/episodes/`) use its levels as steps:
+A mechanic is a kind of gameplay. The game has two playable mechanics: `flight/` (top-down jet flying)
+and `walk/` (on foot, the stealth mechanic). Each one is a folder here. The game manager finds it
+automatically, and episode files (`src/game/episodes/`) use its levels as steps. See [design/design.md](../../design/design.md) for the game's design.
 
 ```ts
 flight.level('sortie-1', { sortie: 1 })
