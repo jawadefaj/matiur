@@ -28,7 +28,7 @@ export const TITLE_STEP = 'title';
 export const refOf = (ep: string, step: string): string => `${ep}/${step}`;
 
 export function metaOf(e: EpisodeDef): EpisodeMeta {
-  return { id: e.id, number: e.number, title: e.title, date: e.date, place: e.place, kind: e.kind };
+  return { id: e.id, number: e.number, title: e.title, date: e.date, place: e.place, kind: e.kind, mode: e.mode };
 }
 
 export class Flow {
