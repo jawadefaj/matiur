@@ -49,9 +49,12 @@
     <s id="menu.locked" en="LOCKED">বন্ধ</s>
     <s id="menu.play" en="PLAY">খেলুন</s>
     <s id="menu.replay" en="REPLAY">আবার খেলুন</s>
-    <s id="menu.chapter" en="{n}. {title}">{n}. {title}</s>
-    <s id="menu.chapterDone" en="{n}. {title}  [DONE]">{n}. {title}  [শেষ]</s>
-    <s id="menu.chapterLocked" en="{n}. {title}  [LOCKED]">{n}. {title}  [বন্ধ]</s>
+    <s id="menu.mode.cinematic" en="CINEMATIC">সিনেমা</s>
+    <s id="menu.mode.stealth" en="STEALTH">গোপনে</s>
+    <s id="menu.mode.flight" en="FLIGHT">উড্ডয়ন</s>
+    <s id="menu.mode.interaction" en="SCENE">দৃশ্য</s>
+    <s id="menu.rowInfo" en="{date}  ·  {mode}">{date}  ·  {mode}</s>
+    <s id="menu.rowInfoDone" en="{date}  ·  {mode}  ·  DONE">{date}  ·  {mode}  ·  শেষ</s>
     <s id="menu.setting" en="{label}: {value}">{label}: {value}</s>
     <s id="menu.buzz" en="BUZZ">কম্পন</s>
   </group>
@@ -82,54 +85,94 @@
     <s id="video.holdToSkip" en="HOLD TO SKIP">বাদ দিতে চেপে ধরুন</s>
   </group>
 
-  <!-- ============================================ Level 1: Sabre Skies -->
-  <group name="ep2">
-    <s id="ep2.title" en="Sabre Skies">সেবরের আকাশ</s>
-    <s id="ep2.date" en="September 1965">সেপ্টেম্বর ১৯৬৫</s>
-    <s id="ep2.place" en="PAF Station Peshawar">পিএএফ স্টেশন পেশোয়ার</s>
-    <s id="ep2.intro.1" en="September 1965.">সেপ্টেম্বর ১৯৬৫।</s>
-    <s id="ep2.intro.2" en="PAF Station Peshawar.">পিএএফ স্টেশন পেশোয়ার।</s>
-    <s id="ep2.beat1.1" en="[Placeholder] Refuelled and rearmed, sir.">[অস্থায়ী] জ্বালানি আর গুলি ভরা হয়েছে, স্যার।</s>
-    <s id="ep2.beat1.2" en="[Placeholder] Writer pass needed: a short beat at the flight line.">[অস্থায়ী] লেখা বাকি: ফ্লাইট লাইনে একটি ছোট দৃশ্য।</s>
-    <s id="ep2.beat2.1" en="[Placeholder] Writer pass needed: a letter from home.">[অস্থায়ী] লেখা বাকি: বাড়ি থেকে আসা একটি চিঠি।</s>
-    <!-- Between-sortie video beats -->
-    <s id="ep2.flight_line.1" en="[Video: 30s] Flight line preparation">[ভিডিও: ৩০s] ফ্লাইট লাইন প্রস্তুতি</s>
-    <s id="ep2.between_1.1" en="[Video: 15s] Between sorties">[ভিডিও: ১৫s] সর্টির মধ্যে</s>
-    <s id="ep2.mission_3.1" en="[Video: 30s] Final mission briefing">[ভিডিও: ৩০s] চূড়ান্ত মিশন ব্রিফিং</s>
-    <!-- {sortie-3.time} and {sortie-3.airframe} are filled in from the save. -->
-    <s id="ep2.archive.text" en="[Placeholder] A photo, the date and a short sourced paragraph go here (GDD §0 rule 4).\n\nYour last sortie: {sortie-3.time}, airframe {sortie-3.airframe}.">[অস্থায়ী] এখানে থাকবে একটি ছবি, তারিখ আর তথ্যসূত্রসহ একটি ছোট অনুচ্ছেদ।\n\nআপনার শেষ অভিযান: {sortie-3.time}, কাঠামো {sortie-3.airframe}।</s>
+  <!-- ============================================ The 12 chapters -->
+  <group name="ch01">
+    <s id="ch01.title" en="Childhood in Dhaka">ঢাকায় শৈশব</s>
+    <s id="ch01.date" en="1940s">১৯৪০-এর দশক</s>
+    <s id="ch01.place" en="Dhaka">ঢাকা</s>
+    <s id="ch01.blurb" en="A boy in Dhaka looks up at the sky and dreams of flying.">ঢাকার একটি ছেলে আকাশের দিকে তাকিয়ে ওড়ার স্বপ্ন দেখে।</s>
   </group>
 
-  <!-- ======================================= Bridge: 1965 to 1971 -->
-  <group name="bridge">
-    <s id="bridge.title" en="Homecoming">বাড়ি ফেরা</s>
-    <s id="bridge.date" en="1965–1971">১৯৬৫–১৯৭১</s>
-    <s id="bridge.place" en="Karachi and Dhaka">করাচি এবং ঢাকা</s>
-    <s id="bridge.line1" en="Six years passed.">ছয় বছর কেটে গেল।</s>
-    <s id="bridge.line2" en="Six years of teaching. Of family. Of letters from home.">শেখানোর ছয় বছর। পরিবারের ছয় বছর। বাড়ি থেকে আসা চিঠির ছয় বছর।</s>
-    <s id="bridge.line3" en="Then came March 1971.">তারপর এলো মার্চ ১৯৭১।</s>
+  <group name="ch02">
+    <s id="ch02.title" en="Sargodha: The Maltas">সরগোধা: মাল্টার বাগান</s>
+    <s id="ch02.date" en="1950s">১৯৫০-এর দশক</s>
+    <s id="ch02.place" en="Sargodha">সরগোধা</s>
+    <s id="ch02.blurb" en="Night. Matiur and his friends creep into the orchard for maltas.">রাত। মতিউর আর বন্ধুরা মাল্টা চুরি করতে বাগানে ঢোকে।</s>
   </group>
 
-  <!-- ================================================ Level 2: Bluebird -->
+  <group name="ch03">
+    <s id="ch03.title" en="Sargodha: The Friend Is Freed">সরগোধা: বন্ধুর মুক্তি</s>
+    <s id="ch03.date" en="1950s">১৯৫০-এর দশক</s>
+    <s id="ch03.place" en="Sargodha">সরগোধা</s>
+    <s id="ch03.blurb" en="A friend was caught. Matiur does not leave him behind.">এক বন্ধু ধরা পড়েছে। মতিউর তাকে ফেলে যায় না।</s>
+  </group>
+
+  <group name="ch04">
+    <s id="ch04.title" en="Risalpur: First Flight">রিসালপুর: প্রথম উড্ডয়ন</s>
+    <s id="ch04.date" en="1960s">১৯৬০-এর দশক</s>
+    <s id="ch04.place" en="PAF Academy Risalpur">পিএএফ একাডেমি রিসালপুর</s>
+    <s id="ch04.blurb" en="The instructor speaks over the radio. Throttle up. Take off.">রেডিওতে প্রশিক্ষকের কণ্ঠ। থ্রটল বাড়াও। আকাশে ওড়ো।</s>
+  </group>
+
+  <group name="ch05">
+    <s id="ch05.title" en="1967: Dogfight and Crash">১৯৬৭: আকাশযুদ্ধ ও বিপর্যয়</s>
+    <s id="ch05.date" en="1967">১৯৬৭</s>
+    <s id="ch05.place" en="Over the desert">মরুভূমির ওপরে</s>
+    <s id="ch05.blurb" en="This day is already history: the engine will fail. Fly as far as you can.">এই দিনটি ইতিহাস হয়ে আছে: ইঞ্জিন বিকল হবেই। যতদূর পারো ওড়ো।</s>
+  </group>
+
+  <group name="ch06">
+    <s id="ch06.title" en="1971: Dhaka and Ramnagar">১৯৭১: ঢাকা ও রামনগর</s>
+    <s id="ch06.date" en="1971">১৯৭১</s>
+    <s id="ch06.place" en="Dhaka and Ramnagar">ঢাকা ও রামনগর</s>
+    <s id="ch06.blurb" en="1971. The country is burning, and his family is far away.">১৯৭১। দেশ জ্বলছে, আর পরিবার অনেক দূরে।</s>
+  </group>
+
+  <group name="ch07">
+    <s id="ch07.title" en="Masroor: The Flight Schedule">মাসরুর: উড্ডয়ন সূচি</s>
+    <s id="ch07.date" en="1971">১৯৭১</s>
+    <s id="ch07.place" en="PAF Base Masroor">পিএএফ ঘাঁটি মাসরুর</s>
+    <s id="ch07.blurb" en="Reach the operations office and read when the student pilot flies solo.">অপারেশন অফিসে পৌঁছে জানো শিক্ষানবিশ পাইলট কখন একা ওড়ে।</s>
+  </group>
+
+  <group name="ch08">
+    <s id="ch08.title" en="Masroor: The Runway Layout">মাসরুর: রানওয়ের নকশা</s>
+    <s id="ch08.date" en="1971">১৯৭১</s>
+    <s id="ch08.place" en="PAF Base Masroor">পিএএফ ঘাঁটি মাসরুর</s>
+    <s id="ch08.blurb" en="Reach the control room and read the runway and taxiway layout.">কন্ট্রোল রুমে পৌঁছে রানওয়ে আর ট্যাক্সিওয়ের নকশা পড়ো।</s>
+  </group>
+
+  <group name="ch09">
+    <s id="ch09.title" en="The Hospital: Chloroform">হাসপাতাল: ক্লোরোফর্ম</s>
+    <s id="ch09.date" en="1971">১৯৭১</s>
+    <s id="ch09.place" en="Air Force Hospital">বিমানবাহিনী হাসপাতাল</s>
+    <s id="ch09.blurb" en="Get into the pharmacy, pick up the chloroform and leave.">ফার্মেসিতে ঢুকে ক্লোরোফর্ম নিয়ে বেরিয়ে এসো।</s>
+  </group>
+
+  <group name="ch10">
+    <s id="ch10.title" en="20 August: Stopping the T-33">২০ আগস্ট: টি-৩৩ থামানো</s>
+    <s id="ch10.date" en="20 August 1971">২০ আগস্ট ১৯৭১</s>
+    <s id="ch10.place" en="PAF Base Masroor">পিএএফ ঘাঁটি মাসরুর</s>
+    <s id="ch10.blurb" en="Drive to the taxiway. At the right moment, signal the plane to stop.">ট্যাক্সিওয়েতে যাও। ঠিক সময়ে ইশারায় বিমানটি থামাও।</s>
+  </group>
+
+  <group name="ch11">
+    <s id="ch11.title" en="20 August: The Last Flight">২০ আগস্ট: শেষ উড্ডয়ন</s>
+    <s id="ch11.date" en="20 August 1971">২০ আগস্ট ১৯৭১</s>
+    <s id="ch11.place" en="Towards the border">সীমান্তের দিকে</s>
+    <s id="ch11.blurb" en="Fly low to the border. This flight is already history: he will not land, but he will not give up.">নিচু দিয়ে সীমান্তের দিকে ওড়ো। এই উড্ডয়ন ইতিহাস হয়ে আছে: তিনি নামবেন না, কিন্তু হাল ছাড়বেন না।</s>
+  </group>
+
+  <group name="ch12">
+    <s id="ch12.title" en="Family, Liberation, Bir Sreshtho">পরিবার, স্বাধীনতা, বীরশ্রেষ্ঠ</s>
+    <s id="ch12.date" en="1971 onwards">১৯৭১ ও তার পরে</s>
+    <s id="ch12.place" en="Bangladesh">বাংলাদেশ</s>
+    <s id="ch12.blurb" en="Bangladesh is free. Matiur Rahman is honoured with the Bir Sreshtho.">বাংলাদেশ স্বাধীন হলো। মতিউর রহমান পেলেন বীরশ্রেষ্ঠ।</s>
+  </group>
+
+  <!-- Used by the Masroor map -->
   <group name="level2">
-    <s id="level2.title" en="Bluebird">ব্লুবার্ড</s>
-    <!-- Between-gameplay video beats -->
-    <s id="level2.schedule.1" en="[Video: 15s] After reading the schedule">[ভিডিও: ১৫s] সময়সূচী পড়ার পরে</s>
-    <s id="level2.dispensary.1" en="[Video: 15s] After the dispensary">[ভিডিও: ১৫s] ডিসপেনসারির পরে</s>
     <s id="level2.date" en="20 August 1971">২০ আগস্ট ১৯৭১</s>
-    <s id="level2.place" en="PAF Base Masroor, Karachi">পিএএফ ঘাঁটি মাসরুর, করাচি</s>
-    <s id="level2.prologue1.1" en="1965 becomes 1968.">১৯৬৫ গড়িয়ে ১৯৬৮।</s>
-    <s id="level2.prologue1.2" en="A wedding in Dhaka. A home in Karachi.">ঢাকায় বিয়ে। করাচিতে সংসার।</s>
-    <s id="level2.prologue1.3" en="1971: Bhairab. Then Karachi again, 9 May.">১৯৭১: ভৈরব। তারপর ৯ মে, আবার করাচি।</s>
-    <s id="level2.prologue2.1" en="PAF Base Masroor. He is watched.">পিএএফ ঘাঁটি মাসরুর। তাঁর ওপর নজর রাখা হচ্ছে।</s>
-    <s id="level2.prologue2.2" en="He studies the base.">তিনি ঘাঁটিটি খুঁটিয়ে দেখেন।</s>
-    <s id="level2.prologue2.3" en="Night falls on Residential East.">রেসিডেনশিয়াল ইস্টে রাত নামে।</s>
-    <s id="level2.morning.1" en="20 August 1971.">২০ আগস্ট ১৯৭১।</s>
-    <s id="level2.morning.2" en="Bluebird is on the schedule.">উড্ডয়ন সূচিতে ব্লুবার্ড।</s>
-    <s id="level2.boarding.1" en="Bluebird stops on the taxiway.">ট্যাক্সিওয়েতে ব্লুবার্ড থামে।</s>
-    <s id="level2.boarding.2" en="Matiur climbs into the rear seat.">মতিউর পেছনের আসনে উঠে বসেন।</s>
-    <s id="level2.boarding.3" en="[Next: Radar Horizon, not built yet]">[পরবর্তী: রাডার দিগন্ত, এখনও তৈরি হয়নি]</s>
-    <s id="level2.archive.text" en="[Placeholder] A photo, the date and a short sourced paragraph go here.">[অস্থায়ী] এখানে থাকবে একটি ছবি, তারিখ আর তথ্যসূত্রসহ একটি ছোট অনুচ্ছেদ।</s>
   </group>
 
   <!-- ======================================================= Radio names -->

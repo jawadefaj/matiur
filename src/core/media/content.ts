@@ -1,11 +1,11 @@
-// Content found at build time: videos in assets/public/video/ and cutscene scripts
+// Content found at build time: videos in assets/videos/ and cutscene scripts
 // in src/data/cutscenes/. Adding a file is enough; no list to edit.
 import type { DialogueLine } from '../contracts';
 
 // '?url&no-inline' keeps even tiny clips as files: iOS Safari often refuses
-// a video given as a data: URL. Videos are in assets/public/ so they're
-// served from root (/) by Vite and copied to dist/assets/ at build time.
-const VIDEO_FILES = import.meta.glob<string>('/*.{mp4,webm}', {
+// a video given as a data: URL. Videos live in assets/videos/ and are copied
+// to dist/assets/ at build time.
+const VIDEO_FILES = import.meta.glob<string>('/assets/videos/*.{mp4,webm}', {
   eager: true,
   query: '?url&no-inline',
   import: 'default',

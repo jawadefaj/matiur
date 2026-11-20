@@ -1,6 +1,6 @@
-// The menu, generated from the game definition (src/game/). One screen lists
-// every episode: its heading with PLAY / CONTINUE, then its chapters. Settings
-// and FULL SCREEN are at the bottom.
+// The menu, generated from the game definition (src/game/). A scrolling list
+// with one row per chapter: number, title, date, mode tag and PLAY / CONTINUE.
+// Settings and FULL SCREEN are at the bottom.
 import Phaser from 'phaser';
 import type { EpisodeDef, SettingDef, SettingValue } from '../contracts';
 import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../config';
@@ -53,58 +53,86 @@ export class MenuScene extends Phaser.Scene {
     return ground;
   }
 
-  /** Title, then each episode with its chapters, then settings. Keys 1-9 start chapters on desktop. */
+  /** Moves with the page: a label or button at a fixed spot on the unscrolled page. */
+  private scrollers: { move: (dy: number) => void }[] = [];
+  private scroll = 0;
+  private maxScroll = 0;
+  /** Where the current drag started, or null. `moved` once it is a scroll and not a tap. */
+  private drag: { y: number; from: number; moved: boolean } | null = null;
+
+  /** Keep a label (and later reposition it) as the page scrolls. */
+  private pinned<T extends Phaser.GameObjects.Text>(o: T): T {
+    const y0 = o.y;
+    this.scrollers.push({ move: (dy) => o.setY(y0 - dy) });
+    return o;
+  }
+
+  /** Title, then one row per chapter (episode), then settings. The page scrolls. Keys 1-9, 0 start chapters on desktop. */
   private buildMenu(episodes: EpisodeDef[]): void {
     const flow = this.gm.flow;
     const game = this.gm.parts.game;
     const save = loadSave();
     const cx = GAME_W / 2;
     const oy = Math.round(EXTRA_H / 2);
+    this.scrollers = [];
+    this.scroll = 0;
     // Text drawn straight on the background gets a dark outline so it reads over the art.
-    const onBg = (x: number, y: number, s: string, size: number, color: string) => txt(this, x, y, s, size, color).setStroke('#0b0c0d', 4);
+    const onBg = (x: number, y: number, s: string, size: number, color: string) => this.pinned(txt(this, x, y, s, size, color).setStroke('#0b0c0d', 4));
     onBg(cx, oy + 24, game.title, 16, CSS.signal).setOrigin(0.5);
     if (game.subtitle) onBg(cx, oy + 46, game.subtitle, 8, CSS.dim).setOrigin(0.5);
 
-    let y = oy + 66;
-    let n = 0;
+    let y = oy + 72;
     let enter: (() => void) | null = null;
-    for (const ep of episodes) {
+    episodes.forEach((ep, i) => {
       const open = flow.isUnlocked(ep.id, save);
       const p = episodeProgress(save, ep.id);
-      onBg(30, y + 4, t('menu.level', { n: ep.number, title: ep.title }), 8, CSS.signal);
-      onBg(30, y + 18, ep.date, 8, CSS.dim);
-      if (!open) {
-        onBg(330, y + 11, t('menu.locked'), 8, CSS.dim).setOrigin(1, 0);
-        y += 44;
-        continue;
+      const mode = ep.mode ? t(MODE_LABEL[ep.mode]) : '';
+      onBg(24, y + 6, t('menu.level', { n: ep.number, title: ep.title }), 8, open ? CSS.signal : CSS.dim);
+      onBg(24, y + 26, open ? t(p.finished ? 'menu.rowInfoDone' : 'menu.rowInfo', { date: ep.date, mode }) : t('menu.locked'), 8, CSS.dim);
+      if (open) {
+        // CONTINUE where the player left off, else PLAY from the start (title card and all).
+        const resume = p.resume ? flow.resolve(`${ep.id}/${p.resume}`) : null;
+        const from = resume && resume.ref !== flow.firstRef(ep.id) ? 'resume' : 'start';
+        const play = () => this.gm.startEpisode(ep.id, from);
+        const label = from === 'resume' ? t('ui.continue') : p.finished ? t('menu.replay') : t('menu.play');
+        const b = this.buttons.add(new Button(this, 256, y + 8, 84, 30, label, play, from === 'resume' || !p.finished));
+        const by = b.y;
+        this.scrollers.push({ move: (dy) => (b.y = by - dy) });
+        // ENTER plays the first chapter that isn't finished.
+        if (!enter && !p.finished) enter = play;
+        if (i < KEY_NAMES.length) this.input.keyboard?.on(`keydown-${KEY_NAMES[i]}`, play);
       }
-
-      // CONTINUE where the player left off, else PLAY from the start (title card and all).
-      const resume = p.resume ? flow.resolve(`${ep.id}/${p.resume}`) : null;
-      const from = resume && resume.ref !== flow.firstRef(ep.id) ? 'resume' : 'start';
-      const play = () => this.gm.startEpisode(ep.id, from);
-      const label = from === 'resume' ? t('ui.continue') : p.finished ? t('menu.replay') : t('menu.play');
-      this.buttons.add(new Button(this, 240, y, 90, 28, label, play, true));
-      // ENTER plays the first episode that isn't finished.
-      if (!enter && !p.finished) enter = play;
-      y += 36;
-
-      // Chapters: each starts the episode from that step.
-      flow.chapters(ep.id, save).forEach((c) => {
-        const label = t(c.done ? 'menu.chapterDone' : c.locked ? 'menu.chapterLocked' : 'menu.chapter', { n: ++n, title: c.title });
-        const go = () => !c.locked && this.gm.playChapter(c.ref);
-        this.buttons.add(new Button(this, 30, y, 300, 32, label, go));
-        if (n <= KEY_NAMES.length) this.input.keyboard?.on(`keydown-${KEY_NAMES[n - 1]}`, go);
-        y += 38;
-      });
-      y += 10;
-    }
+      y += 54;
+    });
     if (enter) this.input.keyboard?.on('keydown-ENTER', enter);
 
     // Settings of every mechanic the episodes use (e.g. flight's GUNS).
     const used = new Set(episodes.flatMap((ep) => ep.steps.flatMap((s) => (s.kind === 'level' ? [s.mechanic] : []))));
     const defs = [...used].flatMap((id) => (this.gm.parts.descriptors[id]?.settings ?? []).map((d) => ({ owner: id, def: d })));
-    this.buildSettings(y, defs);
+    y = this.buildSettings(y + 8, defs);
+    this.maxScroll = Math.max(0, y + 16 - GAME_H);
+    this.setupScrolling();
+  }
+
+  /** Drag or wheel scrolls the page; a drag cancels the button press under the finger. */
+  private setupScrolling(): void {
+    const apply = (v: number) => {
+      this.scroll = Phaser.Math.Clamp(v, 0, this.maxScroll);
+      this.scrollers.forEach((s) => s.move(this.scroll));
+    };
+    this.input.on('pointerdown', (p: Phaser.Input.Pointer) => {
+      this.drag = { y: p.y, from: this.scroll, moved: false };
+    });
+    this.input.on('pointermove', (p: Phaser.Input.Pointer) => {
+      if (!p.isDown || !this.drag) return;
+      if (!this.drag.moved && Math.abs(p.y - this.drag.y) > 8) {
+        this.drag.moved = true;
+        this.buttons.pointerUp(p.id, -999, -999); // release without a tap
+      }
+      if (this.drag.moved) apply(this.drag.from + this.drag.y - p.y);
+    });
+    this.input.on('pointerup', () => (this.drag = null));
+    this.input.on('wheel', (_p: Phaser.Input.Pointer, _o: unknown, _dx: number, dy: number) => apply(this.scroll + dy * 0.5));
   }
 
   /** Setting toggles, two per row, then FULL SCREEN. Each tap saves at once. Returns the y below them. */
@@ -131,10 +159,14 @@ export class MenuScene extends Phaser.Scene {
           b.setLabel(t.label());
         }),
       );
+      const by = b.y;
+      this.scrollers.push({ move: (dy) => (b.y = by - dy) });
       if (i % 2 === 1 || i === toggles.length - 1) y += 38;
     });
     if (this.scale.fullscreen.available) {
-      this.buttons.add(new Button(this, 30, y, 300, 32, t('ui.fullScreen'), () => this.scale.toggleFullscreen()));
+      const fs = this.buttons.add(new Button(this, 30, y, 300, 32, t('ui.fullScreen'), () => this.scale.toggleFullscreen()));
+      const fy = fs.y;
+      this.scrollers.push({ move: (dy) => (fs.y = fy - dy) });
       y += 38;
     }
     return y;
@@ -150,5 +182,13 @@ export class MenuScene extends Phaser.Scene {
   }
 }
 
-/** Phaser key names for keys 1-9. */
-const KEY_NAMES = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE'];
+/** String id of each chapter mode's menu tag. */
+const MODE_LABEL = {
+  cinematic: 'menu.mode.cinematic',
+  stealth: 'menu.mode.stealth',
+  flight: 'menu.mode.flight',
+  interaction: 'menu.mode.interaction',
+} as const;
+
+/** Phaser key names for keys 1-9 and 0. */
+const KEY_NAMES = ['ONE', 'TWO', 'THREE', 'FOUR', 'FIVE', 'SIX', 'SEVEN', 'EIGHT', 'NINE', 'ZERO'];

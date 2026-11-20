@@ -14,6 +14,9 @@ export interface StepOutcome {
   stats?: Stats;
 }
 
+/** How a chapter plays. The menu shows it as a tag. */
+export type ChapterMode = 'cinematic' | 'stealth' | 'flight' | 'interaction';
+
 /** An episode's heading, shown on its title card and in the menu. */
 export interface EpisodeMeta {
   /** 'ep1' .. 'ep5'. Used in save data and deep links, so don't rename it once released. */
@@ -23,6 +26,8 @@ export interface EpisodeMeta {
   date: string;
   place: string;
   kind: 'playable' | 'story';
+  /** What the chapter mostly is: shown as a tag in the menu. */
+  mode?: ChapterMode;
 }
 
 /**

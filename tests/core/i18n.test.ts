@@ -44,7 +44,7 @@ describe('strings.xml', () => {
 
   it('fills in parameters and leaves unknown ones', () => {
     expect(t('menu.level', { n: 2, title: 'X' })).toContain('X');
-    expect(t('ep2.archive.text')).toContain('{sortie-3.time}');
+    expect(t('menu.rowInfo', { date: 'D' })).toContain('{mode}');
     expect(t('no.such.id')).toBe('[no.such.id]');
   });
 

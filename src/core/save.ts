@@ -76,7 +76,7 @@ export function episodeProgress(s: SaveData, ep: string): EpisodeProgress {
 
 /**
  * The v1 save as a v2 save. Episode 2's sortie numbers become the step ids
- * 'sortie-1'..'sortie-3' in src/game/episodes/ep2.sabre-skies.ts, so those
+ * 'sortie-1'..'sortie-3' in the old Episode 2 (no longer in the game), so those
  * ids must not change. The guns setting moves to the flight mechanic.
  */
 export function migrateV1(d: SaveV1): SaveData {
