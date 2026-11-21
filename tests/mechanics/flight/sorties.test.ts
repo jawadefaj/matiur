@@ -44,6 +44,10 @@ describe('sortie playthroughs', () => {
         c.throttle = 1;
         return;
       }
+      // Fly at the height the sortie asks for (Sherdil Two's while joining).
+      // Every sortie uses the same CLIMB / DIVE controls.
+      const want = s.targetAltitude ?? p.altitude;
+      c.pitch = p.altitude < want - 150 ? 1 : p.altitude > want + 150 ? -1 : 0;
       const m = s.markers[0];
       if (!m) return;
       // Joining: steer for a point 0.6 s ahead of the slot and match Two's speed
@@ -130,7 +134,7 @@ describe('sortie playthroughs', () => {
       const toThreshold = p.y - (LOW_AIRFIELD.y + LOW_AIRFIELD.length / 2);
       // On short final, stop holding height and let the jet settle onto the runway.
       if (landing && toThreshold < 150) need = 0;
-      c.pull = p.altitude < need;
+      c.pitch = p.altitude < need ? 1 : 0;
       // Idle on the approach so the speed drops below landing.maxSpeed.
       c.throttle = landing ? 0 : 0.42;
     }, 600);

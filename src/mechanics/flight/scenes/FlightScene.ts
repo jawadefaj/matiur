@@ -104,7 +104,6 @@ export class FlightScene extends Phaser.Scene {
   create(): void {
     // A fixed seed per sortie, so the sim's random choices repeat for the same inputs.
     this.world = new World(1000 + this.sortieNum);
-    this.world.gunsMode = this.host.setting<'auto' | 'hold'>('gunsMode');
     this.sortie = makeSortie(this.sortieNum);
     this.sortie.setup(this.world);
 

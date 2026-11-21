@@ -17,17 +17,20 @@ import { Radio } from '../systems/radio/Radio';
 import type { AI, Aircraft, GameEvent, Kind, Role, Side } from './types';
 
 /**
- * The player's controls. FlightHudScene writes them from touch and keys (sorties also
- * set the throttle); World copies them into the player's input each step.
+ * The player's controls, the same in every flight level. FlightHudScene writes
+ * them from touch and keys (sorties also set the throttle); World copies them
+ * into the player's input each step. There is no fire control: guns fire on
+ * their own when the sight is on target.
  */
 export interface PlayerControls {
   /** Stick direction as an absolute heading (rad); null = no stick input. */
   desiredHeading: number | null;
+  /** Hard turn: the stick is dragged to its edge. */
   pull: boolean;
   /** 0..1 */
   throttle: number;
-  /** FIRE button. Only used when gunsMode is 'hold'. */
-  fire: boolean;
+  /** CLIMB (1), DIVE (-1) or neither (0). */
+  pitch: number;
 }
 
 /** The enemy the player's gunsight is tracking, for the HUD sight and auto-fire. */
@@ -73,9 +76,7 @@ export class World {
   /** Set by spawn() for the aircraft with role 'player'. */
   player!: Aircraft;
 
-  controls: PlayerControls = { desiredHeading: null, pull: false, throttle: 0.7, fire: false };
-  /** 'auto' fires whenever the lead point is in the cone; 'hold' fires only while controls.fire is held. */
-  gunsMode: 'auto' | 'hold' = 'auto';
+  controls: PlayerControls = { desiredHeading: null, pull: false, throttle: 0.7, pitch: 0 };
   /** Sorties with no shooting (1 and 3) turn this off. */
   allowPlayerGuns = true;
 
@@ -85,7 +86,7 @@ export class World {
   damage = new Damage();
   radio = new Radio();
 
-  /** Low-level flight: PULL climbs, altitude matters. Set by the sortie. */
+  /** Low-level flight: small climb and dive rates, and the jet sinks when neither is held. Set by the sortie. */
   lowLevel = false;
   /** Seconds since the engine flamed out (fuel empty). */
   flameoutTime = 0;
@@ -164,9 +165,10 @@ export class World {
       p.input.desiredHeading = this.controls.desiredHeading;
       p.input.pull = this.controls.pull;
       p.input.throttle = this.controls.throttle;
+      p.input.pitch = this.controls.pitch;
+      // Guns fire on their own whenever the lead point is in the sight cone.
       this.updateGunTarget();
-      const wantFire = this.gunsMode === 'auto' ? !!this.gunTarget?.inCone : this.controls.fire;
-      p.input.fire = this.allowPlayerGuns && p.f.airborne && wantFire;
+      p.input.fire = this.allowPlayerGuns && p.f.airborne && !!this.gunTarget?.inCone;
     }
 
     // AI decides its inputs.

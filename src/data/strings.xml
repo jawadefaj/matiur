@@ -200,9 +200,6 @@
     <s id="flight.sortieTitle" en="Sortie {n}: {title}">অভিযান {n}: {title}</s>
     <s id="flight.flySortie" en="FLY SORTIE {n}">অভিযান {n} শুরু</s>
     <s id="flight.date" en="September 1965">সেপ্টেম্বর ১৯৬৫</s>
-    <s id="flight.guns" en="GUNS">কামান</s>
-    <s id="flight.guns.auto" en="AUTO">স্বয়ংক্রিয়</s>
-    <s id="flight.guns.hold" en="HOLD">চেপে ধরে</s>
     <s id="flight.brokeOff.1" en="He's hit! Smoking and breaking off.">ওকে লেগেছে! ধোঁয়া ছেড়ে সরে যাচ্ছে।</s>
     <s id="flight.brokeOff.2" en="Good hits, One. He's turning for home.">দারুণ নিশানা, ওয়ান। ও ঘরে ফিরছে।</s>
     <s id="flight.brokeOff.3" en="That one's out of the fight.">ওটা লড়াই থেকে বাদ।</s>
@@ -212,8 +209,9 @@
     <s id="flight.takingHits" en="Taking hits, One! Shake him!">গুলি খাচ্ছ, ওয়ান! ওকে ঝেড়ে ফেলো!</s>
     <s id="flight.bingo" en="Bingo fuel, One. Watch your throttle.">জ্বালানি তলানিতে, ওয়ান। থ্রটলে খেয়াল রাখো।</s>
     <s id="flight.fail.damage" en="Your Sabre was too badly damaged to fly. You ejected safely.">আপনার সেবর আর ওড়ার মতো ছিল না। আপনি নিরাপদে ইজেক্ট করেছেন।</s>
-    <s id="flight.fail.blackout" en="You blacked out (G-LOC). Ease off PULL at high speed, or slow down first.">আপনি জ্ঞান হারিয়েছেন (জি-লক)। বেশি গতিতে টান কমান, অথবা আগে গতি কমান।</s>
+    <s id="flight.fail.blackout" en="You blacked out (G-LOC). Ease off hard turns at high speed, or slow down first.">আপনি জ্ঞান হারিয়েছেন (জি-লক)। বেশি গতিতে কড়া বাঁক কমান, অথবা আগে গতি কমান।</s>
     <s id="flight.fail.fuel" en="Flameout: the tanks ran dry. Throttle back to save fuel.">ফ্লেমআউট: ট্যাংক খালি। জ্বালানি বাঁচাতে থ্রটল কমান।</s>
+    <s id="flight.fail.ground" en="You flew into the ground. Hold CLIMB to gain height.">আপনি মাটিতে আছড়ে পড়েছেন। উচ্চতা বাড়াতে উঠুন বোতাম চেপে ধরুন।</s>
     <!-- Wingman calls from the AI. {clock} is 1 to 12. -->
     <s id="flight.engage" en="I'm on him!">ওকে ধরেছি!</s>
     <s id="flight.spotOne" en="Bandit, {clock} o'clock!">শত্রু বিমান, {clock}টার দিকে!</s>
@@ -232,11 +230,12 @@
     <s id="hud.altLow" en="ALT {v} FT">উচ্চতা {v} ফুট</s>
     <s id="hud.thr" en="THR {v}%">থ্রটল {v}%</s>
     <s id="hud.thrLabel" en="THR">থ্রটল</s>
+    <s id="hud.altLabel" en="ALT">উচ্চতা</s>
     <s id="hud.altNum" en="{v}FT">{v} ফুট</s>
     <s id="hud.radar" en="RADAR">রাডার</s>
-    <s id="hud.pull" en="PULL">টান</s>
-    <s id="hud.pullUp" en="PULL\n UP">ওপরে\nটান</s>
-    <s id="hud.fire" en="FIRE">গুলি</s>
+    <s id="hud.climb" en="CLIMB">উঠুন</s>
+    <s id="hud.dive" en="DIVE">নামুন</s>
+    <s id="hud.lock" en="LOCK">লক</s>
     <s id="hud.slideUp" en="SLIDE\nUP">ওপরে\nটানুন</s>
     <s id="hud.intercepted" en="INTERCEPTED">ধরা পড়েছেন</s>
     <s id="hud.crashed" en="CRASHED">বিধ্বস্ত</s>
@@ -244,15 +243,16 @@
     <s id="hud.radarContact" en="RADAR CONTACT">রাডারে ধরা পড়েছেন</s>
     <s id="hud.getUnder" en="Get under 100 ft! {s}s">১০০ ফুটের নিচে নামুন! {s} সে.</s>
     <s id="hud.pullUpWarn" en="PULL UP">ওপরে উঠুন</s>
-    <s id="hud.gEaseOff" en="G! EASE OFF">জি! টান কমান</s>
+    <s id="hud.gEaseOff" en="G! EASE OFF">জি! বাঁক কমান</s>
     <s id="hud.greyout" en="GREYOUT">চোখে ধূসর</s>
-    <s id="hud.greyoutSub" en="Controls soft. Ease off PULL.">নিয়ন্ত্রণ দুর্বল। টান কমান।</s>
+    <s id="hud.greyoutSub" en="Controls soft. Ease off the turn.">নিয়ন্ত্রণ দুর্বল। বাঁক কমান।</s>
     <s id="hud.tooLow" en="TOO LOW">খুব নিচু</s>
     <s id="hud.flameout" en="FLAMEOUT">ফ্লেমআউট</s>
-    <s id="hud.tip.1" en="Throttle up to roll. Drag to steer.\nJoin your wingman, fly the patrol.">থ্রটল বাড়িয়ে চলা শুরু করুন। টেনে দিক বদলান।\nউইংম্যানের পাশে যোগ দিন, টহল দিন।</s>
-    <s id="hud.tip.2" en="Get behind them: guns fire on target.\nWatch your G at high speed.">ওদের পেছনে যান: নিশানায় এলেই কামান চলবে।\nবেশি গতিতে জি-র দিকে খেয়াল রাখুন।</s>
-    <s id="hud.tip.3" en="Hold PULL to climb, let go to sink.\nStay 30 to 100 ft. Then land.">উঠতে টান চেপে ধরুন, নামতে ছেড়ে দিন।\n৩০ থেকে ১০০ ফুটে থাকুন। তারপর নামুন।</s>
-    <s id="hud.tip.checkpoint" en="Hold PULL to climb, let go to sink.">উঠতে টান চেপে ধরুন, নামতে ছেড়ে দিন।</s>
+    <s id="hud.tip.1" en="Take off, climb and join your wingman.">উড্ডয়ন করুন, ওপরে উঠে উইংম্যানের পাশে যোগ দিন।</s>
+    <s id="hud.tip.2" en="Get behind them: guns fire on target.">ওদের পেছনে যান: নিশানায় এলেই কামান চলবে।</s>
+    <s id="hud.tip.3" en="Stay 30 to 100 ft under the radar. Then land.">রাডার এড়াতে ৩০ থেকে ১০০ ফুটে থাকুন। তারপর নামুন।</s>
+    <s id="hud.controls" en="Left: CLIMB, DIVE, THROTTLE, LOCK.\nRight: drag to steer, drag far to turn hard.">বাঁয়ে: উঠুন, নামুন, থ্রটল, লক।\nডানে: টেনে দিক বদলান, বেশি টানলে কড়া বাঁক।</s>
+    <s id="hud.tip.checkpoint" en="Hold CLIMB to go up. Let go and you sink.">ওপরে উঠতে উঠুন চেপে ধরুন। ছেড়ে দিলে নেমে যাবেন।</s>
     <s id="hud.sortie" en="SORTIE {n}">অভিযান {n}</s>
     <s id="hud.placeDate" en="{place}, {date}">{place}, {date}</s>
     <s id="hud.episodeLine" en="EPISODE {n} - {title}">পর্ব {n} - {title}</s>
@@ -287,17 +287,20 @@
     <s id="s1.slideThrottle" en="Slide the THROTTLE up to start your roll.">চলা শুরু করতে থ্রটল ওপরে টানুন।</s>
     <s id="s1.hint.takeoff" en="Slide THROTTLE up to take off">উড্ডয়নের জন্য থ্রটল ওপরে টানুন</s>
     <s id="s1.airborne" en="Sherdil One, airborne. Good luck.">শেরদিল ওয়ান, আকাশে। শুভকামনা।</s>
-    <s id="s1.twoNorth" en="Two here, north of the field. Join on my left wing.">টু বলছি, এয়ারফিল্ডের উত্তরে আছি। আমার বাঁ ডানায় যোগ দাও।</s>
-    <s id="s1.dragToSteer" en="Drag anywhere to steer. The jet turns toward your drag.">দিক বদলাতে যেকোনো জায়গায় টানো। জেট টানার দিকে ঘুরবে।</s>
+    <s id="s1.climb" en="Hold CLIMB to gain height. DIVE takes you down.">উচ্চতা বাড়াতে উঠুন চেপে ধরো। নামুন চাপলে নিচে নামবে।</s>
+    <s id="s1.twoNorth" en="Two here, north of the field. Join on my left wing, at my height.">টু বলছি, এয়ারফিল্ডের উত্তরে আছি। আমার উচ্চতায় এসে বাঁ ডানায় যোগ দাও।</s>
+    <s id="s1.dragToSteer" en="Drag on the right to steer. The jet turns toward your drag.">দিক বদলাতে ডান দিকে টানো। জেট টানার দিকে ঘুরবে।</s>
     <s id="s1.hint.catchUp" en="Catch up with Sherdil Two">শেরদিল টু-কে ধরে ফেলুন</s>
+    <s id="s1.hint.climb" en="Hold CLIMB: get to the blue mark on the height bar">উঠুন চেপে ধরুন: উচ্চতার দাগে নীল চিহ্নে পৌঁছান</s>
+    <s id="s1.hint.dive" en="Hold DIVE: get down to the blue mark on the height bar">নামুন চেপে ধরুন: উচ্চতার দাগে নীল চিহ্নে নামুন</s>
     <s id="s1.hint.hold" en="Hold position...">অবস্থান ধরে রাখুন...</s>
     <s id="s1.hint.slide" en="Slide into the marked slot">চিহ্নিত জায়গায় ঢুকে পড়ুন</s>
     <s id="s1.overshoot" en="You're overshooting, One. Throttle back.">ছাড়িয়ে যাচ্ছ, ওয়ান। থ্রটল কমাও।</s>
     <s id="s1.moreThrottle" en="A bit more throttle to close up.">কাছে আসতে আরেকটু থ্রটল দাও।</s>
     <s id="s1.goodJoin" en="Good join! You have the lead. I'll take your wing.">চমৎকার! এখন তুমি সামনে। আমি তোমার ডানায় থাকছি।</s>
-    <s id="s1.flyPatrol" en="Fly the patrol points. Hold PULL for a tighter turn.">টহল বিন্দুগুলোতে যাও। আরও তীক্ষ্ণ বাঁকের জন্য টান চেপে ধরো।</s>
+    <s id="s1.flyPatrol" en="Fly the patrol points. Drag far for a tighter turn.">টহল বিন্দুগুলোতে যাও। আরও তীক্ষ্ণ বাঁকের জন্য বেশি দূর টানো।</s>
     <s id="s1.hint.patrol" en="Fly to patrol point {n} of 3">টহল বিন্দু {n}-এ যান (মোট ৩টি)</s>
-    <s id="s1.point1" en="Point one. Now try a hard turn: hold PULL while you steer.">প্রথম বিন্দু। এবার কড়া বাঁক নাও: দিক বদলানোর সময় টান চেপে ধরো।</s>
+    <s id="s1.point1" en="Point one. Now try a hard turn: drag right out to the edge of the ring.">প্রথম বিন্দু। এবার কড়া বাঁক নাও: বৃত্তের কিনারা পেরিয়ে টানো।</s>
     <s id="s1.gmeter" en="Mind the G-meter. Past 5.5 G too long and you grey out.">জি-মিটারে চোখ রাখো। বেশিক্ষণ ৫.৫ জি-র ওপরে থাকলে চোখে ধূসর দেখবে।</s>
     <s id="s1.sevenG" en="Seven G for more than a second and you black out.">এক সেকেন্ডের বেশি সাত জি হলে জ্ঞান হারাবে।</s>
     <s id="s1.patrolComplete" en="Sherdil flight, patrol complete. Return to base.">শেরদিল ফ্লাইট, টহল শেষ। ঘাঁটিতে ফিরে আসুন।</s>
@@ -335,7 +338,7 @@
     <s id="s3.obj.route" en="Fly home under 100 ft">১০০ ফুটের নিচ দিয়ে ঘরে ফিরুন</s>
     <s id="s3.obj.land" en="Land at Peshawar">পেশোয়ারে অবতরণ করুন</s>
     <s id="s3.leaking" en="One, you're hit and leaking fuel. Stay low, under a hundred feet.">ওয়ান, তোমার জ্বালানি চুইয়ে পড়ছে। নিচু থাকো, একশো ফুটের নিচে।</s>
-    <s id="s3.pullToClimb" en="Hold PULL to climb, let go to ease down. Their radar is watching above.">উঠতে টান চেপে ধরো, ছেড়ে দিলে আস্তে নামবে। ওপরে ওদের রাডার নজর রাখছে।</s>
+    <s id="s3.climbDive" en="Hold CLIMB to go up, let go to ease down. Their radar is watching above.">উঠতে উঠুন চেপে ধরো, ছেড়ে দিলে আস্তে নামবে। ওপরে ওদের রাডার নজর রাখছে।</s>
     <s id="s3.throttleBack" en="Throttle back to stretch the fuel. Follow the valley north.">জ্বালানি বাঁচাতে থ্রটল কমাও। উপত্যকা ধরে উত্তরে চলো।</s>
     <s id="s3.hint.rollout" en="Rolling out...">রানওয়েতে থামছে...</s>
     <s id="s3.onGround" en="Sherdil One, on the ground. Well flown.">শেরদিল ওয়ান, মাটিতে নেমেছেন। চমৎকার উড়েছেন।</s>
@@ -354,7 +357,7 @@
     <s id="s3.overshot" en="Overshot. Turn around and try again from either end.">ছাড়িয়ে গেছেন। ঘুরে যেকোনো প্রান্ত থেকে আবার চেষ্টা করুন।</s>
     <s id="s3.hint.land" en="Land: under {speed} kt, lined up, let her sink">অবতরণ: {speed} নটের নিচে, সোজা হয়ে, ধীরে নামুন</s>
     <s id="s3.hint.turnBack" en="Turn back to the runway">রানওয়ের দিকে ফিরুন</s>
-    <s id="s3.hint.tooHigh" en="Too high! Let go of PULL">খুব উঁচুতে! টান ছেড়ে দিন</s>
+    <s id="s3.hint.tooHigh" en="Too high! Let go of CLIMB, or DIVE">খুব উঁচুতে! উঠুন ছেড়ে দিন, বা নামুন চাপুন</s>
     <s id="s3.hint.under" en="Under 100 ft. Follow the valley north">১০০ ফুটের নিচে। উপত্যকা ধরে উত্তরে চলুন</s>
     <s id="s3.flameout" en="Flameout! You're gliding, One. Make it count.">ফ্লেমআউট! তুমি গ্লাইড করছ, ওয়ান। হিসেব করে চলো।</s>
     <s id="s3.touchdown" en="Touchdown.">চাকা মাটি ছুঁয়েছে।</s>

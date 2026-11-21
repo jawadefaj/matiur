@@ -79,14 +79,39 @@ describe('flight model', () => {
     expect(s.speed).toBeLessThan(480);
   });
 
-  it('low level: PULL climbs, releasing sinks', () => {
+  it('low level: CLIMB climbs, letting go sinks, DIVE drops faster', () => {
     const s = makeFlightState({ speed: 380, altitude: 60 });
     const mods = { ...NO_MODS, lowLevel: true };
-    fly(1.5, () => stepFlight(s, sabre, { desiredHeading: null, pull: true, throttle: 0.5 }, mods, 1 / 60));
+    fly(1.5, () => stepFlight(s, sabre, { desiredHeading: null, pull: false, throttle: 0.5, pitch: 1 }, mods, 1 / 60));
     expect(s.altitude).toBeGreaterThan(100);
     const top = s.altitude;
     fly(2, () => stepFlight(s, sabre, { desiredHeading: null, pull: false, throttle: 0.5 }, mods, 1 / 60));
     expect(s.altitude).toBeLessThan(top - 20);
+    const handsOff = s.altitude;
+    fly(1, () => stepFlight(s, sabre, { desiredHeading: null, pull: false, throttle: 0.5, pitch: -1 }, mods, 1 / 60));
+    expect(handsOff - s.altitude).toBeGreaterThan(tuning.lowLevel.sinkRate);
+  });
+
+  it('at altitude: CLIMB and DIVE change height, letting go holds it', () => {
+    const s = makeFlightState({ speed: 400, altitude: 10000 });
+    fly(2, () => stepFlight(s, sabre, { desiredHeading: null, pull: false, throttle: 0.6, pitch: 1 }, NO_MODS, 1 / 60));
+    expect(s.altitude).toBeGreaterThan(10500);
+    fly(1, () => stepFlight(s, sabre, { desiredHeading: null, pull: false, throttle: 0.6 }, NO_MODS, 1 / 60));
+    const held = s.altitude;
+    fly(3, () => stepFlight(s, sabre, { desiredHeading: null, pull: false, throttle: 0.6 }, NO_MODS, 1 / 60));
+    expect(Math.abs(s.altitude - held)).toBeLessThan(1);
+    fly(2, () => stepFlight(s, sabre, { desiredHeading: null, pull: false, throttle: 0.6, pitch: -1 }, NO_MODS, 1 / 60));
+    expect(s.altitude).toBeLessThan(held - 1000);
+  });
+
+  it('a hard turn works the same at low level as at altitude', () => {
+    const a = makeFlightState({ speed: 380, altitude: 10000 });
+    const b = makeFlightState({ speed: 380, altitude: 60 });
+    fly(0.8, () => {
+      stepFlight(a, sabre, { desiredHeading: Math.PI, pull: true, throttle: 0.5 }, NO_MODS, 1 / 60);
+      stepFlight(b, sabre, { desiredHeading: Math.PI, pull: true, throttle: 0.5 }, { ...NO_MODS, lowLevel: true }, 1 / 60);
+    });
+    expect(Math.abs(angleDiff(a.heading, b.heading))).toBeLessThan(0.01);
   });
 });
 

@@ -59,7 +59,7 @@ export class Sortie3LowAndHome extends Sortie {
     ];
     this.saveCheckpoint(w);
     w.radio.say(t('who.sherdilTwo'), t('s3.leaking'));
-    w.radio.say(t('who.sherdilTwo'), t('s3.pullToClimb'));
+    w.radio.say(t('who.sherdilTwo'), t('s3.climbDive'));
     w.radio.say(t('who.sherdilTwo'), t('s3.throttleBack'));
   }
 

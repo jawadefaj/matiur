@@ -1,5 +1,5 @@
 // Sortie 1 — Scramble. Take off, join Sherdil Two, fly a short patrol.
-// Doubles as the tutorial: steering, throttle, formation, PULL and G.
+// Doubles as the tutorial: throttle, steering, CLIMB and DIVE, formation, hard turns and G.
 import { t } from '../../../core/i18n';
 import { tuning } from '../tuning';
 import { DEG, angleDiff, dist, rotateOffset } from '../../../core/math';
@@ -12,6 +12,8 @@ import { PESHAWAR, farmlandTerrain } from './terrain';
 /** Seconds the player must hold the slot to complete the join. */
 const JOIN_SECONDS = 3;
 const SLOT = { x: -34, y: 22 }; // left wing of Sherdil Two
+/** How close to Two's height (ft) counts as in the slot. */
+const SLOT_ALT = 800;
 
 export class Sortie1Scramble extends Sortie {
   readonly num = 1 as const;
@@ -72,13 +74,14 @@ export class Sortie1Scramble extends Sortie {
       case 'takeoff': {
         this.hint = t('s1.hint.takeoff');
         this.markers = [];
-        // Lift off at takeoff.rotateSpeed (kt). Sortie.climbAfterTakeoff then handles the climb.
-        if (!p.f.airborne && p.f.speed >= tuning.takeoff.rotateSpeed) p.f.airborne = true;
+        // Lift off at takeoff.rotateSpeed (kt); from there the player flies the height.
+        if (!p.f.airborne && p.f.speed >= tuning.takeoff.rotateSpeed) this.liftOff(w);
         if (p.f.airborne) {
           this.setObj('takeoff', 'done');
           this.setObj('join', 'active');
           this.stage = 'join';
           w.radio.say(t('who.tower'), t('s1.airborne'));
+          w.radio.say(t('who.sherdilTwo'), t('s1.climb'));
           w.radio.say(t('who.sherdilTwo'), t('s1.twoNorth'));
           w.radio.say(t('who.sherdilTwo'), t('s1.dragToSteer'));
         }
@@ -91,10 +94,15 @@ export class Sortie1Scramble extends Sortie {
         this.markers = [{ x: sx, y: sy, r: 16, kind: 'slot', label: 'JOIN', heading: this.two.f.heading }];
         const dd = dist(p.f.x, p.f.y, sx, sy);
         const hErr = Math.abs(angleDiff(p.f.heading, this.two.f.heading));
-        const inSlot = dd < 18 && hErr < 25 * DEG;
+        // Two's height shows as a mark on the altitude bar.
+        this.targetAltitude = this.two.f.altitude;
+        const altOk = Math.abs(p.f.altitude - this.two.f.altitude) < SLOT_ALT;
+        const inSlot = dd < 18 && hErr < 25 * DEG && altOk;
         this.joinTime = inSlot ? this.joinTime + dt : Math.max(0, this.joinTime - dt * 0.5);
         this.setObj('join', 'active', `${Math.round((this.joinTime / JOIN_SECONDS) * 100)}%`);
-        this.hint = dd > 220 ? t('s1.hint.catchUp') : inSlot ? t('s1.hint.hold') : t('s1.hint.slide');
+        this.hint = !altOk
+          ? (p.f.altitude < this.two.f.altitude ? t('s1.hint.climb') : t('s1.hint.dive'))
+          : dd > 220 ? t('s1.hint.catchUp') : inSlot ? t('s1.hint.hold') : t('s1.hint.slide');
 
         // Throttle coaching. `along` is px the slot lies ahead of the player along
         // Two's heading; negative means the player has passed it.
@@ -108,6 +116,7 @@ export class Sortie1Scramble extends Sortie {
           }
         }
         if (this.joinTime >= JOIN_SECONDS) {
+          this.targetAltitude = null;
           this.setObj('join', 'done', '');
           this.setObj('patrol', 'active');
           this.stage = 'patrol';

@@ -12,7 +12,9 @@ export type GunKind = keyof Tuning['guns'];
  * The values in tuning.json. JSON cannot hold comments, so its sections are described here:
  * - units: pxPerKnot turns knots into world px/s; g0 is the turn acceleration (px/s²) that counts as 1 G.
  * - aircraft: FlightSpec per type (units in FlightModel.ts), hit radius (px), hp (not used for the player).
- * - takeoff: rotate speed (kt), ground acceleration multiplier, automatic climb (ft/s) to cruise altitude (ft).
+ * - takeoff: rotate speed (kt), ground acceleration multiplier, height the jet lifts off to (ft).
+ * - altitude: CLIMB and DIVE rates and how fast vertical speed changes (ft/s, ft/s²) away from low level,
+ *   the altitude bar's top (ft) and the TOO LOW warning height (ft).
  * - gmeter: when greyout and blackout start and when greyout ends (G, s), greyout turn multiplier,
  *   smoothing (G/s), strain vignette start (G). `max` is unused.
  * - fuel: burn in percent per second (idle + throttle² terms), ground multiplier, bingo (%), flameout grace (s).
@@ -20,7 +22,7 @@ export type GunKind = keyof Tuning['guns'];
  * - guns: player, wingman and enemy GunSpec (Guns.ts): angles in degrees, range px, bulletSpeed px/s, times s.
  * - ai: enemy fighter tactics in AI.ts (ranges px, angles degrees, chances, combatFuel s), and when
  *   broken-off jets are removed (brokenOffGoneAfter s, brokenOffGoneDist px, in World.ts).
- * - lowLevel: sortie 3 altitude band and gauge (ft), climb and sink (ft/s), radar fill and drain (per s),
+ * - lowLevel: sortie 3 altitude band and gauge (ft), CLIMB, DIVE and hands-off sink (ft/s), radar fill and drain (per s),
  *   timers (s), terrain collision radius (px).
  * - landing: sortie 3 touchdown limits (kt, degrees, ft) and flare assist (ft, px). rolloutDecel is unused.
  * - camera: FlightScene look-ahead (px) and follow rate (per s).

@@ -38,8 +38,14 @@
   "takeoff": {
     "rotateSpeed": 150,
     "groundAccelMul": 0.9,
-    "climbRate": 900,
-    "cruiseAltitude": 12000
+    "liftoffAltitude": 60
+  },
+  "altitude": {
+    "climbRate": 600,
+    "diveRate": 900,
+    "vAccel": 900,
+    "gaugeMax": 15000,
+    "lowWarn": 1000
   },
   "gmeter": {
     "max": 7,
@@ -99,6 +105,7 @@
     "bandHigh": 100,
     "gaugeMax": 200,
     "climbRate": 60,
+    "diveRate": 70,
     "sinkRate": 30,
     "vAccel": 140,
     "pullUpG": 1.2,

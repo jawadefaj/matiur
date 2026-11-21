@@ -61,7 +61,18 @@ export interface TerrainSpec {
 }
 
 /** Why a sortie failed. FlightHudScene fades to black for 'blackout'. */
-export type FailKind = 'damage' | 'blackout' | 'fuel' | 'other';
+export type FailKind = 'damage' | 'blackout' | 'fuel' | 'ground' | 'other';
+
+/**
+ * The HUD altitude bar, the same bar in every sortie: 0 ft at the bottom, `max`
+ * at the top, red below `low`, and amber above `high` when the sortie has a
+ * ceiling (low level: the radar watches above it).
+ */
+export interface AltitudeBar {
+  max: number;
+  low: number;
+  high: number | null;
+}
 
 /** A blank farmland map, filled in by the generators in terrain.ts. */
 export function emptyTerrain(): TerrainSpec {
@@ -85,8 +96,10 @@ export abstract class Sortie {
   markers: Marker[] = [];
   /** Set in setup(); FlightScene builds the map from it once. */
   terrain: TerrainSpec = emptyTerrain();
-  /** Low-level mode: altitude gauge, PULL climbs. */
+  /** Low-level mode: small climb and dive rates, the jet sinks hands-off, terrain and radar. */
   lowLevel = false;
+  /** A height (ft) to fly at, marked on the HUD altitude bar; null for none. */
+  targetAltitude: number | null = null;
   /** Seconds until a checkpoint restart (soft failure); 0 = none. */
   restartIn = 0;
   /** Shown while restarting and on the checkpoint card. */
@@ -109,6 +122,15 @@ export abstract class Sortie {
   abstract setup(w: World): void;
   /** Sortie-specific logic, run each step after the shared rules while the sortie is running. */
   protected abstract script(w: World, dt: number): void;
+
+  /** The HUD altitude bar's scale: low level gets a 0–200 ft bar with its band. */
+  get altitudeBar(): AltitudeBar {
+    if (this.lowLevel) {
+      const ll = tuning.lowLevel;
+      return { max: ll.gaugeMax, low: ll.bandLow, high: ll.bandHigh };
+    }
+    return { max: tuning.altitude.gaugeMax, low: tuning.altitude.lowWarn, high: null };
+  }
 
   /** True while the world should not advance (restart pause or sortie failed). */
   get freezeWorld(): boolean {
@@ -133,7 +155,6 @@ export abstract class Sortie {
     }
     this.elapsed += dt;
     this.reactToEvents(w);
-    this.climbAfterTakeoff(w, dt);
     this.checkCommonFailures(w);
     if (this.status === 'running') this.script(w, dt);
   }
@@ -176,16 +197,12 @@ export abstract class Sortie {
     this.failKind = kind;
   }
 
-  /**
-   * Away from low level, altitude is scripted rather than flown: once airborne
-   * the jet climbs at takeoff.climbRate ft/s up to takeoff.cruiseAltitude.
-   */
-  private climbAfterTakeoff(w: World, dt: number): void {
+  /** Leave the runway: airborne at takeoff.liftoffAltitude ft, climbing gently. */
+  protected liftOff(w: World): void {
     const f = w.player.f;
-    const cruise = tuning.takeoff.cruiseAltitude;
-    if (!this.lowLevel && f.airborne && f.altitude < cruise) {
-      f.altitude = Math.min(cruise, f.altitude + tuning.takeoff.climbRate * dt);
-    }
+    f.airborne = true;
+    f.altitude = Math.max(f.altitude, tuning.takeoff.liftoffAltitude);
+    f.vz = Math.max(f.vz, tuning.altitude.climbRate * 0.25);
   }
 
   /** Sherdil Two's radio reactions to this step's events. */
@@ -210,13 +227,17 @@ export abstract class Sortie {
 
   /**
    * Failures shared by every sortie, plus the one-time bingo fuel call.
-   * In low-level mode a flameout is not a failure: the jet glides down instead.
+   * In low-level mode a flameout is not a failure: the jet glides down instead,
+   * and the sortie handles hitting the ground (LowLevel) itself.
    */
   private checkCommonFailures(w: World): void {
     if (w.damage.destroyed) {
       this.fail(t('flight.fail.damage'), 'damage');
     } else if (w.gmeter.blackout) {
       this.fail(t('flight.fail.blackout'), 'blackout');
+    } else if (!this.lowLevel && w.player.f.airborne && w.player.f.altitude <= 0) {
+      w.events.push({ type: 'crash', x: w.player.f.x, y: w.player.f.y });
+      this.fail(t('flight.fail.ground'), 'ground');
     } else if (!this.lowLevel && w.flameoutTime > tuning.fuel.flameoutGrace) {
       this.fail(t('flight.fail.fuel'), 'fuel');
     }

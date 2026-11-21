@@ -34,10 +34,12 @@ export interface FlightState {
 export interface FlightInput {
   /** Absolute heading the player (or AI) wants; null = hold wings level. */
   desiredHeading: number | null;
-  /** PULL held: a tighter turn at altitude, a climb in low-level mode. */
+  /** Hard turn: a tighter, higher-G turn (the player gets it by dragging the stick to its edge). */
   pull: boolean;
   /** 0..1 */
   throttle: number;
+  /** CLIMB (1), DIVE (-1) or neither (0, the default): hold height, or sink slowly at low level. */
+  pitch?: number;
 }
 
 /** Modifiers World sets each step: damage, greyout, low-level mode, engine out. */
@@ -45,8 +47,8 @@ export interface FlightMods {
   handling: number; // 1 = undamaged
   maxSpeed: number; // multiplier on max speed
   control: number; // 1 normally, lower during greyout
-  lowLevel: boolean; // PULL climbs instead of tightening turns
-  /** No thrust (World sets it when fuel runs out): airspeed decays to minSpeed and PULL cannot climb. */
+  lowLevel: boolean; // low-level climb and dive rates, and the jet sinks when neither is held
+  /** No thrust (World sets it when fuel runs out): airspeed decays to minSpeed and CLIMB does nothing. */
   engineOut: boolean;
   extraSink?: number; // ft/s added to sink rate (e.g. engine out)
 }
@@ -136,8 +138,9 @@ export function stepFlight(
     : Math.max(target, s.speed - spec.decel * dt);
 
   // --- Turning -----------------------------------------------------------
-  // PULL tightens the turn at altitude. In low-level flight it climbs instead.
-  const pullForTurn = input.pull && !mods.lowLevel;
+  // A hard turn (pull) raises the turn-rate and G limits.
+  const pullForTurn = input.pull;
+  const pitch = Math.sign(input.pitch ?? 0);
   let targetRate = 0;
   if (s.airborne && input.desiredHeading !== null) {
     const err = angleDiff(s.heading, input.desiredHeading);
@@ -154,22 +157,25 @@ export function stepFlight(
 
   // --- Load factor and energy bleed -------------------------------------
   let g = s.airborne ? gForTurn(s.turnRate, s.speed) : 1;
-  // A low-level pull-up adds lowLevel.pullUpG, so climbing shows on the G-meter and bleeds speed.
-  if (mods.lowLevel && s.airborne && input.pull) g += tuning.lowLevel.pullUpG;
+  // A low-level climb adds lowLevel.pullUpG, so climbing shows on the G-meter and bleeds speed.
+  if (mods.lowLevel && s.airborne && pitch > 0 && !mods.engineOut) g += tuning.lowLevel.pullUpG;
   s.g = g;
   if (s.airborne) {
     s.speed -= spec.bleed * (g - 1) * (g - 1) * dt;
     s.speed = Math.max(spec.minSpeed, s.speed);
   }
 
-  // --- Altitude (low-level mode only; otherwise scripted) ---------------
-  if (mods.lowLevel && s.airborne) {
-    // Vertical speed (ft/s) eases toward a climb while PULL is held, or a
-    // sink otherwise, changing at most lowLevel.vAccel ft/s per second.
-    const ll = tuning.lowLevel;
-    const sink = ll.sinkRate + (mods.extraSink ?? 0);
-    const targetVz = input.pull && !mods.engineOut ? ll.climbRate : -sink;
-    s.vz = approach(s.vz, targetVz, ll.vAccel * dt);
+  // --- Altitude ---------------------------------------------------------
+  if (s.airborne) {
+    // Vertical speed (ft/s) eases toward a climb while CLIMB is held, a dive
+    // while DIVE is held, and otherwise level flight (low level: a slow sink).
+    // It changes at most vAccel ft/s per second. Low level uses its own,
+    // much smaller rates. With the engine out CLIMB does nothing.
+    const v = mods.lowLevel ? tuning.lowLevel : tuning.altitude;
+    const handsOff = mods.lowLevel ? -tuning.lowLevel.sinkRate : 0;
+    let targetVz = pitch > 0 && !mods.engineOut ? v.climbRate : pitch < 0 ? -v.diveRate : handsOff;
+    targetVz -= mods.extraSink ?? 0;
+    s.vz = approach(s.vz, targetVz, v.vAccel * dt);
     s.altitude += s.vz * dt;
   }
 

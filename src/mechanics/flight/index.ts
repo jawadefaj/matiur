@@ -1,5 +1,7 @@
 // The flight mechanic's descriptor: top-down jet flying (the 1965 sorties,
 // which stand in for the flight chapters (4, 5, 11) until their own levels exist).
+// Every level has the same controls and HUD (design/design.md, Flight > Controls);
+// guns fire on their own, so the mechanic has no settings.
 // Phaser-free, so the game definition and tests can import it. The scenes are in runtime.ts.
 import { defineMechanic } from '../../core/define';
 import { t } from '../../core/i18n';
@@ -24,16 +26,6 @@ export const flight = defineMechanic<FlightParams>({
     const s = SORTIE_LIST.find((x) => x.num === p.sortie);
     return { title: t('flight.sortieTitle', { n: p.sortie, title: s?.title ?? '?' }), nextLabel: t('flight.flySortie', { n: p.sortie }) };
   },
-  // Guns fire on their own when the sight is on target, or only while FIRE is held.
-  settings: [
-    {
-      key: 'gunsMode',
-      label: t('flight.guns'),
-      values: ['auto', 'hold'],
-      default: 'auto',
-      valueLabels: { auto: t('flight.guns.auto'), hold: t('flight.guns.hold') },
-    },
-  ],
 });
 
 export default flight;

@@ -105,6 +105,6 @@ In the code, each chapter is one file in `src/game/episodes/` (`ch01` … `ch12`
 Both mechanics are also behind the design:
 
 - **Stealth** (`src/mechanics/walk/`) has guards, vision cones and getting caught, but not yet crouch, auto-hide, noise or the action button.
-- **Flight** (`src/mechanics/flight/`) still has the earlier controls: throttle on the right, a PULL button, guns and a HUD with numbers. Climb/Dive buttons, the altitude shadow and eject are not built yet.
+- **Flight** (`src/mechanics/flight/`) has the design's controls, the same in every level: throttle with a lock, Climb/Dive buttons on the left, drag on the right to steer (drag far for a hard turn), guns that fire on their own and an altitude bar. The HUD still shows numbers, and the altitude shadow, the bigger sprite when high, and eject are not built yet.
 
 The [assets guide](assets/README.md) covers what's in `assets/` and how the art should look.

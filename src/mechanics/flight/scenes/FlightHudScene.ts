@@ -1,10 +1,12 @@
 // HUD and touch controls for the flight mechanic. Runs on top of FlightScene.
-// Controls (portrait phone):
-//   drag anywhere ........ floating stick: the jet turns toward the drag
-//   THROTTLE (right edge)  speed and fuel burn
-//   PULL ................. tighter turn (low level: climb)
-//   FIRE ................. only when guns are set to HOLD
-// Desktop: arrows steer, W/S throttle, SPACE pull, F fire, P/ESC pause.
+// Every flight level uses these same controls and this same HUD
+// (design/design.md, Flight > Controls). Portrait phone:
+//   left thumb: CLIMB / DIVE (hold), THROTTLE slider, LOCK (freezes the throttle)
+//   right thumb: drag anywhere else; the jet turns toward the drag.
+//                Drag to the edge of the ring for a hard (high-G) turn.
+//   No fire button: guns fire on their own when the sight is on target.
+// Desktop: arrows steer, SHIFT hard turn, SPACE/R climb, C/F dive,
+//   W/S throttle, L lock, P/ESC pause.
 import Phaser from 'phaser';
 import { t } from '../../../core/i18n';
 import { CSS, EXTRA_H, GAME_H, GAME_W, PAL } from '../../../core/config';
@@ -19,6 +21,8 @@ import { FLIGHT_SCENES, type FlightScene } from './FlightScene';
 const DEADZONE = 8;
 /** Radius of the drawn stick ring, px; the knob stops at its edge. */
 const STICK_R = 36;
+/** Stick drag, px, beyond which the turn is a hard turn (the ring lights up). */
+const HARD_TURN = STICK_R * 1.15;
 
 /** What covers the HUD: nothing, a card (title or checkpoint), the pause menu or the results. */
 type Overlay = 'none' | 'card' | 'pause' | 'result';
@@ -35,7 +39,16 @@ interface Stick {
   y: number;
 }
 
-type KeyName = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | 'W' | 'S' | 'SPACE' | 'SHIFT' | 'F';
+type KeyName = 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' | 'W' | 'S' | 'SPACE' | 'SHIFT' | 'R' | 'C' | 'F';
+
+type Rect = { x: number; y: number; w: number; h: number };
+type Circle = { x: number; y: number; r: number };
+
+/** Inside a rectangle grown by `pad` px on every side. */
+const inRect = (r: Rect, x: number, y: number, pad: number) =>
+  x >= r.x - pad && x <= r.x + r.w + pad && y >= r.y - pad && y <= r.y + r.h + pad;
+/** Inside a circle grown by `pad` px. */
+const inCircle = (c: Circle, x: number, y: number, pad: number) => Math.hypot(x - c.x, y - c.y) <= c.r + pad;
 
 export class FlightHudScene extends Phaser.Scene {
   private flight!: FlightScene;
@@ -48,10 +61,13 @@ export class FlightHudScene extends Phaser.Scene {
 
   // Which pointer holds each control, so several fingers can work at once.
   private stick: Stick | null = null;
-  private pullId: number | null = null;
-  private fireId: number | null = null;
+  private climbId: number | null = null;
+  private diveId: number | null = null;
   private thrId: number | null = null;
   private pauseId: number | null = null;
+  private lockId: number | null = null;
+  /** LOCK on: the throttle ignores touches and keys until it is turned off. */
+  private throttleLocked = false;
 
   // The open overlay, with its buttons (obtns) and texts (otexts).
   private overlay: Overlay = 'none';
@@ -73,7 +89,8 @@ export class FlightHudScene extends Phaser.Scene {
   init(data: { flight: FlightScene }): void {
     this.flight = data.flight;
     this.stick = null;
-    this.pullId = this.fireId = this.thrId = this.pauseId = null;
+    this.climbId = this.diveId = this.thrId = this.pauseId = this.lockId = null;
+    this.throttleLocked = false;
     this.overlay = 'none';
     this.obtns = new ButtonSet();
     this.otexts = [];
@@ -102,24 +119,27 @@ export class FlightHudScene extends Phaser.Scene {
       warn: txt(this, W / 2, 150, '', 16, CSS.danger).setOrigin(0.5, 0),
       warn2: txt(this, W / 2, 184, '', 8, CSS.white).setOrigin(0.5, 0),
       pause: txt(this, HUD.pause.x + HUD.pause.w / 2, HUD.pause.y + HUD.pause.h / 2, 'II', 8).setOrigin(0.5),
-      pull: txt(this, HUD.pull.x, HUD.pull.y, t('hud.pull'), 8, CSS.signal).setOrigin(0.5),
-      fire: txt(this, HUD.fire.x, HUD.fire.y, t('hud.fire'), 8, CSS.white).setOrigin(0.5),
+      climb: txt(this, HUD.climb.x, HUD.climb.y, t('hud.climb'), 8, CSS.signal).setOrigin(0.5),
+      dive: txt(this, HUD.dive.x, HUD.dive.y, t('hud.dive'), 8, CSS.signal).setOrigin(0.5),
+      lock: txt(this, HUD.lock.x + HUD.lock.w / 2, HUD.lock.y + HUD.lock.h / 2, t('hud.lock'), 8, CSS.dim).setOrigin(0.5),
       thrLbl: txt(this, HUD.throttle.x + HUD.throttle.w / 2, HUD.throttle.y - 14, t('hud.thrLabel'), 8, CSS.dim).setOrigin(0.5, 0),
-      altNum: txt(this, HUD.altGauge.x, HUD.altGauge.y + HUD.altGauge.h + 6, '', 8),
-      radar: txt(this, HUD.altGauge.x, HUD.altGauge.y + HUD.altGauge.h + 50, t('hud.radar'), 8, CSS.dim),
-      a100: txt(this, HUD.altGauge.x + HUD.altGauge.w + 3, 0, '100', 8, CSS.dim),
-      a30: txt(this, HUD.altGauge.x + HUD.altGauge.w + 3, 0, '30', 8, CSS.dim),
-      slideUp: txt(this, HUD.throttle.x - 4, 0, t('hud.slideUp'), 8, CSS.signal).setOrigin(1, 0.5).setAlign('right'),
+      altLbl: txt(this, HUD.altBar.x + HUD.altBar.w, HUD.altBar.y - 14, t('hud.altLabel'), 8, CSS.dim).setOrigin(1, 0),
+      altNum: txt(this, HUD.altBar.x + HUD.altBar.w, HUD.altBar.y + HUD.altBar.h + 6, '', 8).setOrigin(1, 0),
+      radar: txt(this, HUD.altBar.x + HUD.altBar.w, HUD.altBar.y + HUD.altBar.h + 50, t('hud.radar'), 8, CSS.dim).setOrigin(1, 0),
+      barHigh: txt(this, HUD.altBar.x - 3, 0, '', 8, CSS.dim).setOrigin(1, 0),
+      barLow: txt(this, HUD.altBar.x - 3, 0, '', 8, CSS.dim).setOrigin(1, 0),
+      slideUp: txt(this, HUD.throttle.x + HUD.throttle.w + 4, 0, t('hud.slideUp'), 8, CSS.signal).setOrigin(0, 0.5),
     };
     for (const t of Object.values(this.t)) t.setDepth(2);
-    // The altitude gauge and radar only show in low-level flight (sortie 3).
-    const lowLevel = this.flight.sortie.lowLevel;
-    for (const k of ['altNum', 'radar', 'a100', 'a30']) this.t[k].setVisible(lowLevel);
-    const ag = HUD.altGauge;
-    // Altitude (ft) to gauge y: 0 ft at the bottom, lowLevel.gaugeMax at the top.
-    const yOf = (alt: number) => ag.y + ag.h - (alt / tuning.lowLevel.gaugeMax) * ag.h;
-    this.t.a100.setY(Math.round(yOf(tuning.lowLevel.bandHigh) - 4));
-    this.t.a30.setY(Math.round(yOf(tuning.lowLevel.bandLow) - 4));
+    // The altitude bar is on every level; only its scale changes. The radar
+    // dial shows only where a level has radar (low level).
+    this.t.radar.setVisible(this.flight.sortie instanceof Sortie3LowAndHome);
+    const bar = this.flight.sortie.altitudeBar;
+    const ab = HUD.altBar;
+    const yOf = (alt: number) => ab.y + ab.h - (alt / bar.max) * ab.h;
+    this.t.barLow.setText(String(bar.low)).setY(Math.round(yOf(bar.low) - 4));
+    this.t.barHigh.setVisible(bar.high !== null);
+    if (bar.high !== null) this.t.barHigh.setText(String(bar.high)).setY(Math.round(yOf(bar.high) - 4));
 
     // Input.
     this.input.on(Phaser.Input.Events.POINTER_DOWN, (p: Phaser.Input.Pointer) => this.onDown(p));
@@ -129,7 +149,10 @@ export class FlightHudScene extends Phaser.Scene {
     this.input.on(Phaser.Input.Events.POINTER_UP_OUTSIDE, (p: Phaser.Input.Pointer) => this.onUp(p));
     const kb = this.input.keyboard;
     if (kb) {
-      this.keys = kb.addKeys('UP,DOWN,LEFT,RIGHT,W,S,SPACE,SHIFT,F') as Record<KeyName, Phaser.Input.Keyboard.Key>;
+      this.keys = kb.addKeys('UP,DOWN,LEFT,RIGHT,W,S,SPACE,SHIFT,R,C,F') as Record<KeyName, Phaser.Input.Keyboard.Key>;
+      kb.on('keydown-L', () => {
+        if (this.overlay === 'none') this.throttleLocked = !this.throttleLocked;
+      });
       const pauseKey = () => {
         if (this.overlay === 'none') this.openPause();
         else if (this.overlay === 'pause') this.closeOverlay();
@@ -176,11 +199,6 @@ export class FlightHudScene extends Phaser.Scene {
     return this.flight.world;
   }
 
-  /** FIRE shows only in hold-to-fire mode, and only when the sortie allows guns. */
-  private get fireVisible(): boolean {
-    return this.world.gunsMode === 'hold' && this.world.allowPlayerGuns;
-  }
-
   /** A new touch: dismiss a card, press an overlay button, or take a control. Elsewhere it starts the stick. */
   private onDown(p: Phaser.Input.Pointer): void {
     if (this.overlay === 'card') {
@@ -193,23 +211,27 @@ export class FlightHudScene extends Phaser.Scene {
     }
     // Hit areas are a little larger than the drawn controls.
     const { x, y } = p;
-    const pb = HUD.pause;
-    if (x >= pb.x - 4 && x <= pb.x + pb.w + 4 && y >= pb.y - 4 && y <= pb.y + pb.h + 4) {
+    if (inRect(HUD.pause, x, y, 4)) {
       this.pauseId = p.id;
       return;
     }
-    if (Math.hypot(x - HUD.pull.x, y - HUD.pull.y) <= HUD.pull.r + 8) {
-      this.pullId = p.id;
+    if (inRect(HUD.lock, x, y, 4)) {
+      this.lockId = p.id;
       return;
     }
-    if (this.fireVisible && Math.hypot(x - HUD.fire.x, y - HUD.fire.y) <= HUD.fire.r + 6) {
-      this.fireId = p.id;
+    if (inCircle(HUD.climb, x, y, 6)) {
+      this.climbId = p.id;
+      return;
+    }
+    if (inCircle(HUD.dive, x, y, 6)) {
+      this.diveId = p.id;
       return;
     }
     const th = HUD.throttle;
-    if (x >= th.x - 18 && y >= th.y - 16 && y <= th.y + th.h + 16) {
+    if (x <= th.x + th.w + 14 && y >= th.y - 16 && y <= th.y + th.h + 16) {
+      // A locked throttle still takes the touch, so it does not start the stick.
       this.thrId = p.id;
-      this.setThrottleFromY(y);
+      if (!this.throttleLocked) this.setThrottleFromY(y);
       return;
     }
     // One stick at a time: another free finger is ignored.
@@ -218,7 +240,7 @@ export class FlightHudScene extends Phaser.Scene {
 
   private onMove(p: Phaser.Input.Pointer): void {
     if (this.overlay !== 'none') return;
-    if (p.id === this.thrId) this.setThrottleFromY(p.y);
+    if (p.id === this.thrId && !this.throttleLocked) this.setThrottleFromY(p.y);
     const s = this.stick;
     if (s && p.id === s.id) {
       s.x = p.x;
@@ -243,11 +265,15 @@ export class FlightHudScene extends Phaser.Scene {
     // Pause opens on release, and only if the finger is still on the button.
     if (p.id === this.pauseId) {
       this.pauseId = null;
-      const pb = HUD.pause;
-      if (p.x >= pb.x - 4 && p.x <= pb.x + pb.w + 4 && p.y >= pb.y - 4 && p.y <= pb.y + pb.h + 4) this.openPause();
+      if (inRect(HUD.pause, p.x, p.y, 4)) this.openPause();
     }
-    if (p.id === this.pullId) this.pullId = null;
-    if (p.id === this.fireId) this.fireId = null;
+    // LOCK toggles on release, likewise.
+    if (p.id === this.lockId) {
+      this.lockId = null;
+      if (inRect(HUD.lock, p.x, p.y, 4)) this.throttleLocked = !this.throttleLocked;
+    }
+    if (p.id === this.climbId) this.climbId = null;
+    if (p.id === this.diveId) this.diveId = null;
     if (p.id === this.thrId) this.thrId = null;
     if (this.stick && p.id === this.stick.id) this.stick = null;
   }
@@ -255,11 +281,17 @@ export class FlightHudScene extends Phaser.Scene {
   /** Let go of every control and centre the stick, as an overlay opens. */
   private releaseAll(): void {
     this.stick = null;
-    this.pullId = this.fireId = this.thrId = this.pauseId = null;
+    this.climbId = this.diveId = this.thrId = this.pauseId = this.lockId = null;
     const c = this.world.controls;
     c.desiredHeading = null;
     c.pull = false;
-    c.fire = false;
+    c.pitch = 0;
+  }
+
+  /** How far the stick is dragged from its base, px; 0 with no stick. */
+  private get stickDeflection(): number {
+    const s = this.stick;
+    return s ? Math.hypot(s.x - s.ox, s.y - s.oy) : 0;
   }
 
   /** Throttle from finger height: 1 at the top of the track, 0 at the bottom. */
@@ -285,11 +317,16 @@ export class FlightHudScene extends Phaser.Scene {
       if (kx || ky) dh = Math.atan2(kx, -ky);
     }
     c.desiredHeading = dh;
-    c.pull = this.pullId !== null || !!k.SPACE?.isDown || !!k.SHIFT?.isDown;
-    c.fire = this.fireId !== null || !!k.F?.isDown;
-    // W and S move the throttle by 60% per second.
-    if (k.W?.isDown) c.throttle = Math.min(1, c.throttle + dt * 0.6);
-    if (k.S?.isDown) c.throttle = Math.max(0, c.throttle - dt * 0.6);
+    // Hard turn: the stick dragged past the ring, or SHIFT with the arrows.
+    c.pull = (this.stick !== null && this.stickDeflection > HARD_TURN) || (dh !== null && !!k.SHIFT?.isDown);
+    const climb = this.climbId !== null || !!k.SPACE?.isDown || !!k.R?.isDown;
+    const dive = this.diveId !== null || !!k.C?.isDown || !!k.F?.isDown;
+    c.pitch = (climb ? 1 : 0) - (dive ? 1 : 0);
+    // W and S move the throttle by 60% per second, unless it is locked.
+    if (!this.throttleLocked) {
+      if (k.W?.isDown) c.throttle = Math.min(1, c.throttle + dt * 0.6);
+      if (k.S?.isDown) c.throttle = Math.max(0, c.throttle - dt * 0.6);
+    }
   }
 
   // -------------------------------------------------------------------------
@@ -413,8 +450,9 @@ export class FlightHudScene extends Phaser.Scene {
     // Centre warnings.
     this.drawWarnings(blinkOn);
 
-    // Low-level gauge and radar.
-    if (s.lowLevel && s instanceof Sortie3LowAndHome) this.drawLowLevel(g, s, blinkOn);
+    // Altitude bar (every level) and radar (only where a level has it).
+    this.drawAltitudeBar(g);
+    if (s instanceof Sortie3LowAndHome) this.drawRadar(g, s, blinkOn);
 
     // Bottom controls.
     this.drawControls(g);
@@ -451,7 +489,7 @@ export class FlightHudScene extends Phaser.Scene {
       main = t('hud.greyout');
       sub = t('hud.greyoutSub');
       col = CSS.warn;
-    } else if (ll?.warning === 'low') {
+    } else if (ll?.warning === 'low' || this.tooLowAtAltitude) {
       main = t('hud.tooLow');
       col = CSS.warn;
     } else if (w.fuel.empty && w.player.f.airborne) {
@@ -461,29 +499,52 @@ export class FlightHudScene extends Phaser.Scene {
     this.t.warn2.setText(sub);
   }
 
-  /** Sortie 3 altitude gauge (red below the band, green in it, amber above) and the radar dial. */
-  private drawLowLevel(g: Phaser.GameObjects.Graphics, s: Sortie3LowAndHome, blinkOn: boolean): void {
-    const ag = HUD.altGauge;
-    const ll = tuning.lowLevel;
-    const yOf = (alt: number) => ag.y + ag.h - clamp(alt / ll.gaugeMax, 0, 1) * ag.h;
+  /** Away from low level: airborne, under the bar's red line and not climbing. */
+  private get tooLowAtAltitude(): boolean {
+    const s = this.flight.sortie;
+    const f = this.world.player.f;
+    return !s.lowLevel && f.airborne && f.altitude < s.altitudeBar.low && f.vz <= 0;
+  }
+
+  /**
+   * The altitude bar, the same on every level: red below the sortie's low line,
+   * green above it, amber above its ceiling if it has one. A white pointer marks
+   * the jet's height and a cyan tick the height to fly at, if the sortie sets one.
+   */
+  private drawAltitudeBar(g: Phaser.GameObjects.Graphics): void {
+    const ab = HUD.altBar;
+    const bar = this.flight.sortie.altitudeBar;
+    const yOf = (alt: number) => ab.y + ab.h - clamp(alt / bar.max, 0, 1) * ab.h;
+    const top = bar.high ?? bar.max;
     g.fillStyle(PAL.ink, 0.8);
-    g.fillRect(ag.x, ag.y, ag.w, ag.h);
+    g.fillRect(ab.x, ab.y, ab.w, ab.h);
     g.fillStyle(PAL.danger, 0.55);
-    g.fillRect(ag.x + 1, yOf(ll.bandLow), ag.w - 2, ag.y + ag.h - yOf(ll.bandLow));
+    g.fillRect(ab.x + 1, yOf(bar.low), ab.w - 2, ab.y + ab.h - yOf(bar.low) - 1);
     g.fillStyle(PAL.ok, 0.45);
-    g.fillRect(ag.x + 1, yOf(ll.bandHigh), ag.w - 2, yOf(ll.bandLow) - yOf(ll.bandHigh));
-    g.fillStyle(PAL.warn, 0.3);
-    g.fillRect(ag.x + 1, ag.y + 1, ag.w - 2, yOf(ll.bandHigh) - ag.y - 1);
+    g.fillRect(ab.x + 1, yOf(top), ab.w - 2, yOf(bar.low) - yOf(top));
+    if (bar.high !== null) {
+      g.fillStyle(PAL.warn, 0.3);
+      g.fillRect(ab.x + 1, ab.y + 1, ab.w - 2, yOf(bar.high) - ab.y - 1);
+    }
+    const target = this.flight.sortie.targetAltitude;
+    if (target !== null) {
+      const ty = Math.round(yOf(target));
+      g.fillStyle(PAL.friendly, 1);
+      g.fillRect(ab.x - 4, ty - 1, ab.w + 4, 3);
+    }
     const alt = this.world.player.f.altitude;
     const py = Math.round(yOf(alt));
     g.fillStyle(PAL.white, 1);
-    g.fillRect(ag.x - 2, py - 1, ag.w + 4, 2);
-    g.fillTriangle(ag.x + ag.w + 2, py, ag.x + ag.w + 8, py - 4, ag.x + ag.w + 8, py + 4);
+    g.fillRect(ab.x - 2, py - 1, ab.w + 4, 2);
+    g.fillTriangle(ab.x - 2, py, ab.x - 8, py - 4, ab.x - 8, py + 4);
     this.t.altNum.setText(t('hud.altNum', { v: Math.max(0, Math.round(alt)) }));
+  }
 
-    // Radar fill.
-    const cx = ag.x + 11;
-    const cy = ag.y + ag.h + 34;
+  /** Radar dial under the altitude bar: fills while the jet is above the band, blinks once it has contact. */
+  private drawRadar(g: Phaser.GameObjects.Graphics, s: Sortie3LowAndHome, blinkOn: boolean): void {
+    const ab = HUD.altBar;
+    const cx = ab.x + 11;
+    const cy = ab.y + ab.h + 34;
     g.fillStyle(PAL.ink, 0.85);
     g.fillCircle(cx, cy, 11);
     const r = s.ll.radar;
@@ -506,70 +567,71 @@ export class FlightHudScene extends Phaser.Scene {
     g.lineStyle(1, PAL.panelEdge, 1);
     g.strokeRect(pb.x + 0.5, pb.y + 0.5, pb.w - 1, pb.h - 1);
 
-    // PULL.
-    const pu = HUD.pull;
-    const pulling = w.controls.pull;
-    g.fillStyle(pulling ? PAL.signal : PAL.panel, pulling ? 0.95 : 0.7);
-    g.fillCircle(pu.x, pu.y, pu.r);
-    g.lineStyle(2, PAL.signal, 1);
-    g.strokeCircle(pu.x, pu.y, pu.r);
-    this.t.pull.setText(this.flight.sortie.lowLevel ? t('hud.pullUp') : t('hud.pull')).setColor(pulling ? '#15171a' : CSS.signal);
+    // LOCK: lit while the throttle is locked.
+    const lb = HUD.lock;
+    const locked = this.throttleLocked;
+    g.fillStyle(locked ? PAL.signal : PAL.panel, locked ? 0.95 : 0.85);
+    g.fillRect(lb.x, lb.y, lb.w, lb.h);
+    g.lineStyle(1, locked ? PAL.signal : PAL.panelEdge, 1);
+    g.strokeRect(lb.x + 0.5, lb.y + 0.5, lb.w - 1, lb.h - 1);
+    this.t.lock.setColor(locked ? '#15171a' : CSS.dim);
 
-    // FIRE (hold mode only).
-    const showFire = this.fireVisible;
-    this.t.fire.setVisible(showFire);
-    if (showFire) {
-      const fi = HUD.fire;
-      const firing = w.controls.fire;
-      g.fillStyle(firing ? PAL.danger : PAL.panel, firing ? 0.95 : 0.7);
-      g.fillCircle(fi.x, fi.y, fi.r);
-      g.lineStyle(2, PAL.danger, 1);
-      g.strokeCircle(fi.x, fi.y, fi.r);
+    // CLIMB and DIVE: lit while held (by touch or key).
+    const pitch = w.controls.pitch;
+    for (const [btn, label, on] of [[HUD.climb, this.t.climb, pitch > 0], [HUD.dive, this.t.dive, pitch < 0]] as const) {
+      g.fillStyle(on ? PAL.signal : PAL.panel, on ? 0.95 : 0.7);
+      g.fillCircle(btn.x, btn.y, btn.r);
+      g.lineStyle(2, PAL.signal, 1);
+      g.strokeCircle(btn.x, btn.y, btn.r);
+      label.setColor(on ? '#15171a' : CSS.signal);
     }
 
-    // Throttle slider.
+    // Throttle slider. The handle is grey while locked.
     const th = HUD.throttle;
     const v = w.controls.throttle;
     const hy = Math.round(th.y + (1 - v) * th.h);
     g.fillStyle(PAL.ink, 0.75);
     g.fillRect(th.x + 11, th.y, 14, th.h);
-    g.fillStyle(PAL.signal, 0.45);
+    g.fillStyle(PAL.signal, locked ? 0.25 : 0.45);
     g.fillRect(th.x + 12, hy, 12, th.y + th.h - hy);
     g.lineStyle(1, PAL.panelEdge, 1);
     g.strokeRect(th.x + 11.5, th.y + 0.5, 13, th.h - 1);
     for (let i = 1; i < 4; i++) {
       g.fillStyle(PAL.panelEdge, 1);
-      g.fillRect(th.x + 6, Math.round(th.y + (th.h * i) / 4), 4, 1);
+      g.fillRect(th.x + th.w - 10, Math.round(th.y + (th.h * i) / 4), 4, 1);
     }
+    const edge = locked ? PAL.panelEdge : PAL.signal;
     g.fillStyle(PAL.ink, 1);
     g.fillRect(th.x + 1, hy - 6, th.w - 1, 13);
-    g.fillStyle(this.thrId !== null ? PAL.signal : PAL.panel, 1);
+    g.fillStyle(this.thrId !== null && !locked ? PAL.signal : PAL.panel, 1);
     g.fillRect(th.x, hy - 7, th.w - 1, 13);
-    g.lineStyle(1, PAL.signal, 1);
+    g.lineStyle(1, edge, 1);
     g.strokeRect(th.x + 0.5, hy - 6.5, th.w - 2, 12);
 
-    // Take-off prompt next to the throttle.
+    // Take-off prompt to the right of the throttle.
     const f = w.player.f;
     const takingOff = this.flight.sortie.objectives.some((o) => o.id === 'takeoff' && o.state === 'active');
     const showSlide = takingOff && !f.airborne && f.speed < tuning.takeoff.rotateSpeed && v < 0.7 && this.overlay === 'none';
     this.t.slideUp.setVisible(showSlide);
     if (showSlide) {
       const bob = Math.round(Math.sin(this.clock * 6) * 4);
+      const ax = th.x + th.w + 12;
       this.t.slideUp.setY(hy - 30 + bob);
       g.fillStyle(PAL.signal, 1);
-      g.fillTriangle(th.x - 10, hy - 52 + bob, th.x - 16, hy - 44 + bob, th.x - 4, hy - 44 + bob);
+      g.fillTriangle(ax, hy - 52 + bob, ax - 6, hy - 44 + bob, ax + 6, hy - 44 + bob);
     }
 
-    // Floating stick.
+    // Floating stick. The ring lights up for a hard turn.
     const s = this.stick;
     if (s) {
       const dx = s.x - s.ox;
       const dy = s.y - s.oy;
       const d = Math.hypot(dx, dy);
       const k = d > STICK_R ? STICK_R / d : 1;
-      g.lineStyle(2, 0xffffff, 0.35);
+      const hard = d > HARD_TURN;
+      g.lineStyle(2, hard ? PAL.signal : 0xffffff, hard ? 0.9 : 0.35);
       g.strokeCircle(s.ox, s.oy, STICK_R);
-      g.fillStyle(0xffffff, 0.35);
+      g.fillStyle(hard ? PAL.signal : 0xffffff, hard ? 0.7 : 0.35);
       g.fillCircle(s.ox + dx * k, s.oy + dy * k, 14);
     }
   }
@@ -584,9 +646,10 @@ export class FlightHudScene extends Phaser.Scene {
   private drawIndicators(g: Phaser.GameObjects.Graphics): void {
     const w = this.world;
     const s = this.flight.sortie;
-    // The box where targets count as on screen: the playfield, clear of the throttle.
-    const L = 8;
-    const R = GAME_W - 50;
+    // The box where targets count as on screen: the playfield, clear of the
+    // left-hand controls and the altitude bar.
+    const L = HUD.playLeft;
+    const R = HUD.playRight;
     const T = HUD.playTop + 4;
     const B = HUD.playBottom - 4;
     const pp = this.toScreen(w.player.f.x, w.player.f.y);
@@ -677,8 +740,10 @@ export class FlightHudScene extends Phaser.Scene {
       txt(this, cx, oy + 192, episodeLine(this.flight.host.episode), 8, CSS.dim).setOrigin(0.5),
       txt(this, cx, oy + 216, t('hud.sortie', { n: s.num }), 16, CSS.signal).setOrigin(0.5),
       txt(this, cx, oy + 246, s.title, 16, CSS.white).setOrigin(0.5),
-      txt(this, cx, oy + 276, t('hud.placeDate', { place: s.place, date: s.date }), 8, CSS.dim).setOrigin(0.5),
-      txt(this, cx, oy + 300, tips[s.num], 8, CSS.white).setOrigin(0.5, 0).setAlign('center'),
+      txt(this, cx, oy + 270, t('hud.placeDate', { place: s.place, date: s.date }), 8, CSS.dim).setOrigin(0.5),
+      txt(this, cx, oy + 288, tips[s.num], 8, CSS.white, 300).setOrigin(0.5, 0).setAlign('center'),
+      // The same controls on every level, so the same reminder on every card.
+      txt(this, cx, oy + 316, t('hud.controls'), 8, CSS.dim, 300).setOrigin(0.5, 0).setAlign('center'),
       txt(this, cx, oy + 372, t('hud.tapToStart'), 8, CSS.signal).setOrigin(0.5),
     );
     for (const t of this.otexts) t.setDepth(21);
@@ -691,7 +756,7 @@ export class FlightHudScene extends Phaser.Scene {
     this.flight.paused = true;
     const cx = GAME_W / 2;
     const oy = Math.round(EXTRA_H / 2);
-    const tip = this.flight.sortie.lowLevel ? t('hud.tip.checkpoint') : '';
+    const tip = t('hud.tip.checkpoint');
     this.otexts.push(
       txt(this, cx, oy + 222, t('hud.checkpoint'), 16, CSS.signal).setOrigin(0.5),
       txt(this, cx, oy + 252, this.flight.sortie.restartReason, 8, CSS.white, 300).setOrigin(0.5, 0).setAlign('center'),
@@ -719,15 +784,6 @@ export class FlightHudScene extends Phaser.Scene {
     };
     add(t('hud.resume'), () => this.closeOverlay(), true);
     add(t('hud.restartSortie'), () => this.flight.restartSortie());
-    // The GUNS toggle changes the live world and the saved setting together.
-    const gunsBtn = new Button(this, 60, y, 240, 40, gunsLabel(this.world.gunsMode), () => {
-      const next = this.world.gunsMode === 'auto' ? 'hold' : 'auto';
-      this.world.gunsMode = next;
-      this.flight.host.setSetting('gunsMode', next);
-      gunsBtn.setLabel(gunsLabel(next));
-    });
-    this.obtns.add(gunsBtn);
-    y += 50;
     if (this.scale.fullscreen.available) add(t('ui.fullScreen'), () => this.scale.toggleFullscreen());
     add(t('ui.menu'), () => this.flight.toMenu());
     for (const b of this.obtns.buttons) b.setDepth(21);
@@ -833,9 +889,4 @@ function mark(state: string): string {
   if (state === 'failed') return t('hud.mark.failed');
   if (state === 'active') return t('hud.mark.active');
   return t('hud.mark.pending');
-}
-
-/** The pause menu's GUNS toggle label, worded like the menu's setting. */
-function gunsLabel(mode: string): string {
-  return t('menu.setting', { label: t('flight.guns'), value: t(mode === 'hold' ? 'flight.guns.hold' : 'flight.guns.auto') });
 }
